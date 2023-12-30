@@ -1,33 +1,29 @@
-NAME			= libftprintf.a
-CC				= cc
-CFLAGS			= -Wall, -Wextra -Werror -I ft_printf.h
+NAME = libftprintf.a
+CC = cc
+CFLAGS = -Wall -Wextra -Werror
+AR = ar -r -c -s
+RM = rm -rf
 
-SRCNAMES		= printf atoi itoa_base strlen
-PRE_SRC			= $(addprefix ./src/ft_, ${SRCNAMES})
-SRC				= $(addsuffix .c, ${P_SRC})
-
-SRCNAMES_BONUS	=
-
-
-OBJFILES		= $(SRC:%.c=%.o)
-OBJFILES_BONUS	= $(SRC_BONUS:%.c=%.o)
-
-ifdef BON
-OBJ = $(OBJFILES) $(OBJFILES_BONUS)
+ifndef BONUS
+    SRC_NAME = ft_printf
 else
-OBJ = $(OBJFILES)
+    PRE_SRC = ft_printf_bonus
+    SRC_NAME = $(foreach item, $(PRE_SRC), ./bonus/$(item))
 endif
 
-all: $(NAME)
-$(NAME): $(OBJ) 
-	$(CC) $(OBJ) -o $(NAME) $(OBJ)
-bonus: 
-	make all BON=1
-clean:
-	rm -f $(OBJ_BONUS) $(OBJ)
-fclean:
-	rm -f $(NAME)
-re:
-	clean fclean
+SRC = $(foreach item, $(SRC_NAME), $(item).c)
+OBJ = $(foreach item, $(SRC_NAME), $(item).o)
 
-.PHONY all bonus clean fclean re
+$(NAME):
+	$(CC) $(CFLAGS) -o $(OBJ) -c $(SRC)
+	$(AR) libftprintf.a $(OBJ)
+all: $(NAME)
+bonus: fclean
+	make all BONUS=1
+clean:
+	$(RM) $(OBJ)
+fclean:
+	$(RM) $(OBJ) libftprintf.a
+re: fclean all
+
+.PHONY: all clean fclean re
