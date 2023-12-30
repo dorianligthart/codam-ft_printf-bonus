@@ -6,29 +6,22 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/29 18:26:54 by doligtha          #+#    #+#             */
-/*   Updated: 2023/12/30 01:47:40 by doligtha         ###   ########.fr       */
+/*   Updated: 2023/12/30 17:46:31 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../ft_printf.h"
 
-// returns length of an argument.
-static int	get_arg_len(char mode, void *arg, t_data *d)
-{
-	ERRORMSG("function not implemented yet!");
-	return (FALSE);
-}
-
-// for data.width and data.precision.
+//	for origin->data.width and origin->data.precision.
 static void	width_prec(int *widprec, const char *format, int *i, va_list *list)
 {
 	va_list	tmp;
 	int		atoi;
 	int		va;
 
-	va = 0;
-	if (format[*i] == '*' && ++*i)
-		va = TRUE;
+	va = false;
+	if (format[*i] == '*' && *i++)
+		va = true;
 	atoi = 0;
 	if (format[*i] >= '0' && format[*i] <= '9')
 		atoi = ft_atoi(format + *i);
@@ -36,7 +29,7 @@ static void	width_prec(int *widprec, const char *format, int *i, va_list *list)
 		++*i;
 	if (!va)
 		*widprec = atoi;
-	else if ((va && atoi && format[*i] == '$' && ++*i) || (va && atoi))
+	else if ((va && atoi && format[*i] == '$' && *i++) || (va && atoi))
 	{
 		va_copy(tmp, *list);
 		while (va && atoi && atoi--)
@@ -47,80 +40,103 @@ static void	width_prec(int *widprec, const char *format, int *i, va_list *list)
 		*widprec = va_arg(*list, int);
 }
 
-// parses the argument flags.
-static int	parse(const char *format, int *i, va_list *list, t_comp *current)
+//	parses the format string into 'origin->data.*'.
+static void	parse(t_comp **arg, const char *format, int *i, va_list *list)
 {
 	int		*da[128];
 	t_data	*d;
 
-	d = current->data;
+	d = &(*arg)->data;
 	d->precision = -1;
-	arg_array(da, "-0# +", &d->minus, &d->zero, &d->hash, &d->space, &d->plus);
+	arg_array(da, "-0# +", &d->minus, &d->zero,\
+			&d->hash, &d->space, &d->plus);
 	while (ft_strchr("-0# +", format[*i]))
-		*(da[format[*i++]]) = TRUE;
+		*(da[format[*i++]]) = true;
 	if (d->plus)
-		d->space = FALSE;
+		d->space = false;
 	if (format[*i] >= '0' && format[*i] <= '9')
 		width_prec(&d->width, format, i, list);
 	if (format[*i] == '.' && *i++)
-		d->dot = TRUE;
+		d->dot = true;
 	if (format[*i] >= '0' && format[*i] <= '9')
 		width_prec(&d->precision, format, i, list);
 	if (d->width < 0)
 	{
 		d->width *= -1;
-		d->minus = TRUE;
+		d->minus = true;
 	}
-	if (!ft_strchr("cspdiuxX%o", format[*i]))
-		return (-1);
-	return (get_arg_len(format[*i], current->item, current->data));
+	if (*(format + *i))
+		d->conversion = *(format + *i++);
+	(*arg)->len = ft_get_arg_len(*arg);
 }
 
-//	format_str or argument.
-static int	str_arg(t_comp **origin, const char *format, int *i, va_list *list)
+//	mallocs a new t_comp node; appends new node to comp.
+//	returns: new node.
+t_comp	*t_comp_append(t_comp **comp)
 {
-	t_comp	*current;
-	t_comp	*ptr;
+	t_comp	*tmp;
 
-	current = (t_comp *)malloc(sizeof(t_comp *));
-	if (!current)
-		return (-1);
+	tmp = (t_comp *)malloc(sizeof(t_comp *));
+	if (!tmp)
+		return (NULL);
+	tmp->len = 0;
+	tmp->item = NULL;
+	tmp->data.conversion = '\0';
+	tmp->data.minus = false;
+	tmp->data.zero = false;
+	tmp->data.hash = false;
+	tmp->data.space = false;
+	tmp->data.plus = false;
+	tmp->data.dot = false;
+	tmp->data.width = 0;
+	tmp->data.precision = 0;
+	tmp->next = NULL;
+	while ((*comp)->next)
+		(*comp) = (*comp)->next;
+	if (!(*comp))
+		(*comp) = tmp;
+	else
+		(*comp)->next = tmp;
+	return (tmp);
+}
+
+//	saves 'a part of format string' or 'an argument' in a new t_comp node.
+static int	str_arg(t_comp **object, const char *format, int *i, va_list *list)
+{
+	*object = t_comp_append(object);
+	if (!*object)
+		return (ERROR_FT_PRINTF);
 	if (format[*i] == '%')
 	{
-		current->item = va_arg(*list, void *);
-		current->len = parse(format, i, list, current);
+		(*object)->item = va_arg(*list, void *);
+		parse(object, format, i, list);
 	}
 	else
 	{
-		current->len = 0;
-		while (format[*i + current->len] && format[*i + current->len] != '%')
-			current->len++;
-		current->formatsubstr = format + *i;
+		(*object)->len = 0;
+		while (format[*i + (*object)->len] && format[*i + (*object)->len] != '%')
+			(*object)->len++;
+		(*object)->item = (char *)(format + *i);
 	}
-	if (!*origin)
-		return (*origin = current, 1);
-	ptr = *origin;
-	while (ptr->next)
-		ptr = ptr->next;
-	ptr->next = current;
+	if (!(*object)->data.conversion)
 	return (1);
 }
 
 int	ft_printf(const char *format, ...)
 {
-	int			printed;
 	va_list		list;
 	int			i;
 	t_comp		*origin;
+	int			fd;
 
 	if (!format)
-		return (-1);
+		return (ERROR_FT_PRINTF);
 	va_start(list, format);
-	printed = 0;
+	fd = 1;
 	i = 0;
 	while (format[i])
 		if (!str_arg(&origin, format, &i, &list))
-			return (-1);
+			return (ERROR_FT_PRINTF);
 	va_end(list);
-	return (print_comp(origin));
+	return (ft_print_comp(origin));
 }
