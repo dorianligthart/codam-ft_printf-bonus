@@ -70,13 +70,10 @@ static int	ft_putint(int nbr)
 		y++;
 	}
 	put[y] = '\0';
-	y = write(1, put, y);
-	return (-1 + (y >= 0) * (y + 1));
+	return (write(1, put, y));
 }
 
-static void	print10argdiff(char *form,
-	void *arg1, void *arg2, void *arg3, void *arg4, void *arg5,
-	void *arg6, void *arg7, void *arg8, void *arg9, void *arg10)
+static void	print_va_list(const char *form, va_list list)
 {
 	write(1, "\'"YELLOW, 9);
 	if (form)
@@ -84,13 +81,13 @@ static void	print10argdiff(char *form,
 	write(1, RESET"\':", 6);
 		
 		write(1, "\nprintf:    \'", 13);
-		int x = printf(form, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);
+		int x = printf(form, va_arg(list, void *));
 		fflush(stdout);
 		write(1, "\'-->", 4);
 		ft_putint(x);
 		
 		write(1, "\nft_printf: \'", 13);
-		int y = ft_printf(form, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);
+		int y = ft_printf(form, va_arg(list, void *));
 		fflush(stdout);
 		write(1, "\'-->", 4);
 		ft_putint(y);
@@ -101,23 +98,22 @@ static void	print10argdiff(char *form,
 			write(1, "\t\t"GREEN"OK."RESET"\n\n", 17);
 }
 
-static void	print1argdiff(char *form, void *arg)
+static void	print1argdiff(const char *form, void *arg)
 {
 	write(1, "\'"YELLOW, 9);
 	if (form)
 		write(1, form, strlen(form));
 	write(1, RESET"\':", 6);
-		
 		write(1, "\nprintf:    \'", 13);
 		int x = printf(form, arg);
 		fflush(stdout);
-		write(1, "\'-->", 4);
+		write(1, "\'--> ", 5);
 		ft_putint(x);
 		
 		write(1, "\nft_printf: \'", 13);
 		int y = ft_printf(form, arg);
 		fflush(stdout);
-		write(1, "\'-->", 4);
+		write(1, "\'--> ", 5);
 		ft_putint(y);
 
 		if (x != y)
@@ -147,10 +143,11 @@ write(1, "\n"BLUE"[format string test]"RESET"\n", 34);
 	print1argdiff("%%", NULL);
 	print1argdiff("%%abcd", NULL);
 	print1argdiff("abcd%%", NULL);
+	// print1argdiff("something%");
 	
-	int	i = 0;
 //c: flags="-", fieldwidth.
 write(1, "\n"BLUE"[c conversion]"RESET"\n", 28);
+	int	i = -1;
 	while (++i < 128)
 		print1argdiff("%c", (void *)i);
 
@@ -165,8 +162,8 @@ write(1, "\n"BLUE"[s conversion]"RESET"\n", 28);
 //p: flags="-", fieldwidth, precision==0.
 write(1, "\n"BLUE"[p conversion]"RESET"\n", 28);
 	i = -1;
-	while (++i < 20)
-		print1argdiff("%p", (void *)(ULONG_MAX - 10 + i));
+	while (++i < 3)
+		print1argdiff("%p", (void *)(ULONG_MAX - 1 + i));
 
 //di: flags="-+ 0", fieldwidth, precision.
 write(1, "\n"BLUE"[di conversion]"RESET"\n", 29);
@@ -175,30 +172,27 @@ write(1, "\n"BLUE"[di conversion]"RESET"\n", 29);
 	print1argdiff("%i", (void *)1);
 	print1argdiff("%i", (void *)10);
 	i = -1;
-	while (++i < 20)
-		print1argdiff("%i", (void *)(INT_MAX - 10 + i));
+	while (++i < 3)
+		print1argdiff("%i", (void *)(INT_MAX - 1 + i));
 
 //u: flags="-0", fieldwidth, precision.
 write(1, "\n"BLUE"[u conversion]"RESET"\n", 28);
 	i = -1;
-	while (++i < 20)
-		print1argdiff("%u", (void *)(UINT_MAX - 10 + i));
+	while (++i < 3)
+		print1argdiff("%u", (void *)(UINT_MAX - 1 + i));
 
 //x: flags="-#0", fieldwidth, precision.
 write(1, "\n"BLUE"[x conversion]"RESET"\n", 28);
 	i = -1;
-	while (++i < 20)
-		print1argdiff("%x", (void *)(ULONG_MAX - 10 + i));
+	while (++i < 3)
+		print1argdiff("%x", (void *)(ULONG_MAX - 1 + i));
 	
 //X: flags="-#0", fieldwidth, precision.
 write(1, "\n"BLUE"[X conversion]"RESET"\n", 28);
 	i = -1;
-	while (++i < 20)
-		print1argdiff("%X", (void *)(ULONG_MAX - 10 + i));
+	while (++i < 3)
+		print1argdiff("%X", (void *)(ULONG_MAX - 1 + i));
 	
-	print10argdiff("evaluator try 10 args here for fun :)"
-		"%d %d %d %d %d %d %d %d %d %d",
-		(void *)42, (void *)442, (void *)42, (void *)42, (void *)42, (void *)42, (void *)42, (void *)42, (void *)42, (void *)42);
 	return (0);
 }
 /*

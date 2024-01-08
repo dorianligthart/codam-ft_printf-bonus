@@ -6,7 +6,7 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/29 00:44:30 by dligthar          #+#    #+#             */
-/*   Updated: 2023/12/29 19:20:57 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/01/07 19:58:19 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,16 @@ static char	*ft_strchr(const char *str, char c)
 {
 	int	i;
 
-	i = -1;
-	while (str && str[++i])
+	if (!str)
+		return (NULL);
+	i = 0;
+	while (str[i])
+	{
 		if (str[i] == (unsigned char)c)
 			return ((char *)(str + i));
-	if (str && (unsigned char)c == '\0')
+		i++;
+	}
+	if ((unsigned char)c == '\0')
 		return ((char *)(str + i));
 	return (NULL);
 }
