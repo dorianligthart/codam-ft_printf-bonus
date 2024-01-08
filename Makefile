@@ -1,19 +1,16 @@
-NAME = libftprintf.a
-CC = cc
-CFLAGS = -Wall -Wextra -Werror
-AR = ar -r -c -s
-RM = rm -rf
+NAME    = libftprintf.a
+CC      = cc
+CFLAGS  = -Wall -Wextra -Werror
+AR      = ar -r -c -s
+RM      = rm -rf
 
 ifdef BONUS
-    SRC = ./bonus/*
-	OBJ = $(addsuffix .o, $(basename $(SRC)))
+    SRC = ./bonus/*.c
+    OBJ = $(addsuffix .o, $(basename $(SRC)))
 else
     SRC = ft_printf.c
-	OBJ = ft_printf.o
+    OBJ = ft_printf.o
 endif
-
-# SRC = $(foreach item, $(SRC_NAME), $(item).c)
-# OBJ = $(foreach item, $(SRC_NAME), $(item).o)
 
 $(NAME):
 	$(CC) $(CFLAGS) -c $(SRC)
