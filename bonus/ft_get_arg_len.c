@@ -6,7 +6,7 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/30 17:14:18 by doligtha          #+#    #+#             */
-/*   Updated: 2024/01/08 02:34:19 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/01/08 03:11:30 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,18 +14,23 @@
 
 static int	ft_printf_get_arg_len2(t_comp *node, t_data *data)
 {
+	(void)node;
+	(void)data;
 	return (0);
 }
 
 // returns length of an argument.
 int	ft_printf_get_arg_len(t_comp *node, t_data *data, int len)
 {
+	(void)node;
+	(void)data;
+	(void)len;
 	if (data->conversion == 'c')
 		return ((data->width > len) * data->width + 1);
 	else if (data->conversion == 's')
 	{
 		len = ft_strlen(node->item);	
-		return ();
+		return (1);
 	}
 	else
 		return (ft_printf_get_arg_len2(node, data));

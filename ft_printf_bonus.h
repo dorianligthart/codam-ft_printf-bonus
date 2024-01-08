@@ -6,7 +6,7 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/21 16:34:14 by doligtha          #+#    #+#             */
-/*   Updated: 2024/01/08 02:18:28 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/01/08 02:51:31 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@
 // bool dot			= flag.
 // int	precision	= precision width (for integers only, the amount of zero's).
 // char conversion	= conversion, supported: c, s, p, d, i, u, x, X, %, o.
-typedef struct s_data
+typedef struct __attribute__((packed)) s_data
 {
 	bool	minus;
 	bool	zero;
@@ -51,14 +51,14 @@ typedef struct s_data
 	bool	dot;
 	int		precision;
 	char	conversion;
-} 	t_data __attribute__(packed);  //15 bytes.
+} 	t_data;  //15 bytes.
 
-typedef struct s_comp
+typedef struct __attribute__((packed)) s_comp
 {
 	int				len;
 	void			*item;
 	struct s_comp	*next;
-}	t_comp __attribute__(packed); //20 bytes.
+}	t_comp; //20 bytes.
 
 //new libft functions:
 void	ft_arg_to_array(int **table, const char *format, ...);
@@ -72,7 +72,7 @@ int		ft_printf_print_comp(t_comp **origin);
 int		ft_printf_get_arg_len(t_comp *node, t_data *data, int len);
 t_comp	*ft_newcomp_append(t_comp **comp);
 t_data	*ft_newdata(void);
-int		ft_printf(const char *format, ...) __attribute__ ((format (printf, 1, 2)));
+int		ft_printf(const char *format, ...) __attribute__((format (printf, 1, 2)));
 
 #endif // FT_PRINTF_H
 // // maybe union instead of 'void *item'?????????

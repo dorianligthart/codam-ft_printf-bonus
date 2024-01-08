@@ -4,18 +4,19 @@ CFLAGS = -Wall -Wextra -Werror
 AR = ar -r -c -s
 RM = rm -rf
 
-ifndef BONUS
-    SRC_NAME = ft_printf
+ifdef BONUS
+    SRC = ./bonus/*
+	OBJ = $(addsuffix .o, $(basename $(SRC)))
 else
-    PRE_SRC = ft_printf_bonus
-    SRC_NAME = $(foreach item, $(PRE_SRC), ./bonus/$(item))
+    SRC = ft_printf.c
+	OBJ = ft_printf.o
 endif
 
-SRC = $(foreach item, $(SRC_NAME), $(item).c)
-OBJ = $(foreach item, $(SRC_NAME), $(item).o)
+# SRC = $(foreach item, $(SRC_NAME), $(item).c)
+# OBJ = $(foreach item, $(SRC_NAME), $(item).o)
 
 $(NAME):
-	$(CC) $(CFLAGS) -o $(OBJ) -c $(SRC)
+	$(CC) $(CFLAGS) -c $(SRC)
 	$(AR) libftprintf.a $(OBJ)
 all: $(NAME)
 bonus: fclean

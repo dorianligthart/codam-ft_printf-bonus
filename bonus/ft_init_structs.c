@@ -6,7 +6,7 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 00:04:19 by doligtha          #+#    #+#             */
-/*   Updated: 2024/01/08 00:58:26 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/01/08 02:52:55 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,11 +35,11 @@ t_comp	*ft_newcomp_append(t_comp **comp)
 }
 t_data	*ft_newdata(void)
 {
-	t_comp *data;
+	t_data *data;
 
 	data = (t_data *)malloc(sizeof(t_data));
 	if (!data)
-		return (ERROR_FT_PRINTF_BONUS);
+		return (NULL);
 	data->conversion = '\0';
 	data->minus = false;
 	data->zero = false;

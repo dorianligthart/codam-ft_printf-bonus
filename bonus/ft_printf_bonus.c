@@ -6,7 +6,7 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/29 18:26:54 by doligtha          #+#    #+#             */
-/*   Updated: 2024/01/08 02:25:00 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/01/08 03:18:18 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,29 +46,29 @@ static void	ft_printf_width_precision(const char *format, int *i,
 static int	parse(const char *format, va_list *list,
 					t_comp *arg, t_data *d)
 {
-	int	*data[127];
-	int	i;
+	char	*data[127];
+	int		i;
 
-	ft_arg_to_array(data, "-0# +w.pc", &d->minus, &d->zero, &d->hash, &d->space,
+	ft_arg_to_array(data, "-0# +.cwp", &d->minus, &d->zero, &d->hash, &d->space,
 				&d->plus, &d->width, &d->dot, &d->precision, &d->conversion);
 	i = 0;
 	while (ft_strchr("-0# +", format[i]))
-		*(data[format[i++]]) = true;
+		*(*data + format[i++]) = true;
 	if (format[i] >= '0' && format[i] <= '9')
-		ft_printf_width_precision(data['w'], format, i, list);
+		ft_printf_width_precision(*data['w'], format, i, list);
 	if (format[i] == '.' && ++i)
-		*(data['.']) = true;
+	*data['.'] = true;
 	if (format[i] >= '0' && format[i] <= '9')
-		ft_printf_width_precision(data['p'], format, i, list);
-	if (*(data['w']) < 0)
+		ft_printf_width_precision(*data['p'], format, i, list);
+	if (*data['w']) < 0
 	{
-		*(data['w']) *= -1;
-		*(data['-']) = true;
+		*data['w'] *= -1;
+	*data['-'] = true;
 	}
-	if (*(data['+']))
-		*(data[' ']) = false;
+if (*data['+'])
+	*data[' '] = false;
 	if (ft_strchr("cspdiuxX%o", format[i++]))
-		*(data['c']) = format[i - 1];
+		*data['c'] = format[i - 1];
 	arg->len = ft_printf_get_arg_len(arg, d, 1);
 	return (i);
 }

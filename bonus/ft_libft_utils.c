@@ -6,7 +6,7 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 00:58:50 by doligtha          #+#    #+#             */
-/*   Updated: 2024/01/08 01:01:38 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/01/08 03:11:17 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,31 +14,28 @@
 #include <stdarg.h> //va_list, va_arg(), va_start(), va_end()
 
 //sets &table[128]; index[format characters taken as integers] = va_list items.
-void	ft_arg_to_array(void **table, const char *format, ...)
+void	ft_arg_array(int **table, const char *format, ...)
 {
 	va_list		list;
 	int			i;
 	char		duptable[127];
 
-	if (!format || !*format || !*table)
+	if (!format || !*format)
 		return ;
-	i = -1;
-	while (++i < 128)
-		(*table)[i] = 0;
 	i = -1;
 	while (++i < 128)
 		duptable[i] = 0;
 	i = -1;
 	while (format && format[++i])
 	{
-		if (duptable[format[i]])
+		if (*(duptable + format[i]))
 			return ;
-		duptable[format[i]] = '_';
+		*(duptable + format[i]) = '_';
 	}
 	va_start(list, format);
 	i = -1;
 	while (format[++i])
-		table[format[i]] = va_arg(list, void *);
+		*(table + format[i]) = (int *)va_arg(list, void *);
 	va_end(list);
 }
 
