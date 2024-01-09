@@ -1,17 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_libft_utils.c                                   :+:      :+:    :+:   */
+/*   ft_libftutils_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 00:58:50 by doligtha          #+#    #+#             */
-/*   Updated: 2024/01/08 03:11:17 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/01/09 01:55:34 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stddef.h> //size_t, NULL
 #include <stdarg.h> //va_list, va_arg(), va_start(), va_end()
+
+//returns length of integer viewed as characters.
+int	ft_longlen(long n, long base)
+{
+	int	longlen;
+
+	longlen = 1;
+	while (n <= -base || n >= base)
+	{
+		n /= base;
+		longlen++;
+	}
+	if (n < 0)
+		longlen++;
+	return (longlen);
+}
 
 //sets &table[128]; index[format characters taken as integers] = va_list items.
 void	ft_arg_array(int **table, const char *format, ...)

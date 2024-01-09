@@ -6,7 +6,7 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/21 16:34:14 by doligtha          #+#    #+#             */
-/*   Updated: 2024/01/07 20:18:23 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/01/09 00:35:17 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,6 @@
 # include <stdarg.h>	//va_list, va_arg(), va_end()
 # include <unistd.h>	//write()
 
-//PROTOTYPE:
-int		ft_printf(const char *format, ...)\
-			__attribute__ ((format (printf, 1, 2)));
+int	ft_printf(const char *format, ...) __attribute__ ((format (printf, 1, 2)));
 
 #endif // FT_PRINTF_H

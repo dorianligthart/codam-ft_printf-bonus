@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_init_structs.c                                  :+:      :+:    :+:   */
+/*   ft_initstructs_bonus.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 00:04:19 by doligtha          #+#    #+#             */
-/*   Updated: 2024/01/08 02:52:55 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/01/09 01:55:18 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,14 @@
 //	also copies fd from *comp to new.
 t_comp	*ft_newcomp_append(t_comp **comp)
 {
-	t_comp *tmp;
+	t_comp	*tmp;
 
 	tmp = (t_comp *)malloc(sizeof(t_comp));
 	if (tmp)
 		return (NULL);
 	tmp->len = 0;
 	tmp->item = NULL;
+	tmp->conv = NULL;
 	tmp->next = NULL;
 	while ((*comp)->next)
 		(*comp) = (*comp)->next;
@@ -33,11 +34,12 @@ t_comp	*ft_newcomp_append(t_comp **comp)
 		(*comp)->next = tmp;
 	return (tmp);
 }
-t_data	*ft_newdata(void)
-{
-	t_data *data;
 
-	data = (t_data *)malloc(sizeof(t_data));
+t_conv	*ft_newdata(void)
+{
+	t_conv	*data;
+
+	data = (t_conv *)malloc(sizeof(t_conv));
 	if (!data)
 		return (NULL);
 	data->conversion = '\0';
