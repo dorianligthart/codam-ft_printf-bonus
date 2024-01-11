@@ -6,11 +6,11 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/29 00:44:30 by dligthar          #+#    #+#             */
-/*   Updated: 2024/01/07 19:58:19 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/01/11 20:09:18 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_printf.h"
+#include "../include/ft_printf.h"
 #include <stdarg.h> //va_list, va_start(), va_arg(), va_end()
 #include <unistd.h> //write()
 
@@ -32,7 +32,7 @@ static char	*ft_strchr(const char *str, char c)
 	return (NULL);
 }
 
-static int	puint(int fd, unsigned long nbr, char *basestr)
+static int	putint(int fd, unsigned long nbr, char *basestr) //11201
 {
 	unsigned long	divider;
 	int				base;
@@ -50,12 +50,10 @@ static int	puint(int fd, unsigned long nbr, char *basestr)
 	i = 0;
 	while (divider)
 	{
-		put[i] = basestr[nbr / divider];
+		put[i++] = basestr[nbr / divider];
 		nbr = nbr % divider;
 		divider = divider / base;
-		i++;
 	}
-	put[i] = '\0';
 	return (write(fd, put, i));
 }
 
@@ -69,7 +67,7 @@ static int	newformat2(int fd, const char **format, va_list *list, int tmp)
 		if (!nbr)
 			return (write(fd, "(nil)", 5));
 		tmp = write(fd, "0x", 2);
-		nbr = puint(fd, nbr, "0123456789abcdef");
+		nbr = putint(fd, nbr, "0123456789abcdef");
 		return (-1 + (tmp >= 0 && nbr >= 0) * (tmp + nbr + 1));
 	}
 	else if ((*(*format - 1) == 'd' || *(*format - 1) == 'i'))
@@ -82,10 +80,10 @@ static int	newformat2(int fd, const char **format, va_list *list, int tmp)
 			tmp = write(fd, "-", 1);
 			nbr *= -1;
 		}
-		nbr = puint(fd, nbr, "0123456789");
+		nbr = putint(fd, nbr, "0123456789");
 		return (-1 + (tmp >= 0 && nbr >= 0) * (tmp + nbr + 1));
 	}
-	return (puint(fd, va_arg(*list, unsigned int), "0123456789"));
+	return (putint(fd, va_arg(*list, unsigned int), "0123456789"));
 }
 
 static int	newformat(int fd, const char **format, va_list *list, int tmp)
@@ -111,9 +109,9 @@ static int	newformat(int fd, const char **format, va_list *list, int tmp)
 		return (write(fd, s, tmp));
 	}
 	else if (*(*format - 1) == 'x')
-		return (puint(fd, va_arg(*list, unsigned int), "0123456789abcdef"));
+		return (putint(fd, va_arg(*list, unsigned int), "0123456789abcdef"));
 	else if (*(*format - 1) == 'X')
-		return (puint(fd, va_arg(*list, unsigned int), "0123456789ABCDEF"));
+		return (putint(fd, va_arg(*list, unsigned int), "0123456789ABCDEF"));
 	return (newformat2(fd, format, list, 0));
 }
 
@@ -126,7 +124,7 @@ int	ft_printf(const char *format, ...)
 	const char	*tmp;
 
 	if (!format)
-		return (-1);
+		return (ERROR_FT_PRINTF);
 	va_start(list, format);
 	printed = 0;
 	while (*format)
@@ -139,7 +137,7 @@ int	ft_printf(const char *format, ...)
 		if (*format == '%' && format++)
 			y = newformat(1, &format, &list, 0);
 		if (y < 0 || x < 0)
-			return (-1);
+			return (ERROR_FT_PRINTF);
 		printed = printed + x + y;
 	}
 	va_end(list);

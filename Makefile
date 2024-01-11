@@ -4,10 +4,13 @@ CFLAGS  = -Wall -Wextra -Werror
 AR      = ar -r -c -s
 RM      = rm -rf
 
-MAN_SRC = ft_printf.c
-MAN_OBJ = ft_printf.o
+LIBFT   = ./libft/ #FIX THIS INCLUDE :_)
 
-BON_SRC = ./bonus/*.c
+MAN_SRC = ./src/ft_printf.c
+MAN_OBJ = ./src/ft_printf.o
+
+BON_SRC = ./src/bonus/ft_getlength_bonus.c ./src/bonus/ft_initstructs_bonus.c\
+          ./src/bonus/ft_printcomp_bonus.c ./src/bonus/ft_printf_bonus.c
 BON_OBJ = $(addsuffix .o, $(basename $(BON_SRC)))
 
 ifdef BONUS

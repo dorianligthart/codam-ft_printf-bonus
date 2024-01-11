@@ -6,15 +6,16 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/21 16:34:14 by doligtha          #+#    #+#             */
-/*   Updated: 2024/01/09 00:35:17 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/01/11 20:09:00 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FT_PRINTF_H
 # define FT_PRINTF_H
 
-# include <stdarg.h>	//va_list, va_arg(), va_end()
-# include <unistd.h>	//write()
+# ifndef ERROR_FT_PRINTF
+#  define ERROR_FT_PRINTF -1
+# endif
 
 int	ft_printf(const char *format, ...) __attribute__ ((format (printf, 1, 2)));
 

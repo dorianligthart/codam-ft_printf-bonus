@@ -6,7 +6,7 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/21 16:34:14 by doligtha          #+#    #+#             */
-/*   Updated: 2024/01/09 01:58:32 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/01/11 20:08:41 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,8 @@
 # include <stdlib.h>	// malloc(), free()
 # include <stdbool.h>	// 'bool' variable type, true, false 
 
-# ifndef ERROR_FT_PRINTF_BONUS
-#  define ERROR_FT_PRINTF_BONUS -1
+# ifndef ERROR_FT_PRINTF
+#  define ERROR_FT_PRINTF -1
 # endif
 
 // DATA FOR PRINTF ARGUMENTS:
@@ -44,12 +44,14 @@ typedef struct __attribute__((packed)) s_conv
 	bool	dot;
 	int		precision;
 	char	conversion;
+	int		arglength;
 }	t_conv;
 
+// linked list!
 // 28 bytes.
 typedef struct __attribute__((packed)) s_comp
 {
-	int				len;
+	int				itemlen;
 	void			*item;
 	t_conv			*conv;
 	struct s_comp	*next;
@@ -64,12 +66,12 @@ size_t	ft_strlen(const char *s);
 char	*ft_strchr(const char *s, int c);
 int		ft_atoi(const char *nptr);
 
-int		ft_printf_printcomp(t_comp *origin, );
-int		ft_printf_getarglen(int conversion, void *item, int **conv, int arglen);
+int		ft_printf_printcomp(int fd, t_comp *origin);
+int		ft_printf_getitemlength(int conversion, void *item, t_conv *conv, int arglen);
+int		ft_printf_getarglength(int conversion, void *item, t_conv *conv, int arglen);
 t_comp	*ft_newcomp_append(t_comp **comp);
 t_conv	*ft_newconv(void);
 int		ft_printf(const char *format, ...)
 		__attribute__((format (printf, 1, 2)));
 
 #endif // FT_PRINTF_H
-

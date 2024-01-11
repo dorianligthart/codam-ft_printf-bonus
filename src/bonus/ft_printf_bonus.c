@@ -6,16 +6,16 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/29 18:26:54 by doligtha          #+#    #+#             */
-/*   Updated: 2024/01/09 01:09:03 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/01/11 20:07:05 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../ft_printf_bonus.h"
+#include "../include/ft_printf_bonus.h"
 
 //	helper function for origin->data.width and origin->data.precision.
 //		 - uses width_precision integer pointer for either.
-static void	ft_printf_width_precision(const char *format, int *i,
-										va_list *list, int *width_precision)
+static void	width_precision(const char *format, int *i,
+							va_list *list, int *width_precision)
 {
 	va_list	tmp;
 	int		atoi;
@@ -45,23 +45,22 @@ static void	ft_printf_width_precision(const char *format, int *i,
 }
 
 //	parses the format string flags into 'origin->data.*'.
-static int	ft_parse_conv(const char *format, va_list *list,
-							t_comp *node, t_conv *c)
+static int	parse_conversion(const char *format, va_list *list, t_conv *c)
 {
 	char	*conv[127];
 	int		i;
 
-	ft_arg_to_array(conv, "-0# +f.pc", &c->minus, &c->zero, &c->hash, &c->space,
-		&c->plus, &c->fieldwidth, &c->dot, &c->precision, &c->conversion);
+	ft_arg_to_array(conv, "-0# +.", &c->minus, &c->zero, &c->hash,
+		&c->space, &c->plus, &c->dot);
 	i = 0;
 	while (ft_strchr("-0# +", format[i]))
 		*(*conv + format[i++]) = true;
 	if (format[i] >= '0' && format[i] <= '9')
-		ft_printf_width_precision(c->fieldwidth, format, i, list);
+		width_precision(c->fieldwidth, format, i, list);
 	if (format[i] == '.' && ++i)
 		*conv['.'] = true;
 	if (format[i - 1] == '.')
-		ft_printf_width_precision(*conv['p'], format, i, list);
+		width_precision(*conv['p'], format, i, list);
 	if (c->fieldwidth < 0)
 	{
 		c->fieldwidth *= -1;
@@ -71,40 +70,42 @@ static int	ft_parse_conv(const char *format, va_list *list,
 		*conv[' '] = false;
 	if (ft_strchr("cspdiuxX%o", format[i++]))
 		*conv['c'] = format[i - 1];
-	node->len = ft_printf_getarglen(c->conversion, node, c, 1);
 	return (i);
 }
 
 //	appends a new t_comp node.
-//	saves:		pointer to format_string(begin or after arguments) or argument.
+//	saves:		a pointer to format_string(begin or after conversion(s))
+//					or conversion to void *item.
 //	calculates:	string length (until '%' or '\0') or argument length.
 //	sets next to NULL.
-static int	ft_str_arg(const char *format, int *i,
-						va_list *list, t_comp **node)
+//	Returns ERROR_FT_PRINTF_BONUS on error, otherwise positive integer.
+static int	str_or_arg(const char *format, int *i, va_list *list, t_comp **node)
 {
-	t_conv	*conv;
-
 	*node = ft_newcomp_append(node);
 	if (!*node)
-		return (ERROR_FT_PRINTF_BONUS);
+		return (ERROR_FT_PRINTF);
 	if (format[*i] == '%')
 	{
-		conv = ft_newconv();
-		if (!conv)
-			return (ERROR_FT_PRINTF_BONUS);
-		**node.item = va_arg(*list, void *);
-		*i += ft_parse_conv(format + i, list, node, conv);
-		if (!conv->conversion)
-			return (ERROR_FT_PRINTF_BONUS);
+		(*node)->conv = ft_newconv();
+		if (!(*node)->conv)
+			return (ERROR_FT_PRINTF);
+		*i += parse_conversion(format + *i, list, (*node)->conv);
+		if ((*node)->conv->conversion && (*node)->conv->conversion != '%')
+			(*node)->item = va_arg(*list, void *);
+		(*node)->conv->arglength = ft_printf_getarglength(
+				(*node)->conv->conversion, (*node)->item, (*node)->conv, 1);
+		(*node)->itemlen = ft_printf_getitemlen((*node)->conv->conversion,
+				(*node)->item, (*node)->conv, 1);
 	}
 	else
 	{
-		**node.len = 0;
-		while (format[*i + **node.len] && format[*i + **node.len] != '%')
-			**node.len++;
-		**node.item = (char *)(format + *i);
+		(*node)->itemlen = 0;
+		while (format[*i + (*node)->itemlen]
+			&& format[*i + (*node)->itemlen] != '%')
+			(*node)->itemlen++;
+		(*node)->item = (char *)(format + *i);
 	}
-	return (1);
+	return (69);
 }
 
 //	ft_printf() uses:	(argc * 20 + (argc - 1) * 15) bytes of heap memory.
@@ -119,12 +120,12 @@ int	ft_printf(const char *format, ...)
 	int			fd;
 
 	if (!format)
-		return (ERROR_FT_PRINTF_BONUS);
+		return (ERROR_FT_PRINTF);
 	va_start(list, format);
 	i = 0;
 	while (format[i])
-		if (!ft_str_arg(&origin, format, &i, &list))
-			return (ERROR_FT_PRINTF_BONUS);
+		if (!str_or_arg(&origin, format, &i, &list))
+			return (ERROR_FT_PRINTF);
 	va_end(list);
 	fd = 1;
 	return (ft_printcomp(fd, origin));
