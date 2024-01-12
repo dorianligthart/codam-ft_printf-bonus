@@ -6,7 +6,7 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/21 16:34:14 by doligtha          #+#    #+#             */
-/*   Updated: 2024/01/11 20:08:41 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/01/12 16:47:21 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@
 // bool dot			= flag.
 // int	precision	= precision width (for integers only, the amount of zero's).
 // char conversion	= conversion, supported: c, s, p, d, i, u, x, X, %, o.
-// 15bytes
+// 19bytes
 typedef struct __attribute__((packed)) s_conv
 {
 	bool	minus;

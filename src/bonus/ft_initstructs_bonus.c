@@ -6,15 +6,14 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 00:04:19 by doligtha          #+#    #+#             */
-/*   Updated: 2024/01/11 20:06:33 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/01/12 16:54:05 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/ft_printf_bonus.h"
+#include "ft_printf_bonus.h"
 
-//	mallocs a new t_comp node; appends new node to last *comp node.
+//	mallocs a new t_comp node; appends a new node to the last *comp node.
 //	returns: new node.
-//	also copies fd from *comp to new.
 t_comp	*ft_newcomp_append(t_comp **comp)
 {
 	t_comp	*tmp;

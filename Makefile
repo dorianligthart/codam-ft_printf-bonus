@@ -1,10 +1,11 @@
 NAME    = libftprintf.a
 CC      = cc
-CFLAGS  = -Wall -Wextra -Werror
+CFLAGS  = -Wall -Wextra -Werror -Iinclude
 AR      = ar -r -c -s
 RM      = rm -rf
 
-LIBFT   = ./libft/ #FIX THIS INCLUDE :_)
+LIBFT   = ./libft/
+# LIBFT_H = ./libft/libft.h
 
 MAN_SRC = ./src/ft_printf.c
 MAN_OBJ = ./src/ft_printf.o
@@ -22,6 +23,7 @@ else
 endif
 
 $(NAME):
+	make -C $(LIBFT)
 	$(CC) $(CFLAGS) -c $(SRC)
 	$(AR) $(NAME) $(OBJ)
 all: $(NAME)

@@ -6,11 +6,11 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/29 00:44:30 by dligthar          #+#    #+#             */
-/*   Updated: 2024/01/11 20:09:18 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/01/12 16:51:34 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/ft_printf.h"
+#include "ft_printf.h"
 #include <stdarg.h> //va_list, va_start(), va_arg(), va_end()
 #include <unistd.h> //write()
 
@@ -32,7 +32,7 @@ static char	*ft_strchr(const char *str, char c)
 	return (NULL);
 }
 
-static int	putint(int fd, unsigned long nbr, char *basestr) //11201
+static int	putint(int fd, unsigned long nbr, char *basestr)
 {
 	unsigned long	divider;
 	int				base;

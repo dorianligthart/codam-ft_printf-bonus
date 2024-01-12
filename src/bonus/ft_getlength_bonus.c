@@ -6,11 +6,11 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/30 17:14:18 by doligtha          #+#    #+#             */
-/*   Updated: 2024/01/11 20:08:03 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/01/12 19:03:44 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/ft_printf_bonus.h"
+#include "ft_printf_bonus.h"
 
 // returns length of an argument.
 int	ft_printf_getarglength(int conversion, void *item,
@@ -21,7 +21,7 @@ int	ft_printf_getarglength(int conversion, void *item,
 	if (conversion == 's')
 		return (ft_strlen((const char *)item));
 	if (conversion == 'p')
-		return (ft_longlen((long)item, 16));
+		return (ft_longlen((long)item, 16) + 2);
 	if (conversion == 'd' || conversion == 'i')
 		return (ft_longlen((long)item, 10)
 				+ (int)conv->plus + (int)conv->space);
@@ -34,7 +34,7 @@ int	ft_printf_getarglength(int conversion, void *item,
 	return (ERROR_FT_PRINTF);
 }
 
-//TODO: arglen if arg is integer type and has precision.
+//TODO: arglen if arg is integer.
 static int	get_len(bool conv_is_integer, int arglen, int fw, int pr)
 {
 	if (conv_is_integer)
@@ -42,7 +42,7 @@ static int	get_len(bool conv_is_integer, int arglen, int fw, int pr)
 		if (arglen >= pr && arglen >= fw)
 			return (arglen);
 		if (pr > -1 && pr < arglen && pr > fw)
-			return (ERROR_FT_PRINTF);
+			return (pr);
 		return (fw);
 	}
 	else
@@ -55,7 +55,16 @@ static int	get_len(bool conv_is_integer, int arglen, int fw, int pr)
 	}
 }
 
-// returns length of an argument + precision + fieldwidth.
+// returns length of an argument or/with precision or/with fieldwidth.
+//	CONVERSIONS AND THEIR FLAGS:
+//		c: flags="-",		fieldwidth.
+//		s: flags="-",		fieldwidth, precision.
+//		p: flags="-",		fieldwidth, precision does nothing unless = 0.
+//		di: flags="-+ 0",	fieldwidth, precision.
+//		u: flags="-0",		fieldwidth, precision.
+//		x: flags="-#0",		fieldwidth, precision.
+//		X: flags="-#0",		fieldwidth, precision.
+//		o: flags="-#0",		fieldwidth, precision.
 int	ft_printf_getitemlength(int conversion, void *item,
 								t_conv *conv, int arglen)
 {

@@ -6,13 +6,13 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/29 18:26:54 by doligtha          #+#    #+#             */
-/*   Updated: 2024/01/11 20:07:05 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/01/12 17:24:25 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/ft_printf_bonus.h"
+#include "ft_printf_bonus.h"
 
-//	helper function for origin->data.width and origin->data.precision.
+//	helper function for comp->conv->fieldwidth and comp->conv->precision.
 //		 - uses width_precision integer pointer for either.
 static void	width_precision(const char *format, int *i,
 							va_list *list, int *width_precision)
