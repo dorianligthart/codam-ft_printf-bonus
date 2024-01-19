@@ -6,12 +6,13 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 00:58:50 by doligtha          #+#    #+#             */
-/*   Updated: 2024/01/12 17:11:15 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/01/18 17:19:42 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stddef.h> //size_t, NULL
 #include <stdarg.h> //va_list, va_arg(), va_start(), va_end()
+#include <limits.h>
 
 //returns length of integer viewed as characters.
 int	ft_longlen(long n, long base)
@@ -29,8 +30,7 @@ int	ft_longlen(long n, long base)
 	return (longlen);
 }
 
-//sets &table[128]; index[format characters taken as integers] = va_list items.
-void	ft_vars_to_table(int **table, const char *format, ...)
+void	ft_varray(int **array, const char *format, ...)
 {
 	va_list		list;
 	int			i;
@@ -51,6 +51,28 @@ void	ft_vars_to_table(int **table, const char *format, ...)
 	va_start(list, format);
 	i = -1;
 	while (format[++i])
-		*(table + format[i]) = (int *)va_arg(list, void *);
+		*(array + format[i]) = (int *)va_arg(list, void *);
 	va_end(list);
+}
+
+int	ft_atoi(const char *nptr)
+{
+	int	result;
+	int	i;
+
+	result = 0;
+	if (nptr && nptr)
+	{
+		while (*nptr == '\n' || *nptr == '\f' || *nptr == '\t'
+			|| *nptr == '\v' || *nptr == '\r' || *nptr == ' ')
+			nptr++;
+		i = 0;
+		if (*nptr == '-' || *nptr == '+')
+			i++;
+		while (nptr[i] >= '0' && nptr[i] <= '9')
+			result = (result * 10) + (nptr[i++] - '0');
+		if (nptr[0] == '-')
+			result *= -1;	
+	}
+	return (result);
 }

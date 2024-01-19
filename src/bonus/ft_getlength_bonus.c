@@ -6,7 +6,7 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/30 17:14:18 by doligtha          #+#    #+#             */
-/*   Updated: 2024/01/12 19:03:44 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/01/19 05:44:17 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,16 +21,15 @@ int	ft_printf_getarglength(int conversion, void *item,
 	if (conversion == 's')
 		return (ft_strlen((const char *)item));
 	if (conversion == 'p')
-		return (ft_longlen((long)item, 16) + 2);
+		return (ft_longlen((long)item, 16));
 	if (conversion == 'd' || conversion == 'i')
-		return (ft_longlen((long)item, 10)
-				+ (int)conv->plus + (int)conv->space);
+		return (ft_longlen((long)item, 10));
 	if (conversion == 'u')
 		return (ft_longlen((long)item, 10));
 	if (conversion == 'o')
-		return (ft_longlen((long)item, 8) + (int)conv->hash);
+		return (ft_longlen((long)item, 8));
 	if (conversion == 'x' || conversion == 'X')
-		return (ft_longlen((long)item, 16) + (int)conv->hash * 2);
+		return (ft_longlen((long)item, 16));
 	return (ERROR_FT_PRINTF);
 }
 
@@ -39,9 +38,9 @@ static int	get_len(bool conv_is_integer, int arglen, int fw, int pr)
 {
 	if (conv_is_integer)
 	{
-		if (arglen >= pr && arglen >= fw)
+		if (arglen <= pr && arglen >= fw)
 			return (arglen);
-		if (pr > -1 && pr < arglen && pr > fw)
+		if (pr > -1 && pr > arglen)
 			return (pr);
 		return (fw);
 	}
