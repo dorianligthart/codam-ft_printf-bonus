@@ -6,11 +6,11 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/30 17:28:42 by doligtha          #+#    #+#             */
-/*   Updated: 2024/01/20 20:51:42 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/01/20 21:42:08 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_printf_bonus.h"
+#include "../include/ft_printf_bonus.h"
 #include <limits.h>
 
 // expects node struct, see 'ft_printf_bonus.h';

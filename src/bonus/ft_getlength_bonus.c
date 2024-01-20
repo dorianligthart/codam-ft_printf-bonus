@@ -6,11 +6,11 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/30 17:14:18 by doligtha          #+#    #+#             */
-/*   Updated: 2024/01/20 13:51:00 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/01/20 21:41:43 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_printf_bonus.h"
+#include "../include/ft_printf_bonus.h"
 
 // returns length of an argument.
 int	ft_printf_getarglength(int conversion, void *item,\

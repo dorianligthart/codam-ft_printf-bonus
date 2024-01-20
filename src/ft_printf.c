@@ -6,11 +6,11 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/29 00:44:30 by dligthar          #+#    #+#             */
-/*   Updated: 2024/01/20 21:08:33 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/01/20 22:22:18 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_printf.h"
+#include "../include/ft_printf.h"
 #include <stdarg.h> //va_list, va_start(), va_arg(), va_end()
 #include <unistd.h> //write()
 

@@ -40,7 +40,7 @@ make re && cc tester_man.c libftprintf.a -o printf && ./printf
 #include <stdlib.h>
 #include <limits.h>
 
-#include "ft_printf.h"
+#include "include/ft_printf.h"
 #include <string.h>
 #include <unistd.h>
 

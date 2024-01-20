@@ -6,11 +6,11 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/29 18:26:54 by doligtha          #+#    #+#             */
-/*   Updated: 2024/01/20 13:23:38 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/01/20 21:43:19 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_printf_bonus.h"
+#include "../include/ft_printf_bonus.h"
 
 //	helper function for comp->conv->fw and comp->conv->precision.
 //		- sets
@@ -139,14 +139,14 @@ int	ft_printf(const char *format, ...)
 	i = 0;
 	while (format[i])
 		if (!str_or_arg(format, &i, &list, origin))
-			return (ERROR_FT_PRINTF);
+			return (ft_compclear(origin), ERROR_FT_PRINTF);
 	va_end(list);
 	fd = 1;
 	return (ft_printcomp(fd, origin));
 }
 
-int main(int argc, char const *argv[])
-{
-	ft_printf("hello world!\n");
-	return 0;
-}
+// int main(int argc, char const *argv[])
+// {
+// 	ft_printf("hello world!\n");
+// 	return 0;
+// }
