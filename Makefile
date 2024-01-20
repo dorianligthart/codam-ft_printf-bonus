@@ -1,8 +1,10 @@
 NAME    = libftprintf.a
+HEADER  = ft_printf.h
 CC      = cc
 CFLAGS  = -Wall -Wextra -Werror
 AR      = ar -r -c -s
 RM      = rm -rf
+
 
 MAN_PRE = ft_printf.c
 MAN_SRC = $(addprefix ./src/, $(MAN_PRE))
@@ -15,22 +17,20 @@ BON_SRC = $(addprefix ./src/bonus/, $(BON_PRE))
 BON_OBJ = $(addsuffix .o, $(basename $(BON_SRC)))
 
 ifdef BONUS
-LIBPATH = ./lib/
-ARCHIVE = libft/libft.a
     SRC = $(BON_SRC)
     OBJ = $(BON_OBJ)
 else
-LIBPATH = 
-ARCHIVE = 
     SRC = $(MAN_SRC)
     OBJ = $(MAN_OBJ)
 endif
 
-$(NAME):
-	$(CC) $(CFLAGS) $(LIBPATH)$(ARCHIVE) -c $(SRC)
-	$(AR) $(NAME) $(OBJ)
+LIBPATH = ./lib/
+ARCHIVE = libft/libft.a
 libs:
-	make -C $(LIBPATH)
+	make -C $(LIBPATH)/libft/
+$(NAME):
+	$(CC) $(CFLAGS) $(LIBPATH)$(ARCHIVE) -c $(SRC) -I./include/$(HEADER)
+	$(AR) $(NAME) $(OBJ)
 all: libs $(NAME)
 bonus: fclean
 	make all BONUS=1
