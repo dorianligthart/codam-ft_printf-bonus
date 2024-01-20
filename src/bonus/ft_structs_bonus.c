@@ -1,16 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_initstructs_bonus.c                             :+:      :+:    :+:   */
+/*   ft_structs_bonus.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 00:04:19 by doligtha          #+#    #+#             */
-/*   Updated: 2024/01/12 16:54:05 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/01/20 12:47:49 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf_bonus.h"
+
+void	ft_compclear(t_comp *comp)
+{
+	t_comp	*temporary;
+
+	while (comp)
+	{
+		temporary = comp->next;
+		if (comp->conv)
+			free(comp->conv);
+		free(comp);
+		comp = temporary;
+	}
+}
 
 //	mallocs a new t_comp node; appends a new node to the last *comp node.
 //	returns: new node.
@@ -41,15 +55,15 @@ t_conv	*ft_newdata(void)
 	conv = (t_conv *)malloc(sizeof(t_conv));
 	if (!conv)
 		return (NULL);
-	conv->conversion = '\0';
+	conv->conv = '\0';
 	conv->minus = false;
 	conv->zero = false;
 	conv->hash = false;
 	conv->space = false;
 	conv->plus = false;
-	conv->fieldwidth = 0;
+	conv->fw = 0;
 	conv->dot = false;
 	conv->precision = -1;
-	conv->arglength = 0;
+	conv->len = 0;
 	return (conv);
 }

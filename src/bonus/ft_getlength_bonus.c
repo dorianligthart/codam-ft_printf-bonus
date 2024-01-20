@@ -6,14 +6,14 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/30 17:14:18 by doligtha          #+#    #+#             */
-/*   Updated: 2024/01/19 05:44:17 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/01/20 13:51:00 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf_bonus.h"
 
 // returns length of an argument.
-int	ft_printf_getarglength(int conversion, void *item,
+int	ft_printf_getarglength(int conversion, void *item,\
 							t_conv *conv, int arglen)
 {
 	if (conversion == 'c' || conversion == '%')
@@ -54,7 +54,7 @@ static int	get_len(bool conv_is_integer, int arglen, int fw, int pr)
 	}
 }
 
-// returns length of an argument or/with precision or/with fieldwidth.
+// returns length of an argument or/with precision or/with fw.
 //	CONVERSIONS AND THEIR FLAGS:
 //		c: flags="-",		fieldwidth.
 //		s: flags="-",		fieldwidth, precision.
@@ -68,26 +68,26 @@ int	ft_printf_getitemlength(int conversion, void *item,
 								t_conv *conv, int arglen)
 {
 	if (conversion == 'c' || conversion == '%')
-		return (get_len(false, 1, conv->fieldwidth, -1));
+		return (get_len(false, 1, conv->fw, -1));
 	if (conversion == 's')
-		return (get_len(false, ft_strlen((const char *)item),
-				conv->fieldwidth, conv->precision));
+		return (get_len(false, ft_strlen((const char *)item),\
+				conv->fw, conv->precision));
 	if (conversion == 'p')
-		return (get_len(true, ft_longlen((long)item, 16) + 2,
-				conv->fieldwidth, conv->precision));
+		return (get_len(true, ft_longlen((long)item, 16) + 2,\
+				conv->fw, conv->precision));
 	if (conversion == 'd' || conversion == 'i')
 		return (get_len(true, ft_longlen((long)item, 10)
-				+ (int)conv->plus + (int)conv->space,
-				conv->fieldwidth, conv->precision));
+				+ (int)conv->plus + (int)conv->space,\
+				conv->fw, conv->precision));
 	if (conversion == 'u')
-		return (get_len(true, ft_longlen((long)item, 10),
-				conv->fieldwidth, conv->precision));
+		return (get_len(true, ft_longlen((long)item, 10),\
+				conv->fw, conv->precision));
 	if (conversion == 'o')
-		return (get_len(true, ft_longlen((long)item, 8) + (int)conv->hash,
-				conv->fieldwidth, conv->precision));
+		return (get_len(true, ft_longlen((long)item, 8) + (int)conv->hash,\
+				conv->fw, conv->precision));
 	if (conversion == 'x' || conversion == 'X')
 		return (get_len(true, ft_longlen((long)item, 16)
-				+ (int)conv->hash * 2,
-				conv->fieldwidth, conv->precision));
+				+ (int)conv->hash * 2,\
+				conv->fw, conv->precision));
 	return (ERROR_FT_PRINTF);
 }

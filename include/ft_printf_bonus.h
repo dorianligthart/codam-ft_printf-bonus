@@ -6,7 +6,7 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/21 16:34:14 by doligtha          #+#    #+#             */
-/*   Updated: 2024/01/19 07:02:08 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/01/20 20:51:03 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,19 +22,7 @@
 #  define ERROR_FT_PRINTF -1
 # endif
 
-// DATA FOR PRINTF ARGUMENTS:
-// bool minus		= flag.
-// bool zero		= flag.
-// bool hash		= flag.
-// bool space		= flag.
-// bool plus		= flag.
-// int	width		= field width (for every conversion,
-//						the amount of space's/zero's).
-// bool dot			= flag.
-// int	precision	= precision width (for integers(d and i) only,
-//						the amount of zero's).
-// char conversion	= conversion, supported: c, s, p, d, i, u, x, X, %, o.
-// 19bytes
+// 19 bytes.
 typedef struct __attribute__((packed)) s_conv
 {
 	bool	minus;
@@ -42,20 +30,20 @@ typedef struct __attribute__((packed)) s_conv
 	bool	hash;
 	bool	space;
 	bool	plus;
-	int		fieldwidth;
+	int		fw;
 	bool	dot;
 	int		precision;
 	char	conv;
 	int		len;
 }	t_conv;
 
-// linked list!
+// linked list :D!
 // 28 bytes.
 typedef struct __attribute__((packed)) s_comp
 {
-	int				itemlen;
 	void			*item;
 	t_conv			*conv;
+	int				itemlen;
 	struct s_comp	*next;
 }	t_comp;
 
@@ -64,15 +52,20 @@ int		ft_longlen(long n, long base);
 void	ft_varray(int **array, const char *format, ...);
 
 //old libft functions:
+void	*ft_memcpy(void *dest, const void *src, size_t n);
 size_t	ft_strlen(const char *s);
 char	*ft_strchr(const char *s, int c);
 int		ft_atoi(const char *nptr);
 
+//ft_printf:
 int		ft_printf_printcomp(int fd, t_comp *origin);
 int		ft_printf_getitemlength(int conversion, void *item,
 			t_conv *conv, int arglen);
 int		ft_printf_getarglength(int conversion, void *item,
 			t_conv *conv, int arglen);
+
+//structs:
+void	ft_compclear(t_comp *comp);
 t_comp	*ft_newcomp_append(t_comp **comp);
 t_conv	*ft_newconv(void);
 int		ft_printf(const char *format, ...)

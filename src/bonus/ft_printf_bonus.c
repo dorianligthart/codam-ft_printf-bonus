@@ -6,13 +6,13 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/29 18:26:54 by doligtha          #+#    #+#             */
-/*   Updated: 2024/01/18 17:22:35 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/01/20 13:23:38 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf_bonus.h"
 
-//	helper function for comp->conv->fieldwidth and comp->conv->precision.
+//	helper function for comp->conv->fw and comp->conv->precision.
 //		- sets
 //		- uses width_precision integer pointer for either.
 static void	width_precision(const char *format, int *i,
@@ -46,7 +46,7 @@ static void	width_precision(const char *format, int *i,
 }
 
 //	parses the format string flags into 'origin->data.*'.
-static int	parse_conversion(const char *format, va_list *list, t_conv *c)
+static int	parse_format(const char *format, va_list *list, t_conv *c)
 {
 	int		i;
 	char	*arr[127];
@@ -56,45 +56,38 @@ static int	parse_conversion(const char *format, va_list *list, t_conv *c)
 	while (ft_strchr("-0# +", format[i]))
 		*(*arr + format[i++]) = true;
 	if (format[i] >= '0' && format[i] <= '9')
-		width_precision(c->fieldwidth, format, i, list);
+		width_precision(c->fw, format, i, list);
 	if (format[i] == '.' && ++i)
 		*arr['.'] = true;
 	if (format[i - 1] == '.')
 		width_precision(*arr['p'], format, i, list);
-	if (c->fieldwidth < 0)
+	if (c->fw < 0)
 	{
-		c->fieldwidth *= -1;
+		c->fw *= -1;
 		*arr['-'] = true;
 	}
 	if (*arr['+'])
 		*arr[' '] = false;
-	if (ft_strchr("cspdiuxX%o", format[i++]))
+	if (ft_strchr("cspdiuxX%o", format[i]) && ++i)
 		*arr['c'] = format[i - 1];
 	return (i);
 }
 
-static void	str_or_arg2(const char *format, int *i, va_list *list, t_comp *node)
+static void	parse_conversion(const char *format, int *i,
+								va_list *list, t_comp *node)
 {
-	*i += parse_conversion(format + *i, list, node->conv);
-	if (node->conv->conversion && node->conv->conversion != '%')
+	*i += parse_format(format + *i, list, node->conv);
+	if (node->conv->conv && node->conv->conv != '%')
 		node->item = va_arg(*list, void *);
 	if ((node->conv == 'd' || node->conv == 'i') && (int)node->item < 0)
 	{
 		node->conv->plus = 0;
 		node->conv->space = 0;
 	}
-	node->conv->arglength = ft_printf_getarglength(
-			node->conv->conversion,
-			node->item,
-			node->conv,
-			1
-		);
-	node->itemlen = ft_printf_getitemlen(
-			node->conv->conversion,
-			node->item,
-			node->conv,
-			1
-		);
+	node->conv->len = ft_printf_getarglength(node->conv->conv, node->item,\
+		node->conv, 1);
+	node->itemlen = ft_printf_getitemlen(node->conv->conv, node->item,\
+		node->conv, 1);
 }
 
 //	appends a new t_comp node.
@@ -115,7 +108,7 @@ static bool	str_or_arg(const char *format, int *i, va_list *list, t_comp *origin
 		node->conv = ft_newconv();
 		if (!node->conv)
 			return (false);
-		str_or_arg2(format, i, list, node);
+		parse_conversion(format, i, list, node);
 	}
 	else
 	{
@@ -145,9 +138,15 @@ int	ft_printf(const char *format, ...)
 	va_start(list, format);
 	i = 0;
 	while (format[i])
-		if (!str_or_arg(format, &i, &list, &origin))
+		if (!str_or_arg(format, &i, &list, origin))
 			return (ERROR_FT_PRINTF);
 	va_end(list);
 	fd = 1;
 	return (ft_printcomp(fd, origin));
+}
+
+int main(int argc, char const *argv[])
+{
+	ft_printf("hello world!\n");
+	return 0;
 }
