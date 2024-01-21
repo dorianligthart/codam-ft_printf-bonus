@@ -6,7 +6,7 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/21 16:34:14 by doligtha          #+#    #+#             */
-/*   Updated: 2024/01/21 17:05:40 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/01/21 18:41:26 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,8 @@
 #  define ERROR_FT_PRINTF -1
 # endif
 
-// 19 bytes.
-typedef struct __attribute__((packed)) s_conv
+// 19 bytes -> 20
+typedef struct s_conv
 {
 	bool	minus;
 	bool	zero;
@@ -45,8 +45,8 @@ typedef struct __attribute__((packed)) s_conv
 }	t_conv;
 
 // linked list :D!
-// 28 bytes.
-typedef struct __attribute__((packed)) s_comp
+// 28 bytes -> 32 bytes
+typedef struct s_comp
 {
 	void			*item;
 	t_conv			*conv;
@@ -56,7 +56,7 @@ typedef struct __attribute__((packed)) s_comp
 
 //new libft functions:
 int		ft_longlen(long n, long base);
-void	ft_varray(int **array, const char *format, ...);
+void	ft_varray(char **array, const char *format, ...);
 
 //old libft functions:
 void	*ft_memcpy(void *dest, const void *src, size_t n);
@@ -66,10 +66,8 @@ int		ft_atoi(const char *nptr);
 
 //ft_printf:
 int		ft_printf_printcomp(int fd, t_comp *origin);
-int		ft_printf_getitemlength(int conversion, void *item,
-			t_conv *conv, int arglen);
-int		ft_printf_getarglength(int conversion, void *item,
-			t_conv *conv, int arglen);
+int		ft_printf_getitemlength(int conversion, void *item, t_conv *conv);
+int		ft_printf_getarglength(int conversion, void *item);
 
 //structs:
 void	ft_compclear(t_comp *comp);

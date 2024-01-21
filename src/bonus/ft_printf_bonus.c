@@ -6,11 +6,11 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/29 18:26:54 by doligtha          #+#    #+#             */
-/*   Updated: 2024/01/20 21:43:19 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/01/21 18:41:56 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/ft_printf_bonus.h"
+#include "ft_printf_bonus.h"
 
 //	helper function for comp->conv->fw and comp->conv->precision.
 //		- sets
@@ -56,11 +56,11 @@ static int	parse_format(const char *format, va_list *list, t_conv *c)
 	while (ft_strchr("-0# +", format[i]))
 		*(*arr + format[i++]) = true;
 	if (format[i] >= '0' && format[i] <= '9')
-		width_precision(c->fw, format, i, list);
+		width_precision(format, &i, list, &c->fw);
 	if (format[i] == '.' && ++i)
 		*arr['.'] = true;
 	if (format[i - 1] == '.')
-		width_precision(*arr['p'], format, i, list);
+		width_precision(format, &i, list, &c->precision);
 	if (c->fw < 0)
 	{
 		c->fw *= -1;
@@ -76,18 +76,19 @@ static int	parse_format(const char *format, va_list *list, t_conv *c)
 static void	parse_conversion(const char *format, int *i,
 								va_list *list, t_comp *node)
 {
-	*i += parse_format(format + *i, list, node->conv);
-	if (node->conv->conv && node->conv->conv != '%')
+	t_conv *c;
+
+	c = node->conv;
+	*i += parse_format(format + *i, list, c);
+	if (c->conv && c->conv != '%')
 		node->item = va_arg(*list, void *);
-	if ((node->conv == 'd' || node->conv == 'i') && (int)node->item < 0)
+	if ((c->conv == 'd' || c->conv == 'i') && *(int *)node->item < 0)
 	{
-		node->conv->plus = 0;
-		node->conv->space = 0;
+		c->plus = 0;
+		c->space = 0;
 	}
-	node->conv->len = ft_printf_getarglength(node->conv->conv, node->item,\
-		node->conv, 1);
-	node->itemlen = ft_printf_getitemlen(node->conv->conv, node->item,\
-		node->conv, 1);
+	c->len = ft_printf_getarglength(c->conv, node->item);
+	node->itemlen = ft_printf_getitemlength(c->conv, node->item, c);
 }
 
 //	appends a new t_comp node.
@@ -100,7 +101,7 @@ static bool	str_or_arg(const char *format, int *i, va_list *list, t_comp *origin
 {
 	t_comp *node;
 
-	node = ft_newcomp_append(origin);
+	node = ft_newcomp_append(&origin);
 	if (!node)
 		return (false);
 	if (format[*i] == '%')
@@ -135,6 +136,7 @@ int	ft_printf(const char *format, ...)
 
 	if (!format)
 		return (ERROR_FT_PRINTF);
+	origin = (void *)0;
 	va_start(list, format);
 	i = 0;
 	while (format[i])
@@ -142,7 +144,7 @@ int	ft_printf(const char *format, ...)
 			return (ft_compclear(origin), ERROR_FT_PRINTF);
 	va_end(list);
 	fd = 1;
-	return (ft_printcomp(fd, origin));
+	return (ft_printf_printcomp(fd, origin));
 }
 
 // int main(int argc, char const *argv[])

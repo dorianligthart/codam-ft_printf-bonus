@@ -6,7 +6,7 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 00:58:50 by doligtha          #+#    #+#             */
-/*   Updated: 2024/01/21 17:04:39 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/01/21 18:23:33 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	ft_longlen(long n, long base)
 	return (longlen);
 }
 
-void	ft_varray(void **array, const char *format, ...)
+void	ft_varray(char **array, const char *format, ...)
 {
 	va_list		list;
 	int			i;

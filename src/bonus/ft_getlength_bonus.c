@@ -6,15 +6,14 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/30 17:14:18 by doligtha          #+#    #+#             */
-/*   Updated: 2024/01/20 21:41:43 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/01/21 18:41:08 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/ft_printf_bonus.h"
+#include "ft_printf_bonus.h"
 
 // returns length of an argument.
-int	ft_printf_getarglength(int conversion, void *item,\
-							t_conv *conv, int arglen)
+int	ft_printf_getarglength(int conversion, void *item)
 {
 	if (conversion == 'c' || conversion == '%')
 		return (1);
@@ -64,8 +63,7 @@ static int	get_len(bool conv_is_integer, int arglen, int fw, int pr)
 //		x: flags="-#0",		fieldwidth, precision.
 //		X: flags="-#0",		fieldwidth, precision.
 //		o: flags="-#0",		fieldwidth, precision.
-int	ft_printf_getitemlength(int conversion, void *item,
-								t_conv *conv, int arglen)
+int	ft_printf_getitemlength(int conversion, void *item, t_conv *conv)
 {
 	if (conversion == 'c' || conversion == '%')
 		return (get_len(false, 1, conv->fw, -1));

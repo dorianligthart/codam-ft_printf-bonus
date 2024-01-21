@@ -6,11 +6,11 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 00:04:19 by doligtha          #+#    #+#             */
-/*   Updated: 2024/01/20 21:41:30 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/01/21 18:09:49 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/ft_printf_bonus.h"
+#include "ft_printf_bonus.h"
 
 void	ft_compclear(t_comp *comp)
 {

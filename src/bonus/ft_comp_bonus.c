@@ -6,11 +6,11 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/30 17:28:42 by doligtha          #+#    #+#             */
-/*   Updated: 2024/01/21 17:13:24 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/01/21 18:48:45 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/ft_printf_bonus.h"
+#include "ft_printf_bonus.h"
 #include <limits.h>
 
 // expects node struct, see 'ft_printf_bonus.h';
@@ -35,7 +35,7 @@ static void	paste_digit(char *dst, t_comp *node, char *basestr, char *prefix)
 	{
 		*(dst + c->precision + prefix_len + c->len)
 			= basestr[(*(unsigned long *)node->item) % b];
-		(int)node->item / b;
+		*(int *)node->item /= b;
 	}
 	while (c->precision--)
 		*(dst + c->precision) = '0';
@@ -55,8 +55,10 @@ void	paste_prefix_precisionzeros_integer(t_comp *node, char *tmp, t_conv *c)
 			paste_digit(tmp, node, "0123456789", "-");
 		}
 		else if (*(int *)node->item >= 0 && (c->space || c->plus))
-			paste_digit(tmp, node, "0123456789",\
-				c->space * (long)" " + c->plus * (long)"+");
+			paste_digit(tmp, node, "0123456789", (char *)(
+			(int)c->space						* (long)" "
+			+ (int)c->plus						* (long)"+"
+			+ !((int)c->plus && (int)c->space)	* (long)""));
 		else if (*(int *)node->item >= 0)
 			paste_digit(tmp, node, "0123456789", "");
 	}
