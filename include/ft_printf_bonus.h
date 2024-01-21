@@ -6,17 +6,24 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/21 16:34:14 by doligtha          #+#    #+#             */
-/*   Updated: 2024/01/20 20:51:03 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/01/21 17:05:40 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FT_PRINTF_BONUS_H
 # define FT_PRINTF_BONUS_H
 
+//STD libs:
 # include <stdarg.h>	// va_list, va_arg(), va_end()
 # include <unistd.h>	// write()
 # include <stdlib.h>	// malloc(), free()
-# include <stdbool.h>	// 'bool' variable type, true, false 
+# include <stdbool.h>	// 'bool' variable type, true, false
+
+# include "libft.h"
+// void	*ft_memcpy(void *dest, const void *src, size_t n)
+// int	ft_atoi(const char *nptr)
+// char	*ft_strchr(const char *s, int c)
+// size_t	ft_strlen(const char *s)
 
 # ifndef ERROR_FT_PRINTF
 #  define ERROR_FT_PRINTF -1

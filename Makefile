@@ -32,14 +32,15 @@ endif
 
 libs:
 	make -C $(LIBPATH)/libft/
+	mv $(ARCHIVE) $(NAME)
 
 # mkdir if not exist;
 $(OBJDIR):
 	mkdir -p $(OBJDIR)
 
 $(NAME): | $(OBJDIR)
-	$(CC) $(CFLAGS) -o $(OBJDIR)/$(OBJ) -c $(SRC) $(INCLUDE)
-	$(AR) $(NAME) $(MAN_OBJ_FILES) $(LIBPATH)$(ARCHIVE)
+	$(CC) $(CFLAGS) $(NAME) -o $(OBJDIR)/$(OBJ) -c $(SRC) $(INCLUDE)
+	$(AR) $(NAME) $(OBJ)
 
 all: $(NAME)
 bonus: libs fclean

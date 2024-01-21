@@ -6,7 +6,7 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/29 00:44:30 by dligthar          #+#    #+#             */
-/*   Updated: 2024/01/20 22:22:18 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/01/21 17:00:08 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include <stdarg.h> //va_list, va_start(), va_arg(), va_end()
 #include <unistd.h> //write()
 
-static char	*ft_strchr(const char *str, char c)
+static char	*onefile_strchr(const char *str, char c)
 {
 	int	i;
 
@@ -90,7 +90,7 @@ static int	newformat(int fd, const char **format, va_list *list, int tmp)
 {
 	char	*s;
 
-	if (!ft_strchr("cspdiuxX%", **format))
+	if (!onefile_strchr("cspdiuxX%", **format))
 		return (0);
 	if (*(++*format) == '%')
 		return (write(fd, "%", 1));

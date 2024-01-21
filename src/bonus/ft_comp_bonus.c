@@ -6,7 +6,7 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/30 17:28:42 by doligtha          #+#    #+#             */
-/*   Updated: 2024/01/20 21:42:08 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/01/21 17:13:24 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,9 +97,13 @@ static void	pasteinteger(t_comp *node, char *tmp, t_conv *c)
 		*(tmp + c->fw--) = ' ';
 	paste_prefix_precisionzeros_integer(node, tmp + c->fw, c);
 	while (!c->minus && c->fw > node->itemlen)
-		*(tmp + node->itemlen + c->fw--)
-			= (c->zero && c->conv != 'p') * (unsigned long)"0"
-			+ (!c->zero || c->conv == 'p') * (unsigned long)" ";
+	{
+		if (c->zero && c->conv != 'p')
+			*(tmp + node->itemlen + c->fw) = (char)'0';
+		if (!c->zero || c->conv == 'p')
+			*(tmp + node->itemlen + c->fw) =  (char)' ';
+		c->fw--;
+	}
 }
 
 // order of node setting handling:
