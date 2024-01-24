@@ -6,11 +6,12 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/29 18:26:54 by doligtha          #+#    #+#             */
-/*   Updated: 2024/01/23 14:22:40 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/01/23 20:26:54 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
+#include <stdarg.h>
 
 //	helper function for comp->conv->fw and comp->conv->precision.
 //		- sets
@@ -135,13 +136,13 @@ int	ft_printf(const char *format, ...)
 	int			fd;
 
 	if (!format)
-		return (ERROR_FT_PRINTF);
+		return (ERROR_LIBFT);
 	origin = (void *)0;
 	va_start(list, format);
 	i = 0;
 	while (format[i])
 		if (!str_or_arg(format, &i, &list, origin))
-			return (ft_compclear(origin), ERROR_FT_PRINTF);
+			return (ft_compclear(origin), ERROR_LIBFT);
 	va_end(list);
 	fd = 1;
 	return (ft_printf_printcomp(fd, origin));

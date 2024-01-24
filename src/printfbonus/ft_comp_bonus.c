@@ -6,12 +6,14 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/30 17:28:42 by doligtha          #+#    #+#             */
-/*   Updated: 2024/01/21 18:48:45 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/01/23 20:22:23 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_printf_bonus.h"
+#include "libft.h"
+#include <stdlib.h>
 #include <limits.h>
+#include <unistd.h>
 
 // expects node struct, see 'ft_printf_bonus.h';
 // expects dst to be able to hold everything;
@@ -158,8 +160,8 @@ int	ft_printf_printcomp(int fd, t_comp *origin)
 	node = origin;
 	while (node)
 	{
-		if (node->itemlen == ERROR_FT_PRINTF)
-			return (ERROR_FT_PRINTF);
+		if (node->itemlen == ERROR_LIBFT)
+			return (ERROR_LIBFT);
 		total += node->itemlen;
 		node = node->next;
 	}

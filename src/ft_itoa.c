@@ -6,7 +6,7 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/07 19:36:22 by doligtha          #+#    #+#             */
-/*   Updated: 2024/01/23 13:07:05 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/01/23 19:37:48 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <string.h>
 #endif
 
+#include "libft.h"
 #include <stdlib.h>
 
 char	*ft_itoa(int n)
@@ -44,28 +45,33 @@ char	*ft_itoa(int n)
 	return (result);
 }
 
-// int main()
-// {
-// 	int i = 0;
-//	int k;
-// 	while (i < 20)
-// 	{
-//		k = ft_itoa(INT_MAX - 10 + i);
-//		if (!k)
-//			return (-1);
-// 		printf("%s\nsize=%d\n", k, sizeof(k));
-//		free(k);
-// 		i++;
-// 	}
-// 	i = 0;
-// 	while (i < 20)
-// 	{
-// 		k =  ft_itoa(-10 + i);
-//		if (!k)
-//			return (-1);
-//		printf("%s\nsize=%d\n", k, sizeof(k));
-//		free(k);
-// 		i++;
-// 	}
-// 	return (0);
-// }
+#ifdef DEBUG
+
+int	main(void)
+{
+	int	i;
+	int	k;
+
+	i = 0;
+	while (i < 20)
+	{
+		k = ft_itoa(INT_MAX - 10 + i);
+		if (!k)
+			return (-1);
+		printf("%s\nsize=%d\n", k, sizeof(k));
+		free(k);
+		i++;
+	}
+	i = 0;
+	while (i < 20)
+	{
+		k = ft_itoa(-10 + i);
+		if (!k)
+			return (-1);
+		printf("%s\nsize=%d\n", k, sizeof(k));
+		free(k);
+		i++;
+	}
+	return (0);
+}
+#endif
