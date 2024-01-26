@@ -1,11 +1,13 @@
+# TODO: FIX THIS MAKEFILE loool, i can not find mistake I abs hate Makefile's so much. why does my school force me to use this stupid trash scripting language, can anyone explain, anyone :_( ???
+
 NAME     = libftprintf.a
 CC       = cc
 CFLAGS   = -Wall -Wextra -Werror -c
 AR       = ar -r -c -s
 INCLUDE  = -Iinclude
-MAN_PATH = ./src/
-BON_PATH = ./src/printfbonus/
-BUILD    = ./build/
+MAN_PATH = src/
+BON_PATH = src/printfbonus/
+BUILD    = build/
 
 LIB_NAMES =\
     ft_atoi.c\
@@ -57,16 +59,16 @@ LIB_NAMES =\
 MAN_NAMES = ft_printf.c
 BON_NAMES = ft_printf_bonus.c\
     ft_structs_bonus.c\
-    ft_getlength_bonus.c\
+    ft_getlen_bonus.c\
     ft_comp_bonus.c
 
-LIB_SRC  = $(addprefix $(MAN_PATH),    $(LIB_NAME))
-MAN_SRC  = $(addprefix $(MAN_PATH),    $(MAN_NAME))
-BON_SRC  = $(addprefix $(BON_PATH),    $(BON_NAME))
+LIB_SRC  = $(addprefix $(MAN_PATH), $(LIB_NAMES))
+MAN_SRC  = $(addprefix $(MAN_PATH), $(MAN_NAMES))
+BON_SRC  = $(addprefix $(BON_PATH), $(BON_NAMES))
 
-LIB_OBJ  = $(addsuffix .o,  $(basename $(LIB_NAME)))
-MAN_OBJ  = $(addsuffix .o,  $(basename $(MAN_NAME)))
-BON_OBJ  = $(addsuffix .o,  $(basename $(BON_NAME)))
+LIB_OBJ  = $(addsuffix .o, $(basename $(LIB_NAMES)))
+MAN_OBJ  = $(addsuffix .o, $(basename $(MAN_NAMES)))
+BON_OBJ  = $(addsuffix .o, $(basename $(BON_NAMES)))
 
 ifdef BONUS
     SRC  = $(LIB_SRC) $(BON_SRC)
@@ -76,21 +78,20 @@ else
     OBJ  = $(LIB_OBJ) $(MAN_OBJ)
 endif
 
-DST_PATH = $(addprefix $(BUILD), $(OBJ))
-RM_ALL_OBJ = $(addprefix $(BUILD), $(LIB_OBJ) $(MAN_OBJ) $(BON_OBJ))
+# DST_PATH = $(addprefix $(BUILD), $(OBJ))
+DST_OBJ = $(addprefix $(BUILD), $(LIB_OBJ) $(MAN_OBJ) $(BON_OBJ))
 
 $(NAME):
 	mkdir -p $(BUILD)
-#	echo $(SRC)
 	$(CC) $(CFLAGS) $(INCLUDE) $(SRC)
-	@mv $(OBJ) $(BUILD)
-	@$(AR) $(NAME) $(DST_PATH)
-all: $(NAME)
+	mv $(OBJ) $(BUILD)
+	$(AR) $(NAME) $(DST_OBJ)
+all: fclean $(NAME)
 bonus:
 	make fclean
 	make all BONUS=1
 clean:
-	rm -f  $(RM_ALL_OBJ)
+	rm -f $(DST_OBJ)
 	rm -df $(BUILD)
 fclean: clean
 	rm -f $(NAME)

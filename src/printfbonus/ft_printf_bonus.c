@@ -6,14 +6,14 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/29 18:26:54 by doligtha          #+#    #+#             */
-/*   Updated: 2024/01/23 20:26:54 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/01/26 03:17:41 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 #include <stdarg.h>
 
-//	helper function for comp->conv->fw and comp->conv->precision.
+//	helper function for pflist->conv->fw and pflist->conv->precision.
 //		- sets
 //		- uses width_precision integer pointer for either.
 static void	width_precision(const char *format, int *i,
@@ -75,7 +75,7 @@ static int	parse_format(const char *format, va_list *list, t_conv *c)
 }
 
 static void	parse_conversion(const char *format, int *i,
-								va_list *list, t_comp *node)
+								va_list *list, t_pflist *node)
 {
 	t_conv *c;
 
@@ -88,21 +88,22 @@ static void	parse_conversion(const char *format, int *i,
 		c->plus = 0;
 		c->space = 0;
 	}
-	c->len = ft_printf_getarglength(c->conv, node->item);
-	node->itemlen = ft_printf_getitemlength(c->conv, node->item, c);
+	c->len = ft_printf_getitemlen_min_fw(c->conv, node->item, c);
+	node->itemlen = ft_printf_getitemlen(c->conv, node->item);
 }
 
-//	appends a new t_comp node.
+//	appends a new t_pflist node.
 //	saves:		a pointer to format_string(begin or after conversion(s))
 //					or conversion to void *item.
 //	calculates:	string length (until '%' or '\0') or argument length.
 //	sets next to NULL.
 //	Returns false if an error has occured otherwise true.
-static bool	str_or_arg(const char *format, int *i, va_list *list, t_comp *origin)
+static bool	str_or_arg(const char *format, int *i,\
+						va_list *list, t_pflist *origin)
 {
-	t_comp *node;
+	t_pflist *node;
 
-	node = ft_newcomp_append(&origin);
+	node = ft_new_pflist_append(&origin);
 	if (!node)
 		return (false);
 	if (format[*i] == '%')
@@ -132,7 +133,7 @@ int	ft_printf(const char *format, ...)
 {
 	va_list		list;
 	int			i;
-	t_comp		*origin;
+	t_pflist		*origin;
 	int			fd;
 
 	if (!format)
@@ -142,14 +143,32 @@ int	ft_printf(const char *format, ...)
 	i = 0;
 	while (format[i])
 		if (!str_or_arg(format, &i, &list, origin))
-			return (ft_compclear(origin), ERROR_LIBFT);
+			return (ft_pflistclear(origin), ERROR_LIBFT);
 	va_end(list);
 	fd = 1;
-	return (ft_printf_printcomp(fd, origin));
+	return (ft_printf_printpflist(fd, origin));
 }
 
-// int main(int argc, char const *argv[])
-// {
-// 	ft_printf("hello world!\n");
-// 	return 0;
-// }
+/**
+ * @brief prototype dit in header en maak een tester folder met de files van slack
+ * int	fft_printf(const char *format, va_list tmp);
+*/
+int	fft_printf(const char *format, va_list tmp)
+{
+	va_list		list;
+	int			i;
+	t_pflist		*origin;
+	int			fd;
+
+	if (!format)
+		return (ERROR_LIBFT);
+	origin = (void *)0;
+	va_copy(list, tmp);
+	i = 0;
+	while (format[i])
+		if (!str_or_arg(format, &i, &list, origin))
+			return (ft_pflistclear(origin), ERROR_LIBFT);
+	va_end(list);
+	fd = 1;
+	return (ft_printf_printpflist(fd, origin));
+}
