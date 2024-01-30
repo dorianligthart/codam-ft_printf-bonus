@@ -6,7 +6,7 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/13 23:03:56 by doligtha          #+#    #+#             */
-/*   Updated: 2023/11/07 19:54:51 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/01/30 15:47:12 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,14 +21,14 @@
 #include "libft.h"
 #include <stdlib.h>
 
-static char	**it(const char *s, char c, int w, int i)
+static char	**banana(const char *s, char c, int w, int i)
 {
 	char	**s2;
 	int		words;
 
 	words = 0;
-	while (s && s[i])
-		if (s[i++] != c && (s[i] == c || s[i] == '\0'))
+	while (s && s[++i])
+		if (s[i] != c && (s[i] == c || s[i] == '\0'))
 			words++;
 	s2 = (char **)ft_calloc((words + 1), sizeof(char *));
 	while (s2 && i--)
@@ -52,7 +52,7 @@ static char	**it(const char *s, char c, int w, int i)
 
 char	**ft_split(char const *s, char c)
 {
-	return (it(s, c, 0, 0));
+	return (banana(s, c, 0, -1));
 }
 
 // int	main(void)

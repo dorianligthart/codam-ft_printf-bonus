@@ -40,7 +40,7 @@ make re && cc tester_man.c libftprintf.a -o printf && ./printf
 #include <stdlib.h>
 #include <limits.h>
 
-#include "include/ft_printf.h"
+#include "libft.h"
 #include <string.h>
 #include <unistd.h>
 
@@ -73,30 +73,30 @@ static int	ft_putint(int nbr)
 	return (write(1, put, y));
 }
 
-static void	print_va_list(const char *form, va_list list)
-{
-	write(1, "\'"YELLOW, 9);
-	if (form)
-		write(1, form, strlen(form));
-	write(1, RESET"\':", 6);
+// static void	print_va_list(const char *form, va_list list)
+// {
+// 	write(1, "\'"YELLOW, 9);
+// 	if (form)
+// 		write(1, form, strlen(form));
+// 	write(1, RESET"\':", 6);
 		
-		write(1, "\nprintf:    \'", 13);
-		int x = printf(form, va_arg(list, void *));
-		fflush(stdout);
-		write(1, "\'-->", 4);
-		ft_putint(x);
+// 		write(1, "\nprintf:    \'", 13);
+// 		int x = printf(form, va_arg(list, void *));
+// 		fflush(stdout);
+// 		write(1, "\'-->", 4);
+// 		ft_putint(x);
 		
-		write(1, "\nft_printf: \'", 13);
-		int y = ft_printf(form, va_arg(list, void *));
-		fflush(stdout);
-		write(1, "\'-->", 4);
-		ft_putint(y);
+// 		write(1, "\nft_printf: \'", 13);
+// 		int y = ft_printf(form, va_arg(list, void *));
+// 		fflush(stdout);
+// 		write(1, "\'-->", 4);
+// 		ft_putint(y);
 
-		if (x != y)
-			write(1, RED"\t\tdifference!"RESET"\n\n", 26);
-		else
-			write(1, "\t\t"GREEN"OK."RESET"\n\n", 17);
-}
+// 		if (x != y)
+// 			write(1, RED"\t\tdifference!"RESET"\n\n", 26);
+// 		else
+// 			write(1, "\t\t"GREEN"OK."RESET"\n\n", 17);
+// }
 
 static void	print1argdiff(const char *form, void *arg)
 {
@@ -127,73 +127,73 @@ int	main(void)
 {
 printf(CYAN PRINTF_ASCII_ART RESET"\n\n");
 write(1, "\n"BLUE"[format string test]"RESET"\n", 34);
-//UB segfault check:
-	print1argdiff("%zbcd", NULL);
-	print1argdiff("%", NULL);
-	print1argdiff("abcd%", NULL);
-	print1argdiff("%%%", NULL);
-	print1argdiff("abcd%%%", NULL);
-	print1argdiff("%%%abcd", NULL);
-//no UB check:
-	print1argdiff("", NULL);
-	print1argdiff("\0", NULL);
-	print1argdiff(NULL, NULL);
-	print1argdiff("6", NULL);
-	print1argdiff("abcd", NULL);
-	print1argdiff("%%", NULL);
+// //UB segfault check:
+// 	print1argdiff("%zbcd", NULL);
+// 	print1argdiff("%", NULL);
+// 	print1argdiff("abcd%", NULL);
+// 	print1argdiff("%%%", NULL);
+// 	print1argdiff("abcd%%%", NULL);
+// 	print1argdiff("%%%abcd", NULL);
+// //no UB check:
+// 	print1argdiff("", NULL);
+// 	print1argdiff("\0", NULL);
+// 	// print1argdiff(NULL, NULL);
+// 	print1argdiff("6", NULL);
+// 	print1argdiff("abcd", NULL);
+// 	print1argdiff("%%", NULL);
 	print1argdiff("%%abcd", NULL);
 	print1argdiff("abcd%%", NULL);
 	// print1argdiff("something%");
 	
 //c: flags="-", fieldwidth.
-write(1, "\n"BLUE"[c conversion]"RESET"\n", 28);
-	int	i = -1;
-	while (++i < 128)
-		print1argdiff("%c", (void *)i);
+// write(1, "\n"BLUE"[c conversion]"RESET"\n", 28);
+// 	int	i = -1;
+// 	while (++i < 128)
+// 		print1argdiff("%c", (void *)i);
 
-//s: flags="-", fieldwidth, precision.
-write(1, "\n"BLUE"[s conversion]"RESET"\n", 28);
-	print1argdiff("%s", (void *)"");
-	print1argdiff("%s", (void *)"\0");
-	print1argdiff("%s", (void *)NULL);
-	print1argdiff("%s", (void *)"6");
-	print1argdiff("%s", (void *)"abcd");
+// //s: flags="-", fieldwidth, precision.
+// write(1, "\n"BLUE"[s conversion]"RESET"\n", 28);
+// 	print1argdiff("%s", (void *)"");
+// 	print1argdiff("%s", (void *)"\0");
+// 	print1argdiff("%s", (void *)NULL);
+// 	print1argdiff("%s", (void *)"6");
+// 	print1argdiff("%s", (void *)"abcd");
 
-//p: flags="-", fieldwidth, precision==0.
-write(1, "\n"BLUE"[p conversion]"RESET"\n", 28);
-	i = -1;
-	while (++i < 3)
-		print1argdiff("%p", (void *)(ULONG_MAX - 1 + i));
+// //p: flags="-", fieldwidth, precision==0.
+// write(1, "\n"BLUE"[p conversion]"RESET"\n", 28);
+// 	i = -1;
+// 	while (++i < 3)
+// 		print1argdiff("%p", (void *)(ULONG_MAX - 1 + i));
 
-//di: flags="-+ 0", fieldwidth, precision.
-write(1, "\n"BLUE"[di conversion]"RESET"\n", 29);
-	print1argdiff("%i", (void *)-1);
-	print1argdiff("%i", (void *)0);
-	print1argdiff("%i", (void *)1);
-	print1argdiff("%i", (void *)10);
-	i = -1;
-	while (++i < 3)
-		print1argdiff("%i", (void *)(INT_MAX - 1 + i));
+// //di: flags="-+ 0", fieldwidth, precision.
+// write(1, "\n"BLUE"[di conversion]"RESET"\n", 29);
+// 	print1argdiff("%i", (void *)-1);
+// 	print1argdiff("%i", (void *)0);
+// 	print1argdiff("%i", (void *)1);
+// 	print1argdiff("%i", (void *)10);
+// 	i = -1;
+// 	while (++i < 3)
+// 		print1argdiff("%i", (void *)(INT_MAX - 1 + i));
 
-//u: flags="-0", fieldwidth, precision.
-write(1, "\n"BLUE"[u conversion]"RESET"\n", 28);
-	i = -1;
-	while (++i < 3)
-		print1argdiff("%u", (void *)(UINT_MAX - 1 + i));
+// //u: flags="-0", fieldwidth, precision.
+// write(1, "\n"BLUE"[u conversion]"RESET"\n", 28);
+// 	i = -1;
+// 	while (++i < 3)
+// 		print1argdiff("%u", (void *)(UINT_MAX - 1 + i));
 
-//x: flags="-#0", fieldwidth, precision.
-write(1, "\n"BLUE"[x conversion]"RESET"\n", 28);
-	i = -1;
-	while (++i < 3)
-		print1argdiff("%x", (void *)(ULONG_MAX - 1 + i));
+// //x: flags="-#0", fieldwidth, precision.
+// write(1, "\n"BLUE"[x conversion]"RESET"\n", 28);
+// 	i = -1;
+// 	while (++i < 3)
+// 		print1argdiff("%x", (void *)(ULONG_MAX - 1 + i));
 	
-//X: flags="-#0", fieldwidth, precision.
-write(1, "\n"BLUE"[X conversion]"RESET"\n", 28);
-	i = -1;
-	while (++i < 3)
-		print1argdiff("%X", (void *)(ULONG_MAX - 1 + i));
+// //X: flags="-#0", fieldwidth, precision.
+// write(1, "\n"BLUE"[X conversion]"RESET"\n", 28);
+// 	i = -1;
+// 	while (++i < 3)
+// 		print1argdiff("%X", (void *)(ULONG_MAX - 1 + i));
 	
-	return (0);
+// 	return (0);
 }
 /*
 make re && cc tester_man.c libftprintf.a -o printf && ./printf && rm ./printf

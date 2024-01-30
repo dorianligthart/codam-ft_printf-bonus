@@ -6,7 +6,7 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 13:08:07 by doligtha          #+#    #+#             */
-/*   Updated: 2024/01/23 14:20:17 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/01/30 21:09:08 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include <stdarg.h> //va_list, va_arg(), va_start(), va_end()
 #include <limits.h>
 
-void	ft_varray(char **array, const char *format, ...)
+void	ft_varray(void **array, const char *format, ...)
 {
 	va_list		list;
 	int			i;

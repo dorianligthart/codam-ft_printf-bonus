@@ -6,12 +6,13 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/29 18:26:54 by doligtha          #+#    #+#             */
-/*   Updated: 2024/01/26 03:17:41 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/01/30 23:33:06 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 #include <stdarg.h>
+#include <stdio.h>
 
 //	helper function for pflist->conv->fw and pflist->conv->precision.
 //		- sets
@@ -24,14 +25,14 @@ static void	width_precision(const char *format, int *i,
 	int		va;
 
 	va = false;
-	if (format[*i] == '*' && *i++)
+	if (format[*i] == '*' && ++(*i))
 		va = true;
 	atoi = 0;
 	if (format[*i] >= '0' && format[*i] <= '9')
 		atoi = ft_atoi(format + *i);
 	while (format[*i] >= '0' && format[*i] <= '9')
-		++*i;
-	if ((va && atoi && format[*i] == '$' && *i++) || (va && atoi))
+		++(*i);
+	if ((va && atoi && format[*i] == '$' && ++(*i)) || (va && atoi))
 	{
 		va_copy(tmp, *list);
 		while (va && atoi && atoi--)
@@ -59,28 +60,32 @@ static int	parse_format(const char *format, va_list *list, t_conv *c)
 	if (format[i] >= '0' && format[i] <= '9')
 		width_precision(format, &i, list, &c->fw);
 	if (format[i] == '.' && ++i)
-		*arr['.'] = true;
+		c->dot = true;
 	if (format[i - 1] == '.')
 		width_precision(format, &i, list, &c->precision);
 	if (c->fw < 0)
 	{
 		c->fw *= -1;
-		*arr['-'] = true;
+		c->minus = true;
 	}
-	if (*arr['+'])
-		*arr[' '] = false;
-	if (ft_strchr("cspdiuxX%o", format[i]) && ++i)
-		*arr['c'] = format[i - 1];
+	if (c->plus)
+		c->space = false;
+	if (ft_strchr("cspdiuxX%o", format[++i]))
+		c->conv = format[i++];
 	return (i);
 }
 
-static void	parse_conversion(const char *format, int *i,
+static bool	parse_conversion(const char *format, int *i,
 								va_list *list, t_pflist *node)
 {
 	t_conv *c;
+	int		parse_format_return;
 
 	c = node->conv;
-	*i += parse_format(format + *i, list, c);
+	parse_format_return =  parse_format(format + *i, list, c);
+	if (c->conv == 0)
+		return (false);
+	*i += parse_format_return;
 	if (c->conv && c->conv != '%')
 		node->item = va_arg(*list, void *);
 	if ((c->conv == 'd' || c->conv == 'i') && *(int *)node->item < 0)
@@ -89,7 +94,8 @@ static void	parse_conversion(const char *format, int *i,
 		c->space = 0;
 	}
 	c->len = ft_printf_getitemlen_min_fw(c->conv, node->item, c);
-	node->itemlen = ft_printf_getitemlen(c->conv, node->item);
+	node->itemlen = ft_printf_getitemlen(node->item, c);
+	return (true);
 }
 
 //	appends a new t_pflist node.
@@ -99,11 +105,12 @@ static void	parse_conversion(const char *format, int *i,
 //	sets next to NULL.
 //	Returns false if an error has occured otherwise true.
 static bool	str_or_arg(const char *format, int *i,\
-						va_list *list, t_pflist *origin)
+						va_list *list, t_pflist **origin)
 {
 	t_pflist *node;
 
-	node = ft_new_pflist_append(&origin);
+	// printf("\nREACHED with i = %d\n\n", *i);
+	node = ft_newpflist_append(origin);
 	if (!node)
 		return (false);
 	if (format[*i] == '%')
@@ -111,7 +118,11 @@ static bool	str_or_arg(const char *format, int *i,\
 		node->conv = ft_newconv();
 		if (!node->conv)
 			return (false);
-		parse_conversion(format, i, list, node);
+		if (!parse_conversion(format, i, list, node))
+		{
+			printf("reached");
+			return (false);
+		}
 	}
 	else
 	{
@@ -142,33 +153,33 @@ int	ft_printf(const char *format, ...)
 	va_start(list, format);
 	i = 0;
 	while (format[i])
-		if (!str_or_arg(format, &i, &list, origin))
+		if (!str_or_arg(format, &i, &list, &origin))
 			return (ft_pflistclear(origin), ERROR_LIBFT);
 	va_end(list);
 	fd = 1;
 	return (ft_printf_printpflist(fd, origin));
 }
 
-/**
- * @brief prototype dit in header en maak een tester folder met de files van slack
- * int	fft_printf(const char *format, va_list tmp);
-*/
-int	fft_printf(const char *format, va_list tmp)
-{
-	va_list		list;
-	int			i;
-	t_pflist		*origin;
-	int			fd;
+// /**
+//  * @brief prototype dit in header en maak een tester folder met de files van slack
+//  * int	fft_printf(const char *format, va_list tmp);
+// */
+// int	fft_printf(const char *format, va_list tmp)
+// {
+// 	va_list		list;
+// 	int			i;
+// 	t_pflist	*origin;
+// 	int			fd;
 
-	if (!format)
-		return (ERROR_LIBFT);
-	origin = (void *)0;
-	va_copy(list, tmp);
-	i = 0;
-	while (format[i])
-		if (!str_or_arg(format, &i, &list, origin))
-			return (ft_pflistclear(origin), ERROR_LIBFT);
-	va_end(list);
-	fd = 1;
-	return (ft_printf_printpflist(fd, origin));
-}
+// 	if (!format)
+// 		return (ERROR_LIBFT);
+// 	origin = (void *)0;
+// 	va_copy(list, tmp);
+// 	i = 0;
+// 	while (format[i])
+// 		if (!str_or_arg(format, &i, &list, &origin))
+// 			return (ft_pflistclear(origin), ERROR_LIBFT);
+// 	va_end(list);
+// 	fd = 1;
+// 	return (ft_printf_printpflist(fd, origin));
+// }

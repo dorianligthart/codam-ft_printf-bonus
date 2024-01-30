@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_print_pflist_bonus.c                            :+:      :+:    :+:   */
+/*   ft_printpflist_bonus.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/30 17:28:42 by doligtha          #+#    #+#             */
-/*   Updated: 2024/01/26 03:14:47 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/01/31 00:04:31 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 #include <limits.h> //MIN_INT
 #include <unistd.h> //write();
 
+#include <stdio.h>
+
 // expects node struct, see 'ft_printf_bonus.h';
 // expects dst to be able to hold everything;
 // expects node->conv->precision to be the amount
@@ -24,7 +26,7 @@
 // expects no flags in 'node->conv' to
 //	be unnecessarily (in case of UB) or incorrectly set.
 //
-//TODO: paste arglen, paste zero's, then paste prefix: 
+
 //		ORDER OF PASTING::
 //			dst + prefixlen + zero's + arglen--;
 //			dst + prefixlen + zero's--;
@@ -97,13 +99,15 @@ static void	prefix_precisionzeros_integer(t_pflist *node, char *tmp, t_conv *c)
 // }
 static void	pasteinteger(t_pflist *node, char *tmp, t_conv *c)
 {
+	if (!c)
+		return ;
 //	handles e.g. "ppzzaass" the ss part, reduces fieldwidth to use it as offset;
 //	what did he sayyyy:
 //		str char where: p = prefix_chars, z = zeros, a = arg_chars, s = spaces;
 	while (c->minus && c->fw > c->len)
 		*(tmp + c->fw--) = ' ';
 	if (c->conv == 'p' && !(int *)node->item)
-		ft_memcpy(*(tmp + c->fw), "(nil)", c->len);
+		ft_memcpy(tmp + c->fw, "(nil)", c->len);
 	else if (c->fw > c->len)
 		prefix_precisionzeros_integer(node, tmp + c->fw - c->len, c);
 	else if (c->len)
@@ -122,29 +126,31 @@ static void	pasteinteger(t_pflist *node, char *tmp, t_conv *c)
 // pastes the string, character or percent_sign into tmp; or calls pasteitem2().
 static void	pasteitem(t_pflist *node, char *tmp, t_conv *c)
 {
-	while (!c->conv && node->itemlen--)
+	while (c == NULL && node->itemlen--)
 		*(tmp + node->itemlen) = *((char *)node->item + node->itemlen);
-	if (c->conv == 'c' || c->conv == '%')
+	if (c != NULL && (c->conv == 'c' || c->conv == '%'))
 	{
 		while (c->minus && c->fw > c->len)
 			*(tmp + c->len + c->fw--) = ' ';
-		*((char *)node->item + c->fw) = (char)((c->conv == '%') * '%'
-			+ (c->conv == 'c') * (int)(*(char *)node->item));
+		// printf("sizeitem=%d\nfw=%d\n", c->len, c->fw);
+		*(tmp + c->fw) = '%';
+		if (c->conv == 'c')
+			*(tmp + c->fw) = *(char *)node->item;
 		while (!c->minus && c->fw > c->len)
 			*(tmp + c->len + c->fw--) = ' ';
 	}
-	else if (c->conv == 's')
+	else if (c != NULL && c->conv == 's')
 	{
 		while (c->minus && c->fw-- >= c->len)
 			*(tmp + c->len + c->fw) = ' ';
 		while ((char *)node->item && c->len--)
 			*(tmp + c->fw + c->len) = *(char *)node->item + c->len;
 		if (!(char *)node->item)
-			ft_memcpy(*(tmp + c->fw), "(null)", 6);		
+			ft_memcpy(tmp + c->fw, "(null)", 6);		
 		while (!c->minus && c->fw--)
 			*(tmp + c->fw) = ' ';
 	}
-	else if (ft_strchr("diuxXo", c->conv))
+	else if (c != NULL && ft_strchr("pdiuxXo", c->conv))
 		pasteinteger(node, tmp, c);
 }
 

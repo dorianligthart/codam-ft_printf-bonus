@@ -6,7 +6,7 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/05 19:09:51 by doligtha          #+#    #+#             */
-/*   Updated: 2024/01/26 03:17:23 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/01/30 21:02:09 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,9 @@ typedef struct s_list
 	struct s_list	*next;
 }	t_list;
 
-# ifndef LIBFT_VA_FORBIDDEN
+// # ifndef LIBFT_VA_FORBIDDEN
 //printf()'s conversion data:
-typedef struct s_conv
+typedef struct s_conv 
 {
 	bool	minus;
 	bool	zero;
@@ -61,9 +61,9 @@ typedef struct s_pflist
 void	ft_varray(char **array, const char *format, ...);
 //		ft_printf:
 //			ft_printf()'s struct functions:
-void	ft_pflist_clear(t_pflist *pflist);
-t_pflist	*ft_new_pflist_append(t_pflist **pflist);
-t_conv	*ft_newconv(void);
+void		ft_pflistclear(t_pflist *pflist);
+t_pflist	*ft_newpflist_append(t_pflist **pflist);
+t_conv		*ft_newconv(void);
 //			ft_printf()'s conversion length functions:
 int		ft_printf_getitemlen_min_fw(char c, void *item, t_conv *conv);
 int		ft_printf_getitemlen(void *item, t_conv *conv);
@@ -71,7 +71,7 @@ int		ft_printf_getitemlen(void *item, t_conv *conv);
 int		ft_printf_printpflist(int fd, t_pflist *origin);
 int		ft_printf(const char *format, ...)
 		__attribute__((format (printf, 1, 2))); //ft_strchr(), ft_atoi(),
-# endif
+// # endif
 
 //PDF ORDER:
 //part 1 - ctype.h, string.h, strings.h, stdlib.h:

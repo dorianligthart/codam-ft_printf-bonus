@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_structs_bonus.c                                 :+:      :+:    :+:   */
+/*   ft_printf_structs_bonus.c                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 00:04:19 by doligtha          #+#    #+#             */
-/*   Updated: 2024/01/26 00:58:04 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/01/30 20:51:39 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,43 +14,47 @@
 #include <stdlib.h>	 // malloc(), free()
 #include "libft.h"
 
-void	ft_compclear(t_comp *comp)
+void	ft_pflistclear(t_pflist *pflist)
 {
-	t_comp	*temporary;
+	t_pflist	*temporary;
 
-	while (comp)
+	while (pflist)
 	{
-		temporary = comp->next;
-		if (comp->conv)
-			free(comp->conv);
-		free(comp);
-		comp = temporary;
+		temporary = pflist->next;
+		if (pflist->conv)
+			free(pflist->conv);
+		free(pflist);
+		pflist = temporary;
 	}
 }
 
-//	mallocs a new t_comp node; appends a new node to the last *comp node.
+//	mallocs a new t_pflist node; appends a new node to the last *pflist node.
 //	returns: new node.
-t_comp	*ft_newcomp_append(t_comp **comp)
+t_pflist	*ft_newpflist_append(t_pflist **pflist)
 {
-	t_comp	*tmp;
+	t_pflist	*tmp;
+	t_pflist	*ptr;
 
-	tmp = (t_comp *)malloc(sizeof(t_comp));
-	if (tmp)
+	tmp = (t_pflist *)malloc(sizeof(t_pflist));
+	if (!tmp)
 		return (NULL);
 	tmp->itemlen = 0;
 	tmp->item = NULL;
 	tmp->conv = NULL;
 	tmp->next = NULL;
-	while ((*comp)->next)
-		(*comp) = (*comp)->next;
-	if (!(*comp))
-		(*comp) = tmp;
+	if (!(*pflist))
+		(*pflist) = tmp;
 	else
-		(*comp)->next = tmp;
+	{
+		ptr = *pflist;
+		while (ptr->next)
+			ptr = ptr->next;
+		ptr->next = tmp;
+	}
 	return (tmp);
 }
 
-t_conv	*ft_newdata(void)
+t_conv	*ft_newconv(void)
 {
 	t_conv	*conv;
 
