@@ -1,7 +1,7 @@
 /*
-make bonus && cc tester_bonus.c libftprintf.a -o printf && ./printf
+make and debug :
+make bonus && cc -Iinclude -Wall -Werror -Wextra -fsanitize=address tester_bonus.c libftprintf.a && ./a.out
 */
-
 
 #include <stdio.h>
 #include <stddef.h>
@@ -196,6 +196,3 @@ write(1, "\n"BLUE"[X conversion]"RESET"\n", 28);
 	
 	return (0);
 }
-/*
-make bonus && cc tester_bonus.c libftprintf.a -o printf && ./printf
-*/
