@@ -6,25 +6,42 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/05 19:09:51 by doligtha          #+#    #+#             */
-/*   Updated: 2024/01/30 21:02:09 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/02/01 02:53:10 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LIBFT_H
 # define LIBFT_H
-# include <stddef.h>
+# include <stddef.h>  // 'size_t';
 # include <stdbool.h> // 'bool';
 
+//this shit is hella slow but lets go
 # ifdef DEBUG
 #  include <stdio.h>
 #  include <unistd.h>
 #  include <limits.h>
 #  include <string.h>
-# endif
+#  if defined(RESET) || defined(BLACK) || defined(RED) \
+	|| defined(GREEN) || defined(YELLOW) || defined(BLUE) \
+	|| defined(MAGENTA) || defined(CYAN) || defined(WHITE)
+#  else
+#   define RESET "\033[0m"
+#   define BLACK "\033[0;30m"
+#   define RED "\033[0;31m"
+#   define GREEN "\033[0;32m"
+#   define YELLOW "\033[0;33m"
+#   define BLUE "\033[0;34m"
+#   define MAGENTA "\033[0;35m"
+#   define CYAN "\033[0;36m"
+#   define WHITE "\033[0;37m"
+#  endif
+# endif // #ifdef DEBUG
 
 # ifndef ERROR_LIBFT
 #  define ERROR_LIBFT -1
 # endif
+
+
 
 //linked list:
 typedef struct s_list
@@ -58,19 +75,21 @@ typedef struct s_pflist
 	struct s_pflist	*next;
 }	t_pflist;
 
-void	ft_varray(char **array, const char *format, ...);
-//		ft_printf:
+//ft_printf:
 //			ft_printf()'s struct functions:
 void		ft_pflistclear(t_pflist *pflist);
 t_pflist	*ft_newpflist_append(t_pflist **pflist);
 t_conv		*ft_newconv(void);
-//			ft_printf()'s conversion length functions:
-int		ft_printf_getitemlen_min_fw(char c, void *item, t_conv *conv);
-int		ft_printf_getitemlen(void *item, t_conv *conv);
-//			ft_printf() print functions:
-int		ft_printf_printpflist(int fd, t_pflist *origin);
+
+//		ft_printf()'s conversion length functions:
+int		ft_pf_getitemlen_min_fw(void *item, t_conv *conv);
+int		ft_pf_getitemlen(void *item, t_conv *conv);
+
+//		ft_printf() print functions:
+int		ft_printf_printpflist(int fd, t_pflist *origin, int total);
 int		ft_printf(const char *format, ...)
 		__attribute__((format (printf, 1, 2))); //ft_strchr(), ft_atoi(),
+void	ft_varray(char **array, const char *format, ...);
 // # endif
 
 //PDF ORDER:

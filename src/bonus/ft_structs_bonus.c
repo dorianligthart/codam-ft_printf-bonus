@@ -1,30 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_printf_structs_bonus.c                          :+:      :+:    :+:   */
+/*   ft_structs_bonus.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 00:04:19 by doligtha          #+#    #+#             */
-/*   Updated: 2024/01/30 20:51:39 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/02/01 02:23:51 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdbool.h> // 'bool' variable type, true, false
 #include <stdlib.h>	 // malloc(), free()
 #include "libft.h"
+#include <stdio.h>
 
 void	ft_pflistclear(t_pflist *pflist)
 {
-	t_pflist	*temporary;
+	t_pflist	*tmp;
 
 	while (pflist)
 	{
-		temporary = pflist->next;
+		tmp = pflist->next;
 		if (pflist->conv)
 			free(pflist->conv);
 		free(pflist);
-		pflist = temporary;
+		pflist = tmp;
 	}
 }
 
@@ -32,8 +33,8 @@ void	ft_pflistclear(t_pflist *pflist)
 //	returns: new node.
 t_pflist	*ft_newpflist_append(t_pflist **pflist)
 {
-	t_pflist	*tmp;
 	t_pflist	*ptr;
+	t_pflist	*tmp;
 
 	tmp = (t_pflist *)malloc(sizeof(t_pflist));
 	if (!tmp)
@@ -42,8 +43,8 @@ t_pflist	*ft_newpflist_append(t_pflist **pflist)
 	tmp->item = NULL;
 	tmp->conv = NULL;
 	tmp->next = NULL;
-	if (!(*pflist))
-		(*pflist) = tmp;
+	if (!*pflist)
+		*pflist = tmp;
 	else
 	{
 		ptr = *pflist;
@@ -56,20 +57,20 @@ t_pflist	*ft_newpflist_append(t_pflist **pflist)
 
 t_conv	*ft_newconv(void)
 {
-	t_conv	*conv;
+	t_conv	*c;
 
-	conv = (t_conv *)malloc(sizeof(t_conv));
-	if (!conv)
+	c = (t_conv *)malloc(sizeof(t_conv));
+	if (!c)
 		return (NULL);
-	conv->conv = '\0';
-	conv->minus = false;
-	conv->zero = false;
-	conv->hash = false;
-	conv->space = false;
-	conv->plus = false;
-	conv->fw = 0;
-	conv->dot = false;
-	conv->precision = -1;
-	conv->len = 0;
-	return (conv);
+	c->minus = false;
+	c->zero = false;
+	c->hash = false;
+	c->space = false;
+	c->plus = false;
+	c->fw = 0;
+	c->dot = false;
+	c->precision = -1;
+	c->conv = '\0';
+	c->len = 0;
+	return (c);
 }

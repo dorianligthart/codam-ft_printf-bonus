@@ -6,13 +6,14 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/30 17:14:18 by doligtha          #+#    #+#             */
-/*   Updated: 2024/01/30 23:57:03 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/02/01 01:57:56 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-//returns the length based on every flag except fieldwidth (see man(3) printf); 
+//The length based on every flag except fieldwidth (see man(3) printf); 
+//returns either arglen or precision; fw handled in parent function.
 static int printflen(int arglen, int precision, int prefixlen)
 {
 	return (((precision > arglen + prefixlen) * precision) +
@@ -29,8 +30,11 @@ static int printflen(int arglen, int precision, int prefixlen)
 //		x: flags="-#0",		fieldwidth, precision.
 //		X: flags="-#0",		fieldwidth, precision.
 //		o: flags="-#0",		fieldwidth, precision.
-int	ft_printf_getitemlen_min_fw(char c, void *item, t_conv *conv)
+int	ft_pf_getitemlen_min_fw(void *item, t_conv *conv)
 {
+	char	c;
+
+	c = conv->conv;
 	if (c == 'c' || c == '%')
 		return (1);
 	if ((c == 's' || c == 'p') && !(char *)item)
@@ -41,7 +45,7 @@ int	ft_printf_getitemlen_min_fw(char c, void *item, t_conv *conv)
 		return (conv->precision);
 	if (c == 'd' || c == 'i')
 		return (printflen(ft_longlen((long)item, 10), (int)conv->precision,\
-				(int)conv->plus || (int)conv->space || *(int *)item < 0));
+				*(int *)item < 0) || (int)conv->plus || (int)conv->space);
 	if (c == 'u')
 		return (printflen(ft_longlen((long)item, 10), conv->precision, 0));
 	if (c == 'p' || (conv->hash	&& (c == 'x' || c == 'X')))
@@ -51,12 +55,12 @@ int	ft_printf_getitemlen_min_fw(char c, void *item, t_conv *conv)
 	return (ERROR_LIBFT);
 }
 
-int	ft_printf_getitemlen(void *item, t_conv *conv)
+int	ft_pf_getitemlen(void *item, t_conv *conv)
 {
 	int	arglen;
 	int	fieldwidth;
 
-	arglen = ft_printf_getitemlen_min_fw(conv->conv, item, conv);
+	arglen = ft_pf_getitemlen_min_fw(item, conv);
 	fieldwidth = conv->fw;
 	return ((arglen >= fieldwidth) * arglen
 			+ (arglen < fieldwidth) * fieldwidth);

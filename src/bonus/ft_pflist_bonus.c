@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_printpflist_bonus.c                             :+:      :+:    :+:   */
+/*   ft_pflist_bonus.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/30 17:28:42 by doligtha          #+#    #+#             */
-/*   Updated: 2024/01/31 00:04:31 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/02/01 03:00:04 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,7 @@
 #include <limits.h> //MIN_INT
 #include <unistd.h> //write();
 
-#include <stdio.h>
-
+#ifndef DEBUG
 // expects node struct, see 'ft_printf_bonus.h';
 // expects dst to be able to hold everything;
 // expects node->conv->precision to be the amount
@@ -130,9 +129,9 @@ static void	pasteitem(t_pflist *node, char *tmp, t_conv *c)
 		*(tmp + node->itemlen) = *((char *)node->item + node->itemlen);
 	if (c != NULL && (c->conv == 'c' || c->conv == '%'))
 	{
+		// printf("CONVERSION %c; LEN=%d ; FT_PFLIST%.1s\n", c->conv, c->len, (char *)node->item);
 		while (c->minus && c->fw > c->len)
 			*(tmp + c->len + c->fw--) = ' ';
-		// printf("sizeitem=%d\nfw=%d\n", c->len, c->fw);
 		*(tmp + c->fw) = '%';
 		if (c->conv == 'c')
 			*(tmp + c->fw) = *(char *)node->item;
@@ -158,19 +157,17 @@ static void	pasteitem(t_pflist *node, char *tmp, t_conv *c)
 //		adding each node's len to total, then malloc(total),
 //		then parsing the nodes one by one into the malloced str.
 //		then write(fd, str, total).
-int	ft_printf_printpflist(int fd, t_pflist *origin)
+int	ft_printf_printpflist(int fd, t_pflist *origin, int total)
 {
-	int		total;
 	t_pflist	*node;
-	char	*result;
-	char	*tmp;
+	char		*result;
+	char		*tmp;
 
-	total = 0;
 	node = origin;
 	while (node)
 	{
 		if (node->itemlen == ERROR_LIBFT)
-			return (ERROR_LIBFT);
+			return (ft_pflistclear(origin), ERROR_LIBFT);
 		total += node->itemlen;
 		node = node->next;
 	}
@@ -184,5 +181,42 @@ int	ft_printf_printpflist(int fd, t_pflist *origin)
 		node = node->next;
 	}
 	total = write(fd, result, total);
-	return (ft_pflistclear(origin), total);
+	return (free(result), ft_pflistclear(origin), total);
 }
+#else	//ifndef DEBUG
+int	ft_printf_printpflist(int fd, t_pflist *origin, int i)
+{
+	t_pflist	*ptr;
+
+	ptr = origin;
+	while (ptr)
+	{
+		if (i != 0)
+			printf(",");
+		printf("\n");
+		printf(GREEN"\tnode_%p: {\n"RESET, ptr);
+			printf(MAGENTA"\t\t.item: %p,\n"RESET, ptr->item);
+			if (ptr->conv)
+			{
+				printf(MAGENTA"\t\t.conv_%p: [\n"RESET, ptr->conv);
+					printf("\t\t\t.minus:      "CYAN"%s"RESET",\n", ptr->conv->minus ? "true" : "false");
+					printf("\t\t\t.zero:       "CYAN"%s"RESET",\n", ptr->conv->zero ? "true" : "false");
+					printf("\t\t\t.hash:       "CYAN"%s"RESET",\n", ptr->conv->hash ? "true" : "false");
+					printf("\t\t\t.space:      "CYAN"%s"RESET",\n", ptr->conv->space ? "true" : "false");
+					printf("\t\t\t.plus:       "CYAN"%s"RESET",\n", ptr->conv->plus ? "true" : "false");
+					printf("\t\t\t.fieldwidth: "CYAN"%d"RESET",\n", ptr->conv->fw);
+					printf("\t\t\t.dot:        "CYAN"%s"RESET",\n", ptr->conv->dot ? "true" : "false");
+					printf("\t\t\t.precision:  "CYAN"%d"RESET",\n", ptr->conv->precision);
+					printf("\t\t\t.conversion: "CYAN"%c"RESET",\n", ptr->conv->conv);
+					printf("\t\t\t.len:        "CYAN"%d"RESET",\n", ptr->conv->len);
+				printf(MAGENTA"\t\t],\n"RESET);
+			}
+			printf(MAGENTA"\t\t.itemlen: %d,\n"RESET, ptr->itemlen);
+			printf(MAGENTA"\t\t.next: %p\n"RESET, ptr->next);
+		printf(GREEN"\t}"RESET);
+		ptr = ptr->next;
+		i++;
+	}
+	return (ft_pflistclear(origin), fd - 1 + i);
+}
+#endif	//ifndef DEBUG

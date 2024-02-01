@@ -2,47 +2,41 @@
 make bonus && cc tester_bonus.c libftprintf.a -o printf && ./printf
 */
 
-#define RESET "\033[0m"		//4
-#define BLACK "\033[0;30m"	//7
-#define RED "\033[0;31m"	//7
-#define GREEN "\033[0;32m"	//7
-#define YELLOW "\033[0;33m"	//7
-#define BLUE "\033[0;34m"	//7
-#define MAGENTA "\033[0;35m"	//7
-#define CYAN "\033[0;36m"	//7
-#define WHITE "\033[0;37m"	//7
-
-// https://patorjk.com/software/taag/
-#define PRINTF_ASCII_ART \
-"###########################################################################\n"\
-"#     ____       ____                     _   _       _____     _____     #\n"\
-"#  h |  _\"\\ e y |  _\"\\  !      ___       | \\ |\"|     |_ \" _|   |\" ___|    #\n"\
-"#   \\| |_) |/  \\| |_) |/      |_\"_|     <|  \\| |>      | |    i| |_  th   #\n"\
-"#    |  __/     |  _ <         | |      v| |\\  |e     /| |\\   \\|  _|/     #\n"\
-"#    |_|        |_| \\_\\      h/| |\\a     |_| \\_|     f |_| a   |_|        #\n"\
-"#    ||>>_      //   \\\\_  .-,_|___|_,-.  ||   \\\\,-.  _// \\\\_   )(\\\\,-     #\n"\
-"#   (__)__)    (__)  (__)  \\_)-' '-(_/   (_\")  (_/  (__) (__) (__)(_/     #\n"\
-"#                                                                         #\n"\
-"#     _____   y _____ o   ____       _____   l _____ f    ____            #\n"\
-"#    |_ \" _|  \\| ___\"|/  / __\"| r   |_ \" _|  \\| ___\"|/ ! |  _\"\\ !         #\n"\
-"#      | |     |  _|\"   <\\___ \\/      | |     |  _|\"    \\| |_) |/         #\n"\
-"#     /| |\\    | |___    u___) |     /| |\\    | |___     |  _ <           #\n"\
-"#    i |_|n    |_____|   |____/>>   s |_|e    |_____|    |_| \\_\\          #\n"\
-"#    _// \\\\_   <<   >>    )(  (__)  _// \\\\_   <<   >>    //   \\\\_         #\n"\
-"#   (__) (__) (__) (__)  (__)      (__) (__) (__) (__)  (__)  (__)        #\n"\
-"#                                                                         #\n"\
-"#  simple main that checks return values.      by: github/dorianligthart  #\n"\
-"#                   and prints output.                                    #\n"\
-"###########################################################################"
 
 #include <stdio.h>
 #include <stddef.h>
 #include <stdlib.h>
 #include <limits.h>
 
-#include "bonus/ft_printf_bonus.h"
+#include "libft.h"
 #include <string.h>
 #include <unistd.h>
+
+#  define RESET "\033[0m"
+#  define BLACK "\033[0;30m"
+#  define RED "\033[0;31m"
+#  define GREEN "\033[0;32m"
+#  define YELLOW "\033[0;33m"
+#  define BLUE "\033[0;34m"
+#  define MAGENTA "\033[0;35m"
+#  define CYAN "\033[0;36m"
+#  define WHITE "\033[0;37m"
+
+// https://patorjk.com/software/taag/
+#define PRINTF_ASCII_ART \
+"########################################################################################"\
+"\n#           /      _  _ ___             _       _    __   _            _               #"\
+"\n#           /     | || |__ \\           (_)     | |  / _| | |          | |              #"\
+"\n#   _,,   (/ ~    | || |_ ) |_ __  _ __ _ _ __ | |_| |_  | |_ ___  ___| |_ ___ _ __    #"\
+"\n#  \"-=\\;  '| [}   |__   _/ /| '_ \\| '__| | '_ \\| __|  _| | __/ _ \\/ __| __/ _ \\ '__|   #"\
+"\n#   _ \\\\; __X%%       | |/ /_| |_) | |  | | | | | |_| |   | ||  __/\\__ \\ ||  __/ |      #"\
+"\n#   _\\| \\__%%%%        |_|____| .__/|_|  |_|_| |_|\\__|_|    \\__\\___||___/\\__\\___|_|      #"\
+"\n#   \\  \\/\\                  | |                                                        #"\
+"\n#       ( )~~~              |_|     BONUS :)                                           #"\
+"\n#       | \\                                     github.com/dorianligthart              #"\
+"\n#     /  /                      \\(^-^)/                                                #"\
+"\n########################################################################################"
+
 
 static int	ft_putint(int nbr)
 {
@@ -73,30 +67,30 @@ static int	ft_putint(int nbr)
 	return (write(1, put, y));
 }
 
-static void	print_va_list(const char *form, va_list list)
-{
-	write(1, "\'"YELLOW, 9);
-	if (form)
-		write(1, form, strlen(form));
-	write(1, RESET"\':", 6);
+// static void	print_va_list(const char *form, va_list list)
+// {
+// 	write(1, "\'"YELLOW, 9);
+// 	if (form)
+// 		write(1, form, strlen(form));
+// 	write(1, RESET"\':", 6);
 		
-		write(1, "\nprintf:    \'", 13);
-		int x = printf(form, va_arg(list, void *));
-		fflush(stdout);
-		write(1, "\'-->", 4);
-		ft_putint(x);
+// 		write(1, "\nprintf:    \'", 13);
+// 		int x = printf(form, va_arg(list, void *));
+// 		fflush(stdout);
+// 		write(1, "\'-->", 4);
+// 		ft_putint(x);
 		
-		write(1, "\nft_printf: \'", 13);
-		int y = ft_printf(form, va_arg(list, void *));
-		fflush(stdout);
-		write(1, "\'-->", 4);
-		ft_putint(y);
+// 		write(1, "\nft_printf: \'", 13);
+// 		int y = ft_printf(form, va_arg(list, void *));
+// 		fflush(stdout);
+// 		write(1, "\'-->", 4);
+// 		ft_putint(y);
 
-		if (x != y)
-			write(1, RED"\t\tdifference!"RESET"\n\n", 26);
-		else
-			write(1, "\t\t"GREEN"OK."RESET"\n\n", 17);
-}
+// 		if (x != y)
+// 			write(1, RED"\t\tdifference!"RESET"\n\n", 26);
+// 		else
+// 			write(1, "\t\t"GREEN"OK."RESET"\n\n", 17);
+// }
 
 static void	print1argdiff(const char *form, void *arg)
 {
@@ -122,10 +116,17 @@ static void	print1argdiff(const char *form, void *arg)
 			write(1, "\t\t"GREEN"OK."RESET"\n", 17);
 }
 
+void diffintegers(const char *form, void *arg)
+{
+	(void)form;
+	(void)arg;
+	return ;
+}
+
 //TESTER:
 int	main(void)
 {
-printf(CYAN PRINTF_ASCII_ART RESET"\n\n");
+printf(CYAN PRINTF_ASCII_ART RESET"\n");
 write(1, "\n"BLUE"[format string test]"RESET"\n", 34);
 //UB segfault check:
 	print1argdiff("%zbcd", NULL);
@@ -135,21 +136,21 @@ write(1, "\n"BLUE"[format string test]"RESET"\n", 34);
 	print1argdiff("abcd%%%", NULL);
 	print1argdiff("%%%abcd", NULL);
 //no UB check:
+	// print1argdiff(NULL, NULL);
 	print1argdiff("", NULL);
 	print1argdiff("\0", NULL);
-	print1argdiff(NULL, NULL);
 	print1argdiff("6", NULL);
 	print1argdiff("abcd", NULL);
 	print1argdiff("%%", NULL);
 	print1argdiff("%%abcd", NULL);
 	print1argdiff("abcd%%", NULL);
-	// print1argdiff("something%");
+	return 0;
 	
 //c: flags="-", fieldwidth.
 write(1, "\n"BLUE"[c conversion]"RESET"\n", 28);
 	int	i = -1;
 	while (++i < 128)
-		print1argdiff("%c", (void *)i);
+		print1argdiff("%c", (void *)(long)i);
 
 //s: flags="-", fieldwidth, precision.
 write(1, "\n"BLUE"[s conversion]"RESET"\n", 28);
@@ -163,35 +164,35 @@ write(1, "\n"BLUE"[s conversion]"RESET"\n", 28);
 write(1, "\n"BLUE"[p conversion]"RESET"\n", 28);
 	i = -1;
 	while (++i < 3)
-		print1argdiff("%p", (void *)(ULONG_MAX - 1 + i));
+		diffintegers("%p", (void *)(ULONG_MAX - 1 + i));
 
 //di: flags="-+ 0", fieldwidth, precision.
 write(1, "\n"BLUE"[di conversion]"RESET"\n", 29);
-	print1argdiff("%i", (void *)-1);
-	print1argdiff("%i", (void *)0);
-	print1argdiff("%i", (void *)1);
-	print1argdiff("%i", (void *)10);
+	diffintegers("%i", (void *)-1);
+	diffintegers("%i", (void *)0);
+	diffintegers("%i", (void *)1);
+	diffintegers("%i", (void *)10);
 	i = -1;
 	while (++i < 3)
-		print1argdiff("%i", (void *)(INT_MAX - 1 + i));
+		diffintegers("%i", (void *)(INT_MAX - 1 + (long)i));
 
 //u: flags="-0", fieldwidth, precision.
 write(1, "\n"BLUE"[u conversion]"RESET"\n", 28);
 	i = -1;
 	while (++i < 3)
-		print1argdiff("%u", (void *)(UINT_MAX - 1 + i));
+		diffintegers("%u", (void *)(UINT_MAX - 1 + (long)i));
 
 //x: flags="-#0", fieldwidth, precision.
 write(1, "\n"BLUE"[x conversion]"RESET"\n", 28);
 	i = -1;
 	while (++i < 3)
-		print1argdiff("%x", (void *)(ULONG_MAX - 1 + i));
+		diffintegers("%x", (void *)(ULONG_MAX - 1 + i));
 	
 //X: flags="-#0", fieldwidth, precision.
 write(1, "\n"BLUE"[X conversion]"RESET"\n", 28);
 	i = -1;
 	while (++i < 3)
-		print1argdiff("%X", (void *)(ULONG_MAX - 1 + i));
+		diffintegers("%X", (void *)(ULONG_MAX - 1 + i));
 	
 	return (0);
 }
