@@ -8,7 +8,8 @@ make bonus && cc -Iinclude -Wall -Werror -Wextra -fsanitize=address tester_bonus
 #include <stdlib.h>
 #include <limits.h>
 
-#include "libft.h"
+// #include "libft.h"
+#include "printf.h"
 #include <string.h>
 #include <unistd.h>
 
@@ -194,5 +195,153 @@ write(1, "\n"BLUE"[X conversion]"RESET"\n", 28);
 	while (++i < 3)
 		diffintegers("%X", (void *)(ULONG_MAX - 1 + i));
 	
+// write(1, "\n"BLUE"[BONUS: di conversion]"RESET"\n", 29);
+// 	testinteger();
 	return (0);
 }
+<<<<<<< HEAD
+=======
+
+void testinteger(void){
+	print1argdiff("%-+-d",(void *) 42);
+	print1argdiff("%-+-d", (void *)-42);
+	print1argdiff("%3d",(void *) 42000);
+	print1argdiff("%3d", (void *)-42000);
+	print1argdiff("%03i",(void *) 42000);
+	print1argdiff("%03i", (void *)-42000);
+	print1argdiff("%0+3d",(void *) 42000);
+	print1argdiff("%0+3d", (void *)-42000);
+	print1argdiff("%0 3d",(void *) 42000);
+	print1argdiff("%0 3d", (void *)-42000);
+	print1argdiff("%0 +3d",(void *) 42000);
+	print1argdiff("%0 +3d", (void *)-42000);
+	print1argdiff("%0+ 3d",(void *) 42000);
+	print1argdiff("%0+ 3d", (void *)-42000);
+	print1argdiff("%-+3d",(void *) 42000);
+	print1argdiff("%-+3d", (void *)-42000);
+	print1argdiff("%5d",(void *) 42);
+	print1argdiff("%5d", (void *)-42);
+	print1argdiff("%-5d",(void *) 42);
+	print1argdiff("%-5d", (void *)-42);
+	print1argdiff("%05d",(void *) 42);
+	print1argdiff("%0+5d",(void *) 42);
+	print1argdiff("%05d", (void *)-42);
+	print1argdiff("% 5d",(void *) 42);
+	print1argdiff("% 5d", (void *)-42);
+	print1argdiff("%0 5d",(void *) 42);
+	print1argdiff("%+0 5d",(void *) 42);
+	print1argdiff("%0 5d", (void *)-42);
+	print1argdiff("%0-5d",(void *) 42);
+	print1argdiff("%+0-5d",(void *) 42);
+	print1argdiff("%0-5d", (void *)-42);
+	print1argdiff("%+5d",(void *) 42);
+	print1argdiff("%+5d", (void *)-42);
+	print1argdiff("%0+5d", (void *)-42);
+	print1argdiff("%+ 5d",(void *) 42);
+	print1argdiff("%+ 5d", (void *)-42);
+	print1argdiff("%0+0 5d",(void *) 42);
+	print1argdiff("%0+0 5d", (void *)-42);
+	print1argdiff("%+ -5d",(void *) 42);
+	print1argdiff("%+ -5d", (void *)-42);
+	print1argdiff("%+-5d",(void *) 42);
+	print1argdiff("%+-5d", (void *)-42);
+	print1argdiff("%+0-5d", (void *)-42);
+	print1argdiff("%- 5d",(void *) 42);
+	print1argdiff("%- 5d", (void *)-42);
+	print1argdiff("%+- 5d",(void *) 42);
+	print1argdiff("%+- 5d", (void *)-42);
+	print1argdiff("%+-0 5d",(void *) 42);
+	print1argdiff("%+-0 5d", (void *)-42);
+	print1argdiff("% -5d",(void *) 42);
+	print1argdiff("% -5d", (void *)-42);
+	print1argdiff("%+05d",(void *) 42);
+	print1argdiff("%+05d", (void *)-42);
+	print1argdiff("% 5i", (void *)-42);
+	print1argdiff("%5.3d",(void *) 42);
+	print1argdiff("%5.2d", (void *)-42);
+	print1argdiff("%5.3d", (void *)-42);
+	print1argdiff("%5.4d", (void *)-42);
+	print1argdiff("%5.5d", (void *)-42);
+	print1argdiff("%5.6d", (void *)-42);
+	print1argdiff("%6.4d", (void *)-42);
+	print1argdiff("%5.5d",(void *) 42);
+	print1argdiff("%5.6d",(void *) 42);
+	print1argdiff("%8.6d",(void *) 42);
+	print1argdiff("%.5d",(void *) 42);
+	print1argdiff("%.d",(void *) 42);
+	print1argdiff("%-05.3d",(void *) 42);
+	print1argdiff("%5.7d",(void *) 42);
+	print1argdiff("%10.5d",(void *) 42);
+	print1argdiff("%-10.5d",(void *) 42);
+	print1argdiff("%010.5d",(void *) 42);
+	print1argdiff("% 10.5d",(void *) 42);
+	print1argdiff("%0 10.5d",(void *) 42);
+	print1argdiff("%+10.5d",(void *) 42);
+	print1argdiff("%+-10.5d",(void *) 42);
+	print1argdiff("%- 10.5d",(void *) 42);
+	print1argdiff("%+010.5d",(void *) 42);
+	print1argdiff("%0+5.d",(void *) 12);
+	print1argdiff("% 5.7d",(void *) 42);
+	print1argdiff("%-10.5d", (void *)-42);
+	print1argdiff("%010.5d", (void *)-42);
+	print1argdiff("%+10.5d", (void *)-42);
+	print1argdiff("% 10.5d", (void *)-42);
+	print1argdiff("%+-10.5d", (void *)-42);
+	print1argdiff("%- 10.5d", (void *)-42);
+	print1argdiff("%+010.5d", (void *)-42);
+	print1argdiff("%0 8.6d", (void *)-42);
+	print1argdiff("%0 8.6d",(void *) 42);
+	print1argdiff("%0+8.6d",(void *) 42);
+	print1argdiff("%0+8.6d", (void *)-42);
+	print1argdiff("%0 8.6d",(void *) 42000);
+	print1argdiff("%0 8.6d", (void *)-42000);
+	print1argdiff("%0 8.7d", (void *)-42000);
+	print1argdiff("%0+8.7d",(void *) 42000);
+	print1argdiff("%0+8.7d", (void *)-42000);
+	print1argdiff("%-3.7d", (void *)-42000);
+	print1argdiff("%.7d",(void *) 42000);
+	print1argdiff("%+.7d", (void *)-42000);
+	print1argdiff("%+.7d",(void *) 42000);
+	print1argdiff("%+.003d", (void *)-42000);
+	print1argdiff("%+.d", (void *)-42000);
+	print1argdiff("%07.d",(void *) 42000);
+	print1argdiff("%0 10.5d", (void *)-42);
+	print1argdiff("%010.d", (void *)-2147483648);
+	print1argdiff("%.11i", (void *)-2147483648);
+	print1argdiff("%15.12d", (void *)-2147483648);
+	print1argdiff("%-15.12d", (void *)-2147483648);
+	print1argdiff("%015d", (void *)-2147483648);
+	print1argdiff("%015.12d", (void *)-2147483648);
+	print1argdiff("%0 10.5d",(void *) 0);
+	print1argdiff("%0+5d",(void *) 0);
+	print1argdiff("%0+5.d",(void *) 0);
+	print1argdiff("%0 5.i",(void *) 0);
+	print1argdiff("%-+5.d",(void *) 0);
+	print1argdiff("%-3.d",(void *) 0);
+	print1argdiff("%- 5.d",(void *) 0);
+	print1argdiff("%+.d",(void *) 0);
+	print1argdiff("%1.d",(void *) 0);
+	print1argdiff("%.d",(void *) 0);
+	print1argdiff("% .d",(void *) 0);
+	print1argdiff("% 5.3d",(void *) 0);
+	print1argdiff("%0+5.3d",(void *) 0);
+	print1argdiff("%-+5.3d",(void *) 0);
+	print1argdiff("%3d",(void *) 0);
+	print1argdiff("%-3d",(void *) 0);
+	print1argdiff("% 5.7d", (void *)-420000000);
+	print1argdiff("%+5.7d", (void *)-420000000);
+	print1argdiff("%+5.7d", (void *)-2147483648);
+	print1argdiff("% 5.7d", (void *)-2147483648);
+	print1argdiff("% +5.7d", (void *)-2147483648);
+	print1argdiff("%+.003d", (void *)-42000);
+	print1argdiff("%+ .003d", (void *)-2147483648);
+	print1argdiff("%+.d", (void *)-2147483648);
+	print1argdiff("%.d", (void *)-2147483648);
+	print1argdiff("%0+3d",(void *) 42000);
+	print1argdiff("%0 +3d", (void *)-42000);
+	print1argdiff("%0 3d", (void *)-42000);
+}
+/*
+make bonus && cc tester_bonus.c libftprintf.a -o printf && ./printf
+*/
+>>>>>>> fda5e6c (added length modifier, everything done until getting length and printing list)

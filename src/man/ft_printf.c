@@ -6,11 +6,10 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/29 00:44:30 by dligthar          #+#    #+#             */
-/*   Updated: 2024/01/23 19:31:14 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/02/01 23:13:45 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
 #include <stdarg.h> //va_list, va_start(), va_arg(), va_end()
 #include <unistd.h> //write()
 
@@ -124,7 +123,7 @@ int	ft_printf(const char *format, ...)
 	const char	*tmp;
 
 	if (!format)
-		return (ERROR_LIBFT);
+		return (NULL);
 	va_start(list, format);
 	printed = 0;
 	while (*format)
@@ -136,8 +135,8 @@ int	ft_printf(const char *format, ...)
 		y = 0;
 		if (*format == '%' && format++)
 			y = newformat(1, &format, &list, 0);
-		if (y < 0 || x < 0)
-			return (ERROR_LIBFT);
+		if (x < 0 || y < 0)
+			return (NULL);
 		printed = printed + x + y;
 	}
 	va_end(list);

@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_pflist_bonus.c                                  :+:      :+:    :+:   */
+/*   ft_print_bonus.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/30 17:28:42 by doligtha          #+#    #+#             */
-/*   Updated: 2024/02/01 03:00:04 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/02/02 04:11:59 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h" //ft_strchr(), ft_longlen(), ft_strlen(), ft_memcpy(),
+#include "printf.h" //ft_strchr(), ft_longlen(), ft_strlen(), ft_memcpy(),
 				    	//ft_pflistclear(), and the t_pflist t_conv structs;
 #include <stdlib.h> //malloc(), free();
 #include <limits.h> //MIN_INT
@@ -32,7 +32,7 @@
 //			dst + prefixlen--;
 static void	paste_digit(char *dst, t_pflist *node, char *basestr, char *prefix)
 {
-	t_conv			*c;
+	t_pfconv		*c;
 	unsigned long	b;
 	int				prefix_len;
 	int				arglen;
@@ -43,9 +43,9 @@ static void	paste_digit(char *dst, t_pflist *node, char *basestr, char *prefix)
 	arglen = ft_longlen(*(long *)node->item, b);
 	if (c->precision < 0)
 		c->precision = 0;
-	while (b > 1 && c->len--)
+	while (b > 1 && c->arglen--)
 	{
-		*(dst + c->precision + prefix_len + c->len)
+		*(dst + c->precision + prefix_len + c->arglen)
 			= basestr[(*(unsigned long *)node->item) % b];
 		*(int *)node->item /= b;
 	}
@@ -58,13 +58,14 @@ static void	paste_digit(char *dst, t_pflist *node, char *basestr, char *prefix)
 
 // calls paste_digit() with appropriate arguments (from t_pflist node info) to
 //	paste: (prefix + zero's + integer) onto tmp.
-static void	prefix_precisionzeros_integer(t_pflist *node, char *tmp, t_conv *c)
+static void	prefix_precisionzeros_integer(t_pflist *node, char *tmp,
+											t_pfconv *c)
 {
-	if (ft_strchr("di", c->conv) && *(int *)node->item == INT_MIN)
+	if (ft_strchr("di", c->conv) && node->item.i == INT_MIN)
 		ft_memcpy(tmp, "-2147483648", 11);
-	else if (ft_strchr("di", c->conv) && *(int *)node->item < 0)
+	else if (ft_strchr("di", c->conv) && node->item.i < 0)
 	{
-		*(int *)node->item *= -1;
+		node->item.i *= -1;
 		paste_digit(tmp, node, "0123456789", "-");
 	}
 	else if (ft_strchr("di", c->conv) && c->plus)
@@ -88,33 +89,33 @@ static void	prefix_precisionzeros_integer(t_pflist *node, char *tmp, t_conv *c)
 //before everything p exception. dont know if I need this:
 // if (c->conv == 'p')
 // {
-// 	while (c->minus && c->fieldwidth > c->len)
-// 		*(tmp + c->len + --c->fieldwidth) = ' ';
-// 	while (!c->minus && c->fieldwidth > c->len)
+// 	while (c->minus && c->fieldwidth > c->arglen)
+// 		*(tmp + c->arglen + --c->fieldwidth) = ' ';
+// 	while (!c->minus && c->fieldwidth > c->arglen)
 // 		*(tmp + --c->fieldwidth) = ' ';
 // 	if (*(unsigned int *)node->item && c->precision != 0) //weird edgecase!
 // 		ft_ulongtostr(node, tmp, 0, "0x");
 // 	return ;
 // }
-static void	pasteinteger(t_pflist *node, char *tmp, t_conv *c)
+static void	pasteinteger(t_pflist *node, char *tmp, t_pfconv *c)
 {
-	if (!c)
-		return ;
-//	handles e.g. "ppzzaass" the ss part, reduces fieldwidth to use it as offset;
-//	what did he sayyyy:
-//		str char where: p = prefix_chars, z = zeros, a = arg_chars, s = spaces;
-	while (c->minus && c->fw > c->len)
+	while (c->minus && c->fw > c->arglen)
 		*(tmp + c->fw--) = ' ';
-	if (c->conv == 'p' && !(int *)node->item)
-		ft_memcpy(tmp + c->fw, "(nil)", c->len);
-	else if (c->fw > c->len)
-		prefix_precisionzeros_integer(node, tmp + c->fw - c->len, c);
-	else if (c->len)
+	if (c->conv == 'p' && !node->item.ptr)
+		ft_memcpy(tmp + c->fw, "(nil)", 5);
+	else if (c->fw > c->arglen)
+		prefix_precisionzeros_integer(node, tmp + c->fw - c->arglen, c);
+	else if (c->arglen)
 		prefix_precisionzeros_integer(node, tmp, c);
 	while (!c->minus && c->fw && c->zero) //TODO: %p check needed for fieldwidth zero or space printing???
-		*(tmp + c->len + c->fw--) = (char)'0';
+		*(tmp + c->arglen + c->fw--) = (char)'0';
 	while (!c->minus && c->fw && !c->zero)
-		*(tmp + c->len + c->fw--) = (char)' ';
+		*(tmp + c->arglen + c->fw--) = (char)' ';
+}
+
+static void	paste_actual_item(union s_pfitem *item, int arglen, char c)
+{
+	
 }
 
 // order of node setting handling:
@@ -123,33 +124,32 @@ static void	pasteinteger(t_pflist *node, char *tmp, t_conv *c)
 //	- char *str, strlen(str) or, if smaller, precision len + fw;
 //	- digit conversion;
 // pastes the string, character or percent_sign into tmp; or calls pasteitem2().
-static void	pasteitem(t_pflist *node, char *tmp, t_conv *c)
+static void	pasteitem(t_pflist *node, char *tmp, t_pfconv *c)
 {
 	while (c == NULL && node->itemlen--)
-		*(tmp + node->itemlen) = *((char *)node->item + node->itemlen);
-	if (c != NULL && (c->conv == 'c' || c->conv == '%'))
+		*(tmp + node->itemlen) = *(node->item.s + node->itemlen);
+	if (c->conv == 'c' || c->conv == '%')
 	{
-		// printf("CONVERSION %c; LEN=%d ; FT_PFLIST%.1s\n", c->conv, c->len, (char *)node->item);
-		while (c->minus && c->fw > c->len)
-			*(tmp + c->len + c->fw--) = ' ';
-		*(tmp + c->fw) = '%';
+		while (c->minus && c->fw > c->arglen)
+			*(tmp + c->arglen + c->fw--) = ' ';
+		*(tmp + c->fw - c->arglen) = '%';
 		if (c->conv == 'c')
-			*(tmp + c->fw) = *(char *)node->item;
-		while (!c->minus && c->fw > c->len)
-			*(tmp + c->len + c->fw--) = ' ';
+			*(tmp + c->fw - c->arglen) = node->item.c;
+		while (!c->minus && c->fw > c->arglen)
+			*(tmp + c->arglen + c->fw--) = ' ';
 	}
-	else if (c != NULL && c->conv == 's')
-	{
-		while (c->minus && c->fw-- >= c->len)
-			*(tmp + c->len + c->fw) = ' ';
-		while ((char *)node->item && c->len--)
-			*(tmp + c->fw + c->len) = *(char *)node->item + c->len;
-		if (!(char *)node->item)
-			ft_memcpy(tmp + c->fw, "(null)", 6);		
-		while (!c->minus && c->fw--)
-			*(tmp + c->fw) = ' ';
-	}
-	else if (c != NULL && ft_strchr("pdiuxXo", c->conv))
+	// else if (c->conv == 's')
+	// {
+	// 	while (c->minus && c->fw-- >= c->arglen)
+	// 		*(tmp + c->arglen + c->fw) = ' ';
+	// 	while (node->item.s && c->arglen--)
+	// 		*(tmp + c->fw + c->arglen) = *(node->item.s + c->arglen);
+		if (!node->item.s)
+			ft_memcpy(tmp + c->fw, "(null)", 6);
+	// 	while (!c->minus && c->fw--)
+	// 		*(tmp + c->fw) = ' ';
+	// }
+	else if (ft_strchr("pdiuxXo", c->conv))
 		pasteinteger(node, tmp, c);
 }
 
@@ -166,8 +166,8 @@ int	ft_printf_printpflist(int fd, t_pflist *origin, int total)
 	node = origin;
 	while (node)
 	{
-		if (node->itemlen == ERROR_LIBFT)
-			return (ft_pflistclear(origin), ERROR_LIBFT);
+		if (node->itemlen == ERROR_FTPRINTF)
+			return (ft_pflistclear(origin), ERROR_FTPRINTF);
 		total += node->itemlen;
 		node = node->next;
 	}
@@ -195,7 +195,7 @@ int	ft_printf_printpflist(int fd, t_pflist *origin, int i)
 			printf(",");
 		printf("\n");
 		printf(GREEN"\tnode_%p: {\n"RESET, ptr);
-			printf(MAGENTA"\t\t.item: %p,\n"RESET, ptr->item);
+			printf(MAGENTA"\t\t.item: %p,\n"RESET, &ptr->item);
 			if (ptr->conv)
 			{
 				printf(MAGENTA"\t\t.conv_%p: [\n"RESET, ptr->conv);
@@ -207,8 +207,9 @@ int	ft_printf_printpflist(int fd, t_pflist *origin, int i)
 					printf("\t\t\t.fieldwidth: "CYAN"%d"RESET",\n", ptr->conv->fw);
 					printf("\t\t\t.dot:        "CYAN"%s"RESET",\n", ptr->conv->dot ? "true" : "false");
 					printf("\t\t\t.precision:  "CYAN"%d"RESET",\n", ptr->conv->precision);
-					printf("\t\t\t.conversion: "CYAN"%c"RESET",\n", ptr->conv->conv);
-					printf("\t\t\t.len:        "CYAN"%d"RESET",\n", ptr->conv->len);
+					printf("\t\t\t.lengthmod:  "CYAN"%d"RESET",\n", ptr->conv->lengthmod);
+					printf("\t\t\t.conv: "CYAN"%c"RESET",\n", ptr->conv->conv);
+					printf("\t\t\t.arglen:        "CYAN"%d"RESET",\n", ptr->conv->arglen);
 				printf(MAGENTA"\t\t],\n"RESET);
 			}
 			printf(MAGENTA"\t\t.itemlen: %d,\n"RESET, ptr->itemlen);

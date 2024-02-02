@@ -6,7 +6,7 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/05 19:09:51 by doligtha          #+#    #+#             */
-/*   Updated: 2024/02/01 02:53:10 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/02/02 03:33:29 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,10 @@
 # define LIBFT_H
 # include <stddef.h>  // 'size_t';
 # include <stdbool.h> // 'bool';
+
+# ifndef VA_FORBIDDEN
+#  include "printf.h"
+# endif
 
 //this shit is hella slow but lets go
 # ifdef DEBUG
@@ -37,60 +41,12 @@
 #  endif
 # endif // #ifdef DEBUG
 
-# ifndef ERROR_LIBFT
-#  define ERROR_LIBFT -1
-# endif
-
-
-
 //linked list:
 typedef struct s_list
 {
 	void			*content;
 	struct s_list	*next;
 }	t_list;
-
-// # ifndef LIBFT_VA_FORBIDDEN
-//printf()'s conversion data:
-typedef struct s_conv 
-{
-	bool	minus;
-	bool	zero;
-	bool	hash;
-	bool	space;
-	bool	plus;
-	int		fw;
-	bool	dot;
-	int		precision;
-	char	conv;
-	int		len;
-}	t_conv;
-
-//printf()'s linked list:
-typedef struct s_pflist
-{
-	void			*item;
-	t_conv			*conv;
-	int				itemlen;
-	struct s_pflist	*next;
-}	t_pflist;
-
-//ft_printf:
-//			ft_printf()'s struct functions:
-void		ft_pflistclear(t_pflist *pflist);
-t_pflist	*ft_newpflist_append(t_pflist **pflist);
-t_conv		*ft_newconv(void);
-
-//		ft_printf()'s conversion length functions:
-int		ft_pf_getitemlen_min_fw(void *item, t_conv *conv);
-int		ft_pf_getitemlen(void *item, t_conv *conv);
-
-//		ft_printf() print functions:
-int		ft_printf_printpflist(int fd, t_pflist *origin, int total);
-int		ft_printf(const char *format, ...)
-		__attribute__((format (printf, 1, 2))); //ft_strchr(), ft_atoi(),
-void	ft_varray(char **array, const char *format, ...);
-// # endif
 
 //PDF ORDER:
 //part 1 - ctype.h, string.h, strings.h, stdlib.h:
@@ -144,9 +100,4 @@ void	ft_lstclear(t_list **lst, void (*del)(void *)); //ft_lstdelone()
 void	ft_lstiter(t_list *lst, void (*f)(void *));
 t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *));
 			// ft_lstclear(), ft_lstnew(), ft_lstadd_back();
-
-//my own custom functions:
-int		ft_intlen(int n, int base);
-int		ft_longlen(long n, long base);
-
 #endif
