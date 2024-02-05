@@ -6,11 +6,14 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/04 21:16:31 by doligtha          #+#    #+#             */
-/*   Updated: 2024/02/05 02:25:09 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/02/05 03:12:44 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-//ssize_t size_t
+//ssize_t
+#include <unistd.h>
+
+//size_t
 #include <stddef.h>
 
 //intmax_t uintmax_t intptr_t

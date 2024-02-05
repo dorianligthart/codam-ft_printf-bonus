@@ -6,7 +6,7 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/29 18:26:54 by doligtha          #+#    #+#             */
-/*   Updated: 2024/02/05 02:22:53 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/02/05 03:05:50 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,30 +100,30 @@ static void	parse_format(const char *format, int *i,
 }
 
 static bool	pfstr_pfarg(const char *format, int *i, \
-							va_list *list, t_pflist *node)
+							va_list *list, t_pflist *n)
 {
-	if (!node)
+	if (!n)
 		return (false);
 	if (format[*i] != '%')
 	{
-		node->itemlen = 0;
-		while (format[*i + node->itemlen] && format[*i + node->itemlen] != '%')
-			node->itemlen++;
-		node->item.s = (char *)format;
-		*i += node->itemlen;
+		n->itemlen = 0;
+		while (format[*i + n->itemlen] && format[*i + n->itemlen] != '%')
+			n->itemlen++;
+		n->item.s = (char *)format;
+		*i += n->itemlen;
 	}
 	else
 	{
-		node->conv = ft_newpfconv();
-		if (!node->conv)
+		n->conv = ft_newpfconv();
+		if (!n->conv)
 			return (false);
-		parse_format(format, i, list, node->conv);
-		if (node->conv->c == 0)
+		parse_format(format, i, list, n->conv);
+		if (n->conv->c == 0)
 			return (false);
-		if (node->conv->plus)
-			node->conv->space = false;
-		ft_pf_setunion(&node->item, list, node->conv->lengthmod, node->conv->c);
-		node->itemlen = ft_pf_itemlen(&node->item, node->conv, node->conv->c);
+		if (n->conv->plus)
+			n->conv->space = false;
+		ft_pf_set_va_arg(&n->item, list, n->conv->lengthmod, n->conv->c);
+		n->itemlen = ft_pf_itemlen(&n->item, n->conv, n->conv->c);
 	}
 	return (true);
 }
@@ -145,5 +145,5 @@ int	ft_printf(const char *format, ...)
 			return (ft_pflistclear(origin), ERROR_FTPRINTF);
 	va_end(list);
 	fd = 1;
-	return (ft_printf_printpflist(fd, origin, 0));
+	return (ft_pf_printpflist(fd, origin, origin, 0));
 }

@@ -6,31 +6,50 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/05 00:27:59 by doligtha          #+#    #+#             */
-/*   Updated: 2024/02/05 02:27:30 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/02/05 03:19:25 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "printf.h"
-#include <stdio.h>
+#include <stdlib.h>
 
-static void	pasteitem(int fd, t_pflist *node, char *dst, t_pfconv *conv)
+static void	pasteitem(t_pflist *node, char *dst, int len, t_pfconv *conv)
 {
 	int	i;
 
-	i = -1;
-	while (conv == NULL && ++i < len)
-		*(dst + i) = *(node->item.s + i);
-	if (conv)
-		ft_printf_printpflist(1, node, 0);
+	if (conv == NULL)
+	{
+		i = -1;
+		while (++i < len)
+			*(dst + i) = *(node->item.s + i);
+	}
 }
 
-int	ft_printf_printpflist(int fd, t_pflist *origin, int total)
+static void	pf_set_n_arg(union s_pfitem *item, ptrdiff_t printed, int lm)
 {
-	t_pflist	*node;
+	if (lm == 0)
+		*item->n = (int)printed;
+	else if (lm == 1)
+		*item->hhn = (signed char)printed;
+	else if (lm == 2)
+		*item->hn = (short)printed;
+	else if (lm == 3)
+		*item->ln = (long)printed;
+	else if (lm == 4)
+		*item->lln = (long long)printed;
+	else if (lm == 5)
+		*item->jn = (intmax_t)printed;
+	else if (lm == 6)
+		*item->zn = (size_t)printed;
+	else if (lm == 7)
+		*item->tn = printed;
+}
+
+int	ft_pf_printpflist(int fd, t_pflist *origin, t_pflist *node, int total)
+{
 	char		*dst;
 	char		*tmp;
 
-	node = origin;
 	while (node)
 	{
 		if (node->itemlen == ERROR_FTPRINTF)
@@ -43,7 +62,9 @@ int	ft_printf_printpflist(int fd, t_pflist *origin, int total)
 	node = origin;
 	while (dst && node)
 	{
-		pasteitem(fd, node, tmp, node->conv);
+		if (node->conv->c == 'n')
+			pf_set_n_arg(&node->item, tmp - dst, node->conv->lengthmod);
+		pasteitem(node, tmp, node->itemlen, node->conv);
 		tmp += node->itemlen;
 		node = node->next;
 	}
