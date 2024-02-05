@@ -6,11 +6,36 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 13:33:57 by rde-brui          #+#    #+#             */
-/*   Updated: 2024/01/24 16:44:14 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/02/05 02:22:29 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "test.h"
+
+
+/**
+ * @brief prototype dit in header en maak een tester folder met de files van slack
+ * int	fft_printf(const char *format, va_list tmp);
+*/
+int	fft_printf(const char *format, va_list tmp)
+{
+	va_list		list;
+	int			i;
+	t_pflist	*origin;
+	int			fd;
+
+	if (!format)
+		return (ERROR_FTPRINTF);
+	origin = (void *)0;
+	va_copy(list, tmp);
+	i = 0;
+	while (format[i])
+		if (!str_or_arg(format, &i, &list, &origin))
+			return (ft_pflistclear(origin), ERROR_FTPRINTF);
+	va_end(list);
+	fd = 1;
+	return (ft_printf_printpflist(fd, origin));
+}
 
 int	main(int argc, char **argv)
 {

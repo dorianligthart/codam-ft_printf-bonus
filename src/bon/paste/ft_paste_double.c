@@ -1,27 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_int_len.c                                       :+:      :+:    :+:   */
+/*   ft_paste_double.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/23 13:08:39 by doligtha          #+#    #+#             */
-/*   Updated: 2024/02/02 03:42:56 by doligtha         ###   ########.fr       */
+/*   Created: 2024/02/05 01:45:31 by doligtha          #+#    #+#             */
+/*   Updated: 2024/02/05 02:16:28 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-//returns length ochareger viewed as characters.
-int	ft_longlen(long n, long base)
-{
-	int	longlen;
+#include "printf.h"
 
-	longlen = 1;
-	while (n <= -base || n >= base)
-	{
-		n /= base;
-		longlen++;
-	}
-	if (n < 0)
-		longlen++;
-	return (longlen);
+int	ft_double_paste(double d, char c, char *dst, t_pfconv *conv)
+{
+	return (UNIMPLEMENTED_FTPRINTF);
+}
+
+int	ft_longdouble_paste(long double d, char c, char *dst, t_pfconv *conv)
+{
+	return (UNIMPLEMENTED_FTPRINTF);
 }

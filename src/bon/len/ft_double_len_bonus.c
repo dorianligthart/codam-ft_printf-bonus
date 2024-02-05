@@ -1,27 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_uint_len.c                                      :+:      :+:    :+:   */
+/*   ft_double_len_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/23 13:08:39 by doligtha          #+#    #+#             */
-/*   Updated: 2024/02/02 03:43:08 by doligtha         ###   ########.fr       */
+/*   Created: 2024/02/04 23:09:07 by doligtha          #+#    #+#             */
+/*   Updated: 2024/02/05 02:25:19 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-//returns length ochareger viewed as characters.
-int	ft_ulonglen(unsigned long n, unsigned long base)
-{
-	int	longlen;
+#include "printf.h"
 
-	longlen = 1;
-	while (n <= -base || n >= base)
-	{
-		n /= base;
-		longlen++;
-	}
-	if (n < 0)
-		longlen++;
-	return (longlen);
+int	ft_double_len(double d, char c, t_pfconv *conv, int precision)
+{
+	return (UNIMPLEMENTED_FTPRINTF);
+}
+
+int	ft_longdouble_len(long double d, char c, t_pfconv *conv, int precision)
+{
+	return (UNIMPLEMENTED_FTPRINTF);
 }

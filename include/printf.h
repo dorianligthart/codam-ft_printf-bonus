@@ -6,44 +6,37 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 22:22:38 by doligtha          #+#    #+#             */
-/*   Updated: 2024/02/02 04:04:20 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/02/05 02:19:49 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PRINTF_H
 # define PRINTF_H
 
-# ifdef DEBUG
-#  include <stdio.h>
-#  include <unistd.h>
-#  include <limits.h>
-#  include <string.h>
-#  if defined(RESET) || defined(BLACK) || defined(RED) \
-	|| defined(GREEN) || defined(YELLOW) || defined(BLUE) \
-	|| defined(MAGENTA) || defined(CYAN) || defined(WHITE)
-#  else
-#   define RESET "\033[0m"
-#   define BLACK "\033[0;30m"
-#   define RED "\033[0;31m"
-#   define GREEN "\033[0;32m"
-#   define YELLOW "\033[0;33m"
-#   define BLUE "\033[0;34m"
-#   define MAGENTA "\033[0;35m"
-#   define CYAN "\033[0;36m"
-#   define WHITE "\033[0;37m"
-#  endif // #ifndef COLOR_NAMES
-# endif // #ifdef DEBUG
-
 #  ifndef ERROR_FTPRINTF
 #   define ERROR_FTPRINTF -1
+#  endif
+
+#  ifndef UNREACHABLE_FTPRINTF
+#   define UNREACHABLE_FTPRINTF 69
+#  endif
+
+#  ifndef UNIMPLEMENTED_FTPRINTF
+#   define UNIMPLEMENTED_FTPRINTF 0
 #  endif
 
 #  include <stdbool.h>
 #  include <stdarg.h>
 #  include <stdint.h>
 #  include <stddef.h>
-#  include <sys/types.h>
 
+//ft_printf()'s union for all conversions. Note that:
+//  wchar_t* and wint_t datatypes ARE NOT SUPPORTED (lengthmod "ls" and "lc"),
+//	with the following statements in mind you can 
+//  view this union as the actual printf() format string:
+//    "i" could be "d",
+//    "u" could be "x", "X", "o",
+//    "f" could be "F", "e", "E", "a", "A", "g", "G",
 union s_pfitem
 {
 	char 				c;
@@ -65,7 +58,7 @@ union s_pfitem
 	unsigned long long	llu;
 	uintmax_t			ju;
 	size_t				zu;
-	ptrdiff_t			tu;
+	size_t				tu;
 
 	double				f;
 	long double			Lf;
@@ -82,16 +75,12 @@ union s_pfitem
 	void *				p;
 };
 
-//lengthmod:
-// 0 == none;
-// 1 == h;
-// 2 == l;
-// 3 == hh;
-// 4 == ll;
-// 5 == j;
-// 6 == z;
-// 7 == t;
-// 8 == L;
+//conversion flags struct (in order of parsing). note that:
+//  c = conversion character.
+//  lengthmod value determined by ft_printf()'s format string:
+//    0="",  1="hh", 2="h", 3="l", 4="ll",
+//    5="j", 6="z",  7="t", 8="L".
+//  arglen = the arglen acquired by the "./bon/len/*" functions.
 typedef struct s_pfconv 
 {
 	bool	minus;
@@ -103,77 +92,73 @@ typedef struct s_pfconv
 	bool	dot;
 	int		precision;
 	int		lengthmod;
-	char	conv;
+	char	c;
 	int		arglen;
 }	t_pfconv;
 
 typedef struct s_pflist
 {
-	int				uniontype;
 	union s_pfitem	item;
 	t_pfconv		*conv;
 	int				itemlen;
 	struct s_pflist	*next;
 }	t_pflist;
 
-void		ft_pflistclear(t_pflist *pflist);
-int			ft_printf_printpflist(int fd, t_pflist *origin, int total);
 
-void		ft_pf_union(union s_pfitem *item, t_pfconv *conv, va_list *list);
-int			ft_pf_arglen(union s_pfitem *item, t_pfconv *conv);
-int			ft_pf_itemlen(union s_pfitem *item, t_pfconv *conv);
+//length modifier functions :
+# ifndef PF_PASTE
+#  define PF_PASTE "char *dst, t_pfconv *conv"
+# endif
+//	signedinteger:
+int	ft_signedchar_len(signed char n, signed char base);
+int	ft_signedchar_paste(signed char n, signed char base, PF_PASTE);
+int	ft_short_len(short n, short base);
+int	ft_short_paste(short n, short base, PF_PASTE);
+int	ft_int_len(int n, int base);
+int	ft_int_paste(int n, int base, PF_PASTE);
+int	ft_long_len(long n, long base);
+int	ft_long_paste(long n, long base, PF_PASTE);
+int	ft_longlong_len(long long n, long long base);
+int	ft_longlong_paste(long long n, long long base, PF_PASTE);
+int	ft_ssize_t_len(ssize_t n, ssize_t base);
+int	ft_ssize_t_paste(ssize_t n, ssize_t base, PF_PASTE);
+int	ft_intmax_len(intmax_t n, intmax_t base);
+int	ft_intmax_paste(intmax_t n, intmax_t base, PF_PASTE);
+int	ft_ptrdiff_t_len(ptrdiff_t n, ptrdiff_t base);
+int	ft_ptrdiff_t_paste(ptrdiff_t n, ptrdiff_t base, PF_PASTE);
+//	unsigned integer (note, 'uptrdiff_t' is obtained and parsed as 'size_t'):
+int	ft_uchar_len(unsigned char n, unsigned char base);
+int	ft_uchar_paste(unsigned char n, unsigned char base, PF_PASTE);
+int	ft_ushort_len(unsigned short n, unsigned short base);
+int	ft_ushort_paste(unsigned short n, unsigned short base, PF_PASTE);
+int	ft_uint_len(unsigned int n, unsigned int base);
+int	ft_uint_paste(unsigned int n, unsigned int base, PF_PASTE);
+int	ft_ulong_len(unsigned long n, unsigned long base);
+int	ft_ulong_paste(unsigned long n, unsigned long base, PF_PASTE);
+int	ft_ulonglong_len(unsigned long long n, unsigned long long base);
+int	ft_ulonglong_paste(unsigned long long n, unsigned long long base, PF_PASTE);
+int	ft_size_t_len(size_t n, size_t base);
+int	ft_size_t_paste(size_t n, size_t base, PF_PASTE);
+int	ft_uintmax_len(uintmax_t n, uintmax_t base);
+int	ft_uintmax_paste(uintmax_t n, uintmax_t base, PF_PASTE);
+//	(long) double:
+int	ft_double_len(double d, char c, t_pfconv *conv, int precision);
+int	ft_double_paste(double d, char c, PF_PASTE);
+int	ft_longdouble_len(long double d, char c, t_pfconv *conv, int precision);
+int	ft_longdouble_paste(long double d, char c, PF_PASTE);
 
-t_pfconv	*ft_newpfconv(void);
+//ft_printf()'s struct functions decl:
+void	ft_pflistclear(t_pflist *pflist);
 t_pflist	*ft_newpflist_append(t_pflist **pflist);
+t_pfconv	*ft_newpfconv(void);
 
-int			ft_printf(const char *format, ...) \
+//ft_printf()'s main functions (read order down to up):
+int	ft_printf_printpflist(int fd, t_pflist *origin, int total);
+int	ft_pf_itemlen(union s_pfitem *item, t_pfconv *conv, char c);
+void	ft_pf_set_va_arg_in_union(union s_pfitem *item, va_list *list,\
+				int lm, char c);
+int	ft_printf(const char *format, ...) \
 			__attribute__((format (printf, 1, 2)));
-
-//TODO: integer viewed as characters, return strlen() functions:
-/*
-char
-char *
-signed char
-short
-int
-long
-long long
-intmax_t
-size_t
-ptrdiff_t
-unsigned char
-unsigned short
-unsigned int
-unsigned long
-unsigned long long
-uintmax_t
-ssize_t
-ptrdiff_t
-double
-long double
-signed char	*
-short *
-int *
-long *
-long long *
-intmax_t *
-size_t *
-ptrdiff_t *
-void *
-*/
-//my own integer len functions:
-int		ft_charlen(char n, char base);
-int		ft_shortlen(short n, short base);
-int		ft_intlen(int n, int base);
-int		ft_longlen(long n, long base);
-int		ft_longlonglen(long long n, long long base);
-
-int		ft_ucharlen(unsigned char n, unsigned char base);
-int		ft_ushortlen(unsigned short n, unsigned short base);
-int		ft_uintlen(unsigned int n, unsigned int base);
-int		ft_ulonglen(unsigned long n, unsigned long base);
-int		ft_ulonglonglen(unsigned long long n, unsigned long long base);
-
 
 // EXTRA VA_LIST FUNCTIONS:
 void	ft_varray(char **array, const char *format, ...);

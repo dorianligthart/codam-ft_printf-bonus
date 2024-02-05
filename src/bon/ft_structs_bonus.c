@@ -6,7 +6,7 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 00:04:19 by doligtha          #+#    #+#             */
-/*   Updated: 2024/02/02 04:02:38 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/02/04 20:51:27 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ t_pfconv	*ft_newpfconv(void)
 	c->plus = false;
 	c->fw = 0;
 	c->dot = false;
-	c->precision = -1;
+	c->precision = 1;
 	c->lengthmod = 0;
 	c->conv = '\0';
 	c->arglen = 0;

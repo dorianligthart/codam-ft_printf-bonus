@@ -6,7 +6,7 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/29 18:26:54 by doligtha          #+#    #+#             */
-/*   Updated: 2024/02/02 03:57:27 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/02/05 02:22:53 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,28 +15,28 @@
 #include <stdarg.h>
 #include <stdbool.h>
 
-static void set_lengthmod(const char *format, int *i, t_pfconv *c)
+static void	set_lengthmod(const char *format, int *i, t_pfconv *conv)
 {
 	if (format[*i] == 'h' && ++(*i))
 	{
-		c->lengthmod += 1;
+		conv->lengthmod = 2;
 		if (format[*i] == 'h' && ++(*i))
-			c->lengthmod += 1;
+			conv->lengthmod = 1;
 	}
 	else if (format[*i] == 'l' && ++(*i))
 	{
-		c->lengthmod += 2;
+		conv->lengthmod += 3;
 		if (format[*i] == 'l' && ++(*i))
-			c->lengthmod += 2;
+			conv->lengthmod = 4;
 	}
 	else if (format[*i] == 'j' && ++(*i))
-		c->lengthmod = 5;
+		conv->lengthmod = 5;
 	else if (format[*i] == 'z' && ++(*i))
-		c->lengthmod = 6;
+		conv->lengthmod = 6;
 	else if (format[*i] == 't' && ++(*i))
-		c->lengthmod = 7;
+		conv->lengthmod = 7;
 	else if (format[*i] == 'L' && ++(*i))
-		c->lengthmod = 8;
+		conv->lengthmod = 8;
 }
 
 static void	width_precision(const char *format, int *i,
@@ -70,36 +70,36 @@ static void	width_precision(const char *format, int *i,
 }
 
 static void	parse_format(const char *format, int *i,
-							va_list *list, t_pfconv *c)
+							va_list *list, t_pfconv *conv)
 {
 	while (ft_strchr("-0# +", format[*i]))
 	{
-		c->minus = (bool)(c->minus || format[*i] == '-');
-		c->zero = (bool)(c->zero || format[*i] == '0');
-		c->hash = (bool)(c->hash || format[*i] == '#');
-		c->space = (bool)(c->space || format[*i] == ' ');
-		c->plus = (bool)(c->plus || format[*i] == '+');
+		conv->minus = (bool)(conv->minus || format[*i] == '-');
+		conv->zero = (bool)(conv->zero || format[*i] == '0');
+		conv->hash = (bool)(conv->hash || format[*i] == '#');
+		conv->space = (bool)(conv->space || format[*i] == ' ');
+		conv->plus = (bool)(conv->plus || format[*i] == '+');
 		(*i)++;
 	}
 	if ((format[*i] >= '0' && format[*i] <= '9') || format[*i] == '*')
-		width_precision(format, i, list, &c->fw);
+		width_precision(format, i, list, &conv->fw);
 	if (format[*i] == '.' && ++(*i))
-		c->dot = true;
+		conv->dot = true;
 	if (format[*i - 1] == '.')
-		width_precision(format, i, list, &c->precision);
-	if (c->fw < 0)
+		width_precision(format, i, list, &conv->precision);
+	if (conv->fw < 0)
 	{
-		c->fw *= -1;
-		c->minus = true;
+		conv->fw *= -1;
+		conv->minus = true;
 	}
-	if (   format[*i] == 'h' || format[*i] == 'l' || format[*i] == 'j'
+	if (format[*i] == 'h' || format[*i] == 'l' || format[*i] == 'j'
 		|| format[*i] == 'z' || format[*i] == 't' || format[*i] == 'L')
-		set_lengthmod(format, i, c);
+		set_lengthmod(format, i, conv);
 	if (ft_strchr("csdioxXufFeEaAgGnp", format[*i]))
-		c->conv = format[(*i)++];
+		conv->c = format[(*i)++];
 }
 
-static bool	pfstr_pfarg(const char *format, int *i,\
+static bool	pfstr_pfarg(const char *format, int *i, \
 							va_list *list, t_pflist *node)
 {
 	if (!node)
@@ -118,11 +118,12 @@ static bool	pfstr_pfarg(const char *format, int *i,\
 		if (!node->conv)
 			return (false);
 		parse_format(format, i, list, node->conv);
-		if (node->conv->conv == 0)
+		if (node->conv->c == 0)
 			return (false);
 		if (node->conv->plus)
 			node->conv->space = false;
-		ft_pf_union(&node->item, node->conv, list);
+		ft_pf_setunion(&node->item, list, node->conv->lengthmod, node->conv->c);
+		node->itemlen = ft_pf_itemlen(&node->item, node->conv, node->conv->c);
 	}
 	return (true);
 }
@@ -146,61 +147,3 @@ int	ft_printf(const char *format, ...)
 	fd = 1;
 	return (ft_printf_printpflist(fd, origin, 0));
 }
-
-// /**
-//  * @brief prototype dit in header en maak een tester folder met de files van slack
-//  * int	fft_printf(const char *format, va_list tmp);
-// */
-// int	fft_printf(const char *format, va_list tmp)
-// {
-// 	va_list		list;
-// 	int			i;
-// 	t_pflist	*origin;
-// 	int			fd;
-
-// 	if (!format)
-// 		return (ERROR_FTPRINTF);
-// 	origin = (void *)0;
-// 	va_copy(list, tmp);
-// 	i = 0;
-// 	while (format[i])
-// 		if (!str_or_arg(format, &i, &list, &origin))
-// 			return (ft_pflistclear(origin), ERROR_FTPRINTF);
-// 	va_end(list);
-// 	fd = 1;
-// 	return (ft_printf_printpflist(fd, origin));
-// }
-
-
-// OLD ARGLEN GETTER: called like:
-//		set_arglen(&node->item, list, node->conv, node->conv->conv);
-//
-// static void set_arglen(union s_pfitem *item, va_list *list,
-// 						t_pfconv *conv, char c)
-// {
-// 	if (c == 'c')
-// 	{
-// 		item->c = (char)va_arg(*list, int);
-// 		conv->arglen = sizeof(char);
-// 	}
-// 	if (c == 's')
-// 	{
-// 		item->s = va_arg(*list, char *);
-// 		conv->arglen = ft_strlen(item->s);
-// 	}
-// 	if (c == 'p')
-// 	{
-// 		item->p = va_arg(*list, void *);
-// 		conv->arglen = ft_longlen((long)item->p, 16);
-// 	}
-// 	if (c == 'd' || c == 'i')
-// 	{
-// 		item->i = va_arg(*list, int);
-// 		conv->arglen = ft_longlen(item->i, 10);
-// 	}
-// 	if (c == 'u' || c == 'x' || c == 'X')
-// 	{
-// 		item->u = va_arg(*list, unsigned int);
-// 		conv->arglen = ft_longlen(item->u, (c == 'u' * 10) + (c != 'u' * 16));
-// 	}
-// }
