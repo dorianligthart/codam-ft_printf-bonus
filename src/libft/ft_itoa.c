@@ -6,7 +6,7 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/07 19:36:22 by doligtha          #+#    #+#             */
-/*   Updated: 2024/02/01 01:59:16 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/02/05 02:46:04 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,22 @@
 #include "libft.h"
 #include <stdlib.h>
 
+//returns length of integer viewed as characters.
+static int	ft_itoa_intlen(int n, int base)
+{
+	int	result;
+
+	result = 1;
+	while (n <= -base || n >= base)
+	{
+		n /= base;
+		result++;
+	}
+	if (n < 0)
+		result++;
+	return (result);
+}
+
 char	*ft_itoa(int n)
 {
 	char	*result;
@@ -28,7 +44,7 @@ char	*ft_itoa(int n)
 	long	n_long;
 
 	n_long = (long)n;
-	index = ft_intlen(n, 10);
+	index = ft_itoa_intlen(n, 10);
 	result = (char *)malloc((index + 1) * sizeof(char));
 	if (!result)
 		return (NULL);

@@ -6,7 +6,7 @@
 /*   By: doligtha <doligtha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 22:22:38 by doligtha          #+#    #+#             */
-/*   Updated: 2024/02/05 02:19:49 by doligtha         ###   ########.fr       */
+/*   Updated: 2024/02/05 03:15:07 by doligtha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@
 #  include <stdarg.h>
 #  include <stdint.h>
 #  include <stddef.h>
+#  include <unistd.h>
 
 //ft_printf()'s union for all conversions. Note that:
 //  wchar_t* and wint_t datatypes ARE NOT SUPPORTED (lengthmod "ls" and "lc"),
@@ -106,46 +107,43 @@ typedef struct s_pflist
 
 
 //length modifier functions :
-# ifndef PF_PASTE
-#  define PF_PASTE "char *dst, t_pfconv *conv"
-# endif
 //	signedinteger:
 int	ft_signedchar_len(signed char n, signed char base);
-int	ft_signedchar_paste(signed char n, signed char base, PF_PASTE);
+int	ft_signedchar_paste(signed char n, signed char base, char *dst, t_pfconv *conv);
 int	ft_short_len(short n, short base);
-int	ft_short_paste(short n, short base, PF_PASTE);
+int	ft_short_paste(short n, short base, char *dst, t_pfconv *conv);
 int	ft_int_len(int n, int base);
-int	ft_int_paste(int n, int base, PF_PASTE);
+int	ft_int_paste(int n, int base, char *dst, t_pfconv *conv);
 int	ft_long_len(long n, long base);
-int	ft_long_paste(long n, long base, PF_PASTE);
+int	ft_long_paste(long n, long base, char *dst, t_pfconv *conv);
 int	ft_longlong_len(long long n, long long base);
-int	ft_longlong_paste(long long n, long long base, PF_PASTE);
+int	ft_longlong_paste(long long n, long long base, char *dst, t_pfconv *conv);
 int	ft_ssize_t_len(ssize_t n, ssize_t base);
-int	ft_ssize_t_paste(ssize_t n, ssize_t base, PF_PASTE);
+int	ft_ssize_t_paste(ssize_t n, ssize_t base, char *dst, t_pfconv *conv);
 int	ft_intmax_len(intmax_t n, intmax_t base);
-int	ft_intmax_paste(intmax_t n, intmax_t base, PF_PASTE);
+int	ft_intmax_paste(intmax_t n, intmax_t base, char *dst, t_pfconv *conv);
 int	ft_ptrdiff_t_len(ptrdiff_t n, ptrdiff_t base);
-int	ft_ptrdiff_t_paste(ptrdiff_t n, ptrdiff_t base, PF_PASTE);
+int	ft_ptrdiff_t_paste(ptrdiff_t n, ptrdiff_t base, char *dst, t_pfconv *conv);
 //	unsigned integer (note, 'uptrdiff_t' is obtained and parsed as 'size_t'):
 int	ft_uchar_len(unsigned char n, unsigned char base);
-int	ft_uchar_paste(unsigned char n, unsigned char base, PF_PASTE);
+int	ft_uchar_paste(unsigned char n, unsigned char base, char *dst, t_pfconv *conv);
 int	ft_ushort_len(unsigned short n, unsigned short base);
-int	ft_ushort_paste(unsigned short n, unsigned short base, PF_PASTE);
+int	ft_ushort_paste(unsigned short n, unsigned short base, char *dst, t_pfconv *conv);
 int	ft_uint_len(unsigned int n, unsigned int base);
-int	ft_uint_paste(unsigned int n, unsigned int base, PF_PASTE);
+int	ft_uint_paste(unsigned int n, unsigned int base, char *dst, t_pfconv *conv);
 int	ft_ulong_len(unsigned long n, unsigned long base);
-int	ft_ulong_paste(unsigned long n, unsigned long base, PF_PASTE);
+int	ft_ulong_paste(unsigned long n, unsigned long base, char *dst, t_pfconv *conv);
 int	ft_ulonglong_len(unsigned long long n, unsigned long long base);
-int	ft_ulonglong_paste(unsigned long long n, unsigned long long base, PF_PASTE);
+int	ft_ulonglong_paste(unsigned long long n, unsigned long long base, char *dst, t_pfconv *conv);
 int	ft_size_t_len(size_t n, size_t base);
-int	ft_size_t_paste(size_t n, size_t base, PF_PASTE);
+int	ft_size_t_paste(size_t n, size_t base, char *dst, t_pfconv *conv);
 int	ft_uintmax_len(uintmax_t n, uintmax_t base);
-int	ft_uintmax_paste(uintmax_t n, uintmax_t base, PF_PASTE);
+int	ft_uintmax_paste(uintmax_t n, uintmax_t base, char *dst, t_pfconv *conv);
 //	(long) double:
-int	ft_double_len(double d, char c, t_pfconv *conv, int precision);
-int	ft_double_paste(double d, char c, PF_PASTE);
-int	ft_longdouble_len(long double d, char c, t_pfconv *conv, int precision);
-int	ft_longdouble_paste(long double d, char c, PF_PASTE);
+int	ft_double_len(double d, char c, t_pfconv *conv, int prefixlen);
+int	ft_double_paste(double d, char c, char *dst, t_pfconv *conv);
+int	ft_longdouble_len(long double d, char c, t_pfconv *conv, int prefixlen);
+int	ft_longdouble_paste(long double d, char c, char *dst, t_pfconv *conv);
 
 //ft_printf()'s struct functions decl:
 void	ft_pflistclear(t_pflist *pflist);
@@ -153,12 +151,10 @@ t_pflist	*ft_newpflist_append(t_pflist **pflist);
 t_pfconv	*ft_newpfconv(void);
 
 //ft_printf()'s main functions (read order down to up):
-int	ft_printf_printpflist(int fd, t_pflist *origin, int total);
+int	ft_pf_printpflist(int fd, t_pflist *origin, t_pflist *node, int total);
 int	ft_pf_itemlen(union s_pfitem *item, t_pfconv *conv, char c);
-void	ft_pf_set_va_arg_in_union(union s_pfitem *item, va_list *list,\
-				int lm, char c);
-int	ft_printf(const char *format, ...) \
-			__attribute__((format (printf, 1, 2)));
+void	ft_pf_set_va_arg(union s_pfitem *item, va_list *list, int lm, char c);
+int	ft_printf(const char *format, ...) __attribute__((format (printf, 1, 2)));
 
 // EXTRA VA_LIST FUNCTIONS:
 void	ft_varray(char **array, const char *format, ...);
