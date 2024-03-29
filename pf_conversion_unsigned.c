@@ -1,7 +1,7 @@
 #include "libft.h"
 #include <stddef.h>
 
-int ft_uintmax_len(uintmax_t n, uintmax_t base)
+int ft_size_t_len(size_t n, size_t base)
 {
 	int	intlen;
 
@@ -15,8 +15,12 @@ int ft_uintmax_len(uintmax_t n, uintmax_t base)
 }
 
 static int pf_put_unsigned(t_pfstruct *p, t_pfconv *c,\
-						   uintmax_t n, const char *basestr)
+						   size_t n, const char *basestr)
 {
+	(void)p;
+	(void)c;
+	(void)n;
+	(void)basestr;
 	return (0);
 }
 

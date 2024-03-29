@@ -41,7 +41,7 @@ int ft_snprintf(char *str, size_t size, const char *format, ...)
     int     tmp;
 
     va_start(ap, format);
-    tmp = ft_snprintf(str, size, format, ap);
+    tmp = ft_vsnprintf(str, size, format, ap);
     va_end(ap);
     return (tmp);
 }

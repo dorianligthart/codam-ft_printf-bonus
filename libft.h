@@ -81,7 +81,7 @@ typedef struct s_pfstruct
     size_t  	size;
     const char	*format;
     va_list 	ap;
-    int     	bytes;
+    size_t     	bytes;
 } t_pfstruct;
 
 //UTILS :
@@ -93,9 +93,9 @@ size_t  ft_strlen(const char *str);
 void	ft_vsnprintf_new_conv(t_pfstruct *p);
 int		ft_printf_char(t_pfstruct *p, t_pfconv *c);
 int		ft_printf_signed(t_pfstruct *p, t_pfconv *c);
-int		ft_intmax_len(intmax_t n, intmax_t base);
+int		ft_intmax_len(ssize_t n, ssize_t base);
 int		ft_printf_unsigned(t_pfstruct *p, t_pfconv *c);
-int		ft_uintmax_len(uintmax_t n, uintmax_t base);
+int		ft_uintmax_len(size_t n, size_t base);
 int		ft_printf_double(t_pfstruct *p, t_pfconv *c);
 
 //PRINTF(like) FUNCTIONS :

@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <stdint.h>
 
-int ft_intmax_len(intmax_t n, intmax_t base)
+int ft_ssize_len(ssize_t n, ssize_t base)
 {
 	int	intlen;
 
@@ -20,24 +20,24 @@ int ft_intmax_len(intmax_t n, intmax_t base)
 	return (intlen);
 }
 
-static void pf_itoa2_helper(char *dest, intmax_t n, int len, char *basestr)
-{
-    int base;
-
-    base = ft_strlen(basestr);
-    if (n == SSIZE_MIN)
-    {
-        dest[len-- - 1] = basestr[(n % base) * -1];
-        n /= base;
-    }
-    if (n < 0)
-        n = -n;
-    while (len--)
-    {
-        dest[len] = basestr[n % base];
-        n /= base;
-    }
-}
+// static void pf_itoa2_helper(char *dest, ssize_t n, int len, char *basestr)
+// {
+//     int base;
+// 
+//     base = ft_strlen(basestr);
+//     if (n == SSIZE_MIN)
+//     {
+//         dest[len-- - 1] = basestr[(n % base) * -1];
+//         n /= base;
+//     }
+//     if (n < 0)
+//         n = -n;
+//     while (len--)
+//     {
+//         dest[len] = basestr[n % base];
+//         n /= base;
+//     }
+// }
 
 //CHANGE in values(compared to parent function):
 //	adds sign to itemlen,
@@ -45,11 +45,13 @@ static void pf_itoa2_helper(char *dest, intmax_t n, int len, char *basestr)
 //	updates fieldwidth to actual spaces/zeros,
 //	negative boolean value to scaler for '0',
 static int	pf_put_signed(t_pfstruct *p, t_pfconv *c,\
-						  intmax_t n, int negative)
+						  ssize_t n, int negative)
 {
 	char		result;
     const int	signlen = (negative || c->plus || c->space);
 
+	(void)p;
+	(void)n;
 	c->itemlen += signlen;
     c->prec = (c->prec > c->itemlen + c->prec) * c->itemlen - c->prec;
     c->width -= (c->prec + c->itemlen);

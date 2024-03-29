@@ -11,18 +11,18 @@ SRC =\
 OBJ = $(addsuffix .o, $(basename $(SRC)))
 
 NAME = libftprintf.a
-CFLAGS = -c -I./ -Wall -Wextra
+CFLAGS = -c -I./ -Wall -Wextra -fsanitize=address -ggdb
 
 $(NAME):
-	@cc $(CFLAGS) $(SRC)
-	@ar rcs $(NAME) $(OBJ)
+	cc $(CFLAGS) $(SRC)
+	ar rcs $(NAME) $(OBJ)
 
 all: $(NAME)
 bonus: $(NAME)
 clean:
-	@rm -f $(OBJ)
+	rm -f $(OBJ)
 fclean: clean
-	@rm -f $(NAME)
+	rm -f $(NAME)
 re: fclean $(NAME)
 
 .PHONY: $(NAME) all bonus clean fclean re
