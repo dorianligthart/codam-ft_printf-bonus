@@ -3,10 +3,10 @@ SRC =\
 	pf_printf.c\
 	pf_vprintf.c\
 	pf_conversion.c\
-	pf_conversion_char.c\
-	pf_conversion_signed.c\
-	pf_conversion_unsigned.c\
-	pf_conversion_double.c
+	pf_conv_misc.c\
+	pf_conv_signed.c\
+	pf_conv_unsigned.c\
+	pf_conv_double.c
 
 OBJ = $(addsuffix .o, $(basename $(SRC)))
 

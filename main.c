@@ -14,12 +14,16 @@
 
 void cmp_int(const char *str, ...)
 {
-	va_list ap;
+	static char	ftbuffer[1024];
+	static char	buffer[1024];
+	va_list		ap;
 
 	va_start(ap, str);
-	int own = ft_snprintf(NULL, 0, str, ap);
-	int ret = snprintf(NULL, 0, str, ap);
-	printf("ft_vsnprintf() returned: %d/%d\n", own, ret);
+	int own = 0;//ft_snprintf(ftbuffer, 1024, str, ap);
+	int ret = vsnprintf(buffer, 1024, str, ap);
+	write(1, RED, 7);
+	printf("[%s]: ft_vsnprintf() returned: %d/%d and printed: \"%s\" vs the real: \"%s\"\n", str, own, ret, ftbuffer, buffer);
+	write(1, RESET, 6);
 	fflush(stdout);
 	va_end(ap);
 }

@@ -6,66 +6,66 @@
 #include "libft.h"
 #include <stdio.h>
 
-static void	ft_vsnprintf_set_conv(t_pfstruct *p, t_pfconv *c)
+static inline bool	ft_pf_new_conversion2(t_pfstruct *p, t_pfconv *c)
 {
-	printf("\n\n[Conversion %%%c]:\n", *(p->format - 1));
-	printf("\thash= %s\n", c->hash ? "true" : "false");
+	printf("\n[Conversion %%%c]:\n", c->c);
+	printf("\thash=  %s\n", c->hash ? "true" : "false");
 	printf("\tminus= %s\n", c->minus ? "true" : "false");
 	printf("\tplus=  %s\n", c->plus ? "true" : "false");
 	printf("\tspace= %s\n", c->space ? "true" : "false");
 	printf("\tzero=  %s\n", c->zero ? "true" : "false");
-	printf("\twidth= %d\n", c->width);
+	printf("\tfw= %d\n", c->fw);
 	printf("\tdot=   %s\n", c->dot ? "true" : "false");
-	printf("\tprec=   %d\n", c->prec);
-	printf("\tconv=  '%c'\n\n", c->c);
-	if (ft_strchr("cs%", c->c))
-		p->bytes += ft_printf_char(p, c);
+	printf("\tprec=  %d\n", c->prec);
+	printf("\tmod=   %d\n", c->lm);
+	void (*funcptrs[128])(t_pfstruct *, t_pfconv *) = {['%'] = ft_pf_c,\
+	['c'] = ft_pf_c, ['s'] = ft_pf_s, ['n'] = ft_pf_n};
+
+	if (ft_strchr("cs", c->c) && c->lm == PF_LM_L)
+		return (false);
+	else if (c->c == '%')
+		c->item.c = '%';
+	else if (c->c == 'c')
+		c->item.c = va_arg(p->ap, int);
+	else if (c->c == 's')
+		c->item.s = va_arg(p->ap, char *);
+	else if (c->c == 'p')
+		return (c->hash = true,
+				c->item.p = va_arg(p->ap, void *),
+				c->itemlen = ft_pfsizelen((size_t)c->item.p, 16),
+				ft_pfsize(p, c, (size_t)c->item.p, "0123456789abcdef"),
+				true);
 	else if (ft_strchr("id", c->c))
-		p->bytes += ft_printf_signed(p, c);
-	else if (ft_strchr("ouxXpb", c->c))
-		p->bytes += ft_printf_unsigned(p, c);
+		return (ft_pf_signed(p, c));
+	else if (ft_strchr("bouxX", c->c))
+		return (ft_pf_unsigned(p, c));
 	else if (ft_strchr("fFeEaAgG", c->c))
-		p->bytes += ft_printf_double(p, c);
-	else if (c->c == 'n' && c->lm == 0)
-		*c->item.n = p->bytes;
-	else if (c->c == 'n' && c->lm == 1)
-		*c->item.hhn = p->bytes;
-	else if (c->c == 'n' && c->lm == 2)
-		*c->item.hn = p->bytes;
-	else if (c->c == 'n' && c->lm == 3)
-		*c->item.ln = p->bytes;
-	else if (c->c == 'n' && c->lm == 4)
-		*c->item.lln = p->bytes;
-	else if (c->c == 'n' && c->lm == 5)
-		*c->item.jn = p->bytes;
-	else if (c->c == 'n' && c->lm == 6)
-		*c->item.zn = p->bytes;
-	else if (c->c == 'n' && c->lm == 7)
-		*c->item.tn = p->bytes;
+		return (ft_pf_double(p, c), true);
+	return (funcptrs[(int)c->c](p, c), true);
 }
 
-static inline int ft_printf_get_lm(t_pfstruct *p)
+static inline int	ft_pf_get_lengthmodifier(t_pfstruct *p)
 {
-	if (*p->format == 'h' && *(p->format + 1) == 'h' && ++(p->format) && ++(p->format))
-		return (1);
-	if (*p->format == 'h' && ++(p->format))
-		return (2);
-	if (*p->format == 'l' && *(p->format + 1) == 'l' && ++(p->format) && ++(p->format))
-		return (4);
-	if (*p->format == 'l' && ++(p->format))
-		return (3);
-	if (*p->format == 'j' && ++(p->format))
-		return (5);
-	if (*p->format == 'z' && ++(p->format))
-		return (6);
-	if (*p->format == 't' && ++(p->format))
-		return (7);
-	if (*p->format == 'L' && ++(p->format))
-		return (8);
-	return (0);
+	if (*p->format == 'h' && *(p->format + 1) == 'h')
+		return (p->format += 2, PF_LM_HH);
+	if (*p->format == 'l' && *(p->format + 1) == 'l')
+		return (p->format += 2, PF_LM_LL);
+	if (*p->format == 'h')
+		return (p->format += 1, PF_LM_H);
+	if (*p->format == 'l')
+		return (p->format += 1, PF_LM_L);
+	if (*p->format == 'j')
+		return (p->format += 1, PF_LM_J);
+	if (*p->format == 'z')
+		return (p->format += 1, PF_LM_Z);
+	if (*p->format == 't')
+		return (p->format += 1, PF_LM_T);
+	if (*p->format == 'L')
+		return (p->format += 1, PF_LM_LF);
+	return (PF_LM_NONE);
 }
 
-static inline void ft_printf_width_precision(t_pfstruct *p, int *wp)
+static inline void	ft_pf_get_fw_or_prec(t_pfstruct *p, int *wp)
 {
 	int		atoi;
 	bool	va;
@@ -79,9 +79,10 @@ static inline void ft_printf_width_precision(t_pfstruct *p, int *wp)
 		*wp = atoi;
 	else if (va && !atoi)
 		*wp = va_arg(p->ap, int);
-	else if ((va && atoi)
-			|| (va && atoi && *p->format == '$' && *p->format++))
+	else if (va && atoi)
 	{
+		if (*p->format == '$')
+			p->format++;
 		va_copy(tmp, p->ap);
 		while (atoi--)
 			*wp = va_arg(tmp, int);
@@ -90,12 +91,12 @@ static inline void ft_printf_width_precision(t_pfstruct *p, int *wp)
 }
 
 // if (ft_strchr("cspdiuoxXfFeEaAgG%", **str))
-void ft_vsnprintf_new_conv(t_pfstruct *p)
+bool	ft_pf_new_conversion(t_pfstruct *p)
 {
-	static t_pfconv	conv;
+	t_pfconv	conv;
 
 	ft_memset(&conv, 0, sizeof(conv));
-	while (ft_strchr("#-+ 0", *(++p->format)))
+	while (ft_strchr("#-+ 0", *++p->format))
 	{
 		conv.hash = (conv.hash || *p->format == '#');
 		conv.zero = (conv.zero || *p->format == '0');
@@ -103,16 +104,17 @@ void ft_vsnprintf_new_conv(t_pfstruct *p)
 		conv.space = (conv.space || *p->format == ' ');
 		conv.plus = (conv.plus || *p->format == '+');
 	}
-	if (*p->format >= '1' && *p->format <= '9')
-		ft_printf_width_precision(p, &conv.width);
-	conv.minus = (conv.minus || conv.width < 0);
-	conv.width *= (conv.width < 0) * 2 - 1;
-	if (*p->format == '.' && *p->format)
+	if ((*p->format >= '1' && *p->format <= '9') || *p->format == '*')
+		ft_pf_get_fw_or_prec(p, &conv.fw);
+	if (conv.fw < 0)
 	{
-		conv.dot = true;
-		ft_printf_width_precision(p, &conv.prec);
+		conv.minus = true;
+		conv.fw *= -1;
 	}
-	conv.lm = ft_printf_get_lm(p);
+	conv.dot = (*p->format == '.' && *p->format++);
+	if (*(p->format - 1) == '.')
+		ft_pf_get_fw_or_prec(p, &conv.prec);
+	conv.lm = ft_pf_get_lengthmodifier(p);
 	conv.c = *p->format++;
-	ft_vsnprintf_set_conv(p, &conv);
+	return (ft_pf_new_conversion2(p, &conv));
 }
