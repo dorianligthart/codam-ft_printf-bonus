@@ -80,7 +80,7 @@ void	ft_pfssize(t_pfstruct *p, t_pfconv *c, ssize_t n, const char *basestr)
 				  ' ', ft_pfdesired(p, c->fw - prfxlen - c->prec - c->itemlen));
 }
 
-static inline bool	ft_pfsigned2(t_pfstruct *p, t_pfconv *c, const char *basestr)
+static inline bool	ft_pf_signed2(t_pfstruct *p, t_pfconv *c, const char *basestr)
 {
 	if (c->lm == PF_LM_LL)
 		return (c->item.lli = va_arg(p->ap, long long),
@@ -102,7 +102,7 @@ static inline bool	ft_pfsigned2(t_pfstruct *p, t_pfconv *c, const char *basestr)
 
 //returns (0);
 //di: flags="-+ 0", fieldwidth, precision.
-bool	ft_pfsigned(t_pfstruct *p, t_pfconv *c)
+bool	ft_pf_signed(t_pfstruct *p, t_pfconv *c)
 {
 	const char	*basestr = "0123456789";
 
@@ -122,6 +122,6 @@ bool	ft_pfsigned(t_pfstruct *p, t_pfconv *c)
 		return (c->item.li = va_arg(p->ap, long),
 				c->itemlen = ft_pfssizelen(c->item.li, 10),
 				ft_pfssize(p, c, c->item.li, basestr), true);
-	return (ft_pfsigned2(p, c, basestr));
+	return (ft_pf_signed2(p, c, basestr));
 }
 

@@ -14,7 +14,7 @@ int	ft_pfdesired(t_pfstruct *p, size_t desired)
 
 //c: flags="-", fieldwidth, length-modifier.
 //%: flags="-", fieldwidth.
-void	ft_vsnprintf_c(t_pfstruct *p, t_pfconv *c)
+void	ft_pf_c(t_pfstruct *p, t_pfconv *c)
 {
 	c->itemlen = 1;
 	if (!c->minus && c->fw > c->itemlen)
@@ -30,7 +30,7 @@ void	ft_vsnprintf_c(t_pfstruct *p, t_pfconv *c)
 //warning: the second call of vsnprintf(), 
 //  the char * or wchar_t * could potentially have changed.
 //s: flags="-", fieldwidth, precision, length-modifier.
-void	ft_vsnprintf_s(t_pfstruct *p, t_pfconv *c)
+void	ft_pf_s(t_pfstruct *p, t_pfconv *c)
 {
 	const char	*invalid = "(null)";
 	const int	invlen = ft_strlen(invalid);
@@ -52,7 +52,7 @@ void	ft_vsnprintf_s(t_pfstruct *p, t_pfconv *c)
 }
 
 //n: no flags.
-void	ft_vsnprintf_n(t_pfstruct *p, t_pfconv *c)
+void	ft_pf_n(t_pfstruct *p, t_pfconv *c)
 {
 	if (c->c == 'n' && c->lm == PF_LM_NONE)
 		*c->item.n = p->bytes;

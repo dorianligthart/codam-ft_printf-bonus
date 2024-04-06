@@ -8,16 +8,16 @@
 
 static inline bool	ft_pf_new_conversion2(t_pfstruct *p, t_pfconv *c)
 {
-	printf("\n[Conversion %%%c]:\n", c->c);
-	printf("\thash=  %s\n", c->hash ? "true" : "false");
-	printf("\tminus= %s\n", c->minus ? "true" : "false");
-	printf("\tplus=  %s\n", c->plus ? "true" : "false");
-	printf("\tspace= %s\n", c->space ? "true" : "false");
-	printf("\tzero=  %s\n", c->zero ? "true" : "false");
-	printf("\tfw= %d\n", c->fw);
-	printf("\tdot=   %s\n", c->dot ? "true" : "false");
-	printf("\tprec=  %d\n", c->prec);
-	printf("\tmod=   %d\n", c->lm);
+	// printf("\n[Conversion %%%c]:\n", c->c);
+	// printf("\thash=  %s\n", c->hash ? "true" : "false");
+	// printf("\tminus= %s\n", c->minus ? "true" : "false");
+	// printf("\tplus=  %s\n", c->plus ? "true" : "false");
+	// printf("\tspace= %s\n", c->space ? "true" : "false");
+	// printf("\tzero=  %s\n", c->zero ? "true" : "false");
+	// printf("\tfw=    %d\n", c->fw);
+	// printf("\tdot=   %s\n", c->dot ? "true" : "false");
+	// printf("\tprec=  %d\n", c->prec);
+	// printf("\tmod=   %d\n", c->lm);
 	void (*funcptrs[128])(t_pfstruct *, t_pfconv *) = {['%'] = ft_pf_c,\
 	['c'] = ft_pf_c, ['s'] = ft_pf_s, ['n'] = ft_pf_n};
 
