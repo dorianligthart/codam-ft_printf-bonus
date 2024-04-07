@@ -78,31 +78,30 @@
 #include <string.h>
 #include <stdarg.h>
 #include <unistd.h>
-#include "libft.h"
-
-#include <stdint.h>
 #include <limits.h>
-
-#if 1
-#define PRINT_FLAGS
-#endif
+#include "libft.h"
 
 void cmp_int(const char *str, ...)
 {
+	fflush(stdout);
 	static char	ftbuffer[1024];
 	static char	buffer[1024];
-	va_list		ap;
+	va_list 	ap1;
+	va_list 	ap2;
+	va_list 	ap3;
 
-	va_start(ap, str);
-	int	cap = vsnprintf(NULL, 0, str, ap);
-	int own = ft_vsnprintf(ftbuffer, cap + 1, str, ap);
-	int ret = vsnprintf(buffer, cap + 1, str, ap);
+	va_start(ap1, str);
+	va_copy(ap2, ap1);
+	va_copy(ap3, ap1);
+	int	cap = vsnprintf(NULL, 0, str, ap1);
+	int own = ft_vsnprintf(ftbuffer, cap + 1, str, ap2);
+	int ret = vsnprintf(buffer, cap + 1, str, ap3);
 	if (own - ret != 0 || strncmp(ftbuffer, buffer, cap))
 		write(1, C_RED, 8);
-	printf("[%s]: ft_vsnprintf() returned: %d/%d and printed: \"%.*s\" vs the real: \"%.*s\"\n", str, own, ret, cap, ftbuffer, cap, buffer);
+	printf("[%s]: ft_vsnprintf() returned: %d/%d and printed: \n\t\"%.*s\"\tvs the real:\n\t\"%.*s\"\n", str, own, ret, cap, ftbuffer, cap, buffer);
 	write(1, C_RESET, 7);
+	va_end(ap1);
 	fflush(stdout);
-	va_end(ap);
 }
 
 //c: flags="-", fieldwidth.
@@ -115,7 +114,6 @@ int main(void)
 {
 	cmp_int("%02d", 42);
 	cmp_int("%0+2d", 42);
-    return 0;
 	cmp_int("%0 2d", 42);
 	cmp_int("%02d", -42);
 	cmp_int("%0+2d", -42);
@@ -163,6 +161,7 @@ int main(void)
 	cmp_int("%5d", -42);
 	cmp_int("%+5d", -42);
 	cmp_int("% 5d", -42);
+    return 0;
 
 	printf("done!\n");
 }

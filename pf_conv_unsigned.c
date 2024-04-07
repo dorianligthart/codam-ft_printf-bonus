@@ -1,21 +1,6 @@
 #include "libft.h"
 #include <stddef.h>
 
-//provide: size_t *pow which is eq to 1 resulting:
-//*pow = base^tothepowerof(sqrootof(n));
-int ft_pfsizelen(size_t n, size_t base)
-{
-	int	len;
-
-	len = 1;
-	while (n >= base)
-	{
-		++len;
-		n /= base;
-	}
-	return (len);
-}
-
 static inline void	ft_pfsize2(t_pfstruct *p, t_pfconv *c, 
 								size_t n, const char *basestr)
 {
@@ -67,41 +52,42 @@ void ft_pfsize(t_pfstruct *p, t_pfconv *c, size_t n, const char *basestr)
 				  ' ', ft_pfdesired(p, c->fw - prfxlen - c->prec - c->itemlen));
 }
 
-static inline bool	ft_pf_unsigned2(t_pfstruct *p, t_pfconv *c,
+
+//returns true if length modifier is valid, otherwise false.
+static inline bool	ft_pf_u2(t_pfstruct *p, t_pfconv *c,
 									const char *basestr, const int base)
 {
-	if (c->lm == PF_LM_L)
+	if (c->lm == PF_LM_H)
+		return (c->item.hu = (unsigned short)va_arg(p->ap, unsigned int),
+				c->itemlen = ft_sizelen(c->item.hu, base),
+				ft_pfsize(p, c, c->item.hu, basestr), true);
+	else if (c->lm == PF_LM_L)
 		return (c->item.lu = va_arg(p->ap, unsigned long),
-				c->itemlen = ft_pfsizelen(c->item.lu, base),
-				ft_pfsize(p, c, c->item.lu, basestr),
-				true);
+				c->itemlen = ft_sizelen(c->item.lu, base),
+				ft_pfsize(p, c, c->item.lu, basestr), true);
 	else if (c->lm == PF_LM_LL)
 		return (c->item.llu = va_arg(p->ap, unsigned long long),
-				c->itemlen = ft_pfsizelen(c->item.llu, base),
-				ft_pfsize(p, c, c->item.llu, basestr),
-				true);
+				c->itemlen = ft_sizelen(c->item.llu, base),
+				ft_pfsize(p, c, c->item.llu, basestr), true);
     else if (c->lm == PF_LM_J)
 		return (c->item.ju = va_arg(p->ap, uintmax_t),
-				c->itemlen = ft_pfsizelen(c->item.ju, base),
-				ft_pfsize(p, c, c->item.ju, basestr),
-				true);
+				c->itemlen = ft_sizelen(c->item.ju, base),
+				ft_pfsize(p, c, c->item.ju, basestr), true);
     else if (c->lm == PF_LM_Z)
 		return (c->item.zu = va_arg(p->ap, size_t),
-				c->itemlen = ft_pfsizelen(c->item.zu, base),
-				ft_pfsize(p, c, c->item.zu, basestr),
-				true);
+				c->itemlen = ft_sizelen(c->item.zu, base),
+				ft_pfsize(p, c, c->item.zu, basestr), true);
 	else if (c->lm == PF_LM_T)
 		return (c->item.tu = va_arg(p->ap, size_t),
-				c->itemlen = ft_pfsizelen(c->item.tu, base),
-				ft_pfsize(p, c, c->item.tu, basestr),
-				true);
+				c->itemlen = ft_sizelen(c->item.tu, base),
+				ft_pfsize(p, c, c->item.tu, basestr), true);
 	return (false);
 }
 
 //returns (0);
 //u: flags="-0", fieldwidth, precision.
 //xXob: flags="-#0", fieldwidth, precision.
-bool	ft_pf_unsigned(t_pfstruct *p, t_pfconv *c)
+void	ft_pf_u(t_pfstruct *p, t_pfconv *c)
 {
 	const char	*basestr = (const char *)((c->c == 'b') * (size_t)"01"\
 							+ (c->c == 'o') * (size_t)"01234567"\
@@ -109,21 +95,20 @@ bool	ft_pf_unsigned(t_pfstruct *p, t_pfconv *c)
 							+ (c->c == 'x') * (size_t)"0123456789abcdef"\
 							+ (c->c == 'X') * (size_t)"0123456789ABCDEF");
 	const int	base = ft_strlen(basestr);
+	const char	*invalid = "(nil)";
 
 	if (c->lm == PF_LM_NONE)
-		return (c->item.u = va_arg(p->ap, unsigned int),
-				c->itemlen = ft_pfsizelen(c->item.u, base),
-				ft_pfsize(p, c, c->item.u, basestr),
-				true);
+	{
+		c->item.u = va_arg(p->ap, unsigned int);
+		c->itemlen = ft_sizelen(c->item.u, base);
+		ft_pfsize(p, c, c->item.u, basestr);
+	}
     else if (c->lm == PF_LM_HH)
-		return (c->item.hhu = (unsigned char)va_arg(p->ap, unsigned int),
-				c->itemlen = ft_pfsizelen(c->item.hhu, base),
-				ft_pfsize(p, c, c->item.hhu, basestr),
-				true);
-    else if (c->lm == PF_LM_H)
-		return (c->item.hu = (unsigned short)va_arg(p->ap, unsigned int),
-				c->itemlen = ft_pfsizelen(c->item.hu, base),
-				ft_pfsize(p, c, c->item.hu, basestr),
-				true);
-	return (ft_pf_unsigned2(p, c, basestr, base));
+	{
+		c->item.hhu = (unsigned char)va_arg(p->ap, unsigned int);
+		c->itemlen = ft_sizelen(c->item.hhu, base);
+		ft_pfsize(p, c, c->item.hhu, basestr);
+	}
+	else
+		ft_pf_u2(p, c, basestr, base);
 }

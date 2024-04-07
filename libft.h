@@ -1,11 +1,9 @@
 #ifndef LIBFT_H
 # define LIBFT_H
 
-# if defined(FT_SSIZE_MAX) || defined(FT_SIZE_MAX) || defined(FT_TERMINATOR) \
-	|| defined(FT_ERROR)
+//SIZE_MIN and SSIZE_MAX is PTRDIFF_MIN PTRDIFF_MAX respectively.
+# if defined(FT_TERMINATOR) || defined(FT_ERROR)
 # else
-#  define FT_SSIZE_MAX (SIZE_MAX / 2)
-#  define FT_SSIZE_MIN (SIZE_MAX / -2 - 1)
 #  define FT_TERMINATOR 1
 #  define FT_ERROR -1
 # endif
@@ -59,7 +57,7 @@ union u_pfunion
 	size_t				zu;
 	ptrdiff_t			tu;
 	double				f;
-	long double			Lf;
+	long double			lf;
 	int					*n;
 	signed char			*hhn;
 	short				*hn;
@@ -96,7 +94,7 @@ typedef struct s_pfstruct
 	size_t  	size;
 	const char	*format;
 	va_list 	ap;
-	size_t     	bytes;
+	int     	bytes;
 } t_pfstruct;
 
 //Printf function definitions :
@@ -120,25 +118,29 @@ int ft_vdprintf(int fd, const char *format, va_list ap);
 
 //Conversion specific :
 
-bool	ft_pf_new_conversion(t_pfstruct *p);
 void	ft_pf_c(t_pfstruct *p, t_pfconv *c);
 void	ft_pf_s(t_pfstruct *p, t_pfconv *c);
+void	ft_pf_p(t_pfstruct *p, t_pfconv *c);
+void	ft_pf_i(t_pfstruct *p, t_pfconv *c);
+void	ft_pf_u(t_pfstruct *p, t_pfconv *c);
+void	ft_pf_f(t_pfstruct *p, t_pfconv *c);
 void	ft_pf_n(t_pfstruct *p, t_pfconv *c);
-void	ft_pf_double(t_pfstruct *p, t_pfconv *c);
-bool	ft_pf_signed(t_pfstruct *p, t_pfconv *c);
-bool	ft_pf_unsigned(t_pfstruct *p, t_pfconv *c);
 
 //Conversion general (without underscore) :
 
+bool	ft_pf_new_conversion(t_pfstruct *p);
 int		ft_pfdesired(t_pfstruct *p, size_t desired);
 void	ft_pfsize(t_pfstruct *p, t_pfconv *c, size_t n, const char *basestr);
 void	ft_pfssize(t_pfstruct *p, t_pfconv *c, ssize_t n, const char *basestr);
-int		ft_pfssizelen(ssize_t n, ssize_t base);
-int		ft_pfsizelen(size_t n, size_t base);
 
 # endif //#ifndef VA_FORBIDDEN
 
-//LIBFT :
+//NEW LIBFT :
+
+int		ft_ssizelen(ssize_t n, ssize_t base);
+int		ft_sizelen(size_t n, size_t base);
+
+//OLD LIBFT :
 
 void	*ft_memcpy(void *dest, const void *src, size_t n);
 char	*ft_strchr(const char *s, int c);

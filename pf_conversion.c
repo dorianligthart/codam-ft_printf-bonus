@@ -6,8 +6,6 @@
 #include "libft.h"
 #include <stdio.h>
 
-static inline bool	ft_pf_new_conversion2(t_pfstruct *p, t_pfconv *c)
-{
 	// printf("\n[Conversion %%%c]:\n", c->c);
 	// printf("\thash=  %s\n", c->hash ? "true" : "false");
 	// printf("\tminus= %s\n", c->minus ? "true" : "false");
@@ -18,30 +16,25 @@ static inline bool	ft_pf_new_conversion2(t_pfstruct *p, t_pfconv *c)
 	// printf("\tdot=   %s\n", c->dot ? "true" : "false");
 	// printf("\tprec=  %d\n", c->prec);
 	// printf("\tmod=   %d\n", c->lm);
+static inline bool	ft_pf_new_conversion2(t_pfstruct *p, t_pfconv *c)
+{
 	void (*funcptrs[128])(t_pfstruct *, t_pfconv *) = {['%'] = ft_pf_c,\
-	['c'] = ft_pf_c, ['s'] = ft_pf_s, ['n'] = ft_pf_n};
+	['c'] = ft_pf_c, ['s'] = ft_pf_s, ['p'] = ft_pf_p, ['d'] = ft_pf_i,\
+	['i'] = ft_pf_i, ['u'] = ft_pf_u, ['x'] = ft_pf_u, ['X'] = ft_pf_u,\
+	['b'] = ft_pf_u, ['o'] = ft_pf_u, ['n'] = ft_pf_n,\
+	['f'] = ft_pf_f, ['F'] = ft_pf_f, ['e'] = ft_pf_f, ['E'] = ft_pf_f,\
+	['a'] = ft_pf_f, ['A'] = ft_pf_f, ['g'] = ft_pf_f, ['G'] = ft_pf_f};
 
-	if (ft_strchr("cs", c->c) && c->lm == PF_LM_L)
-		return (false);
-	else if (c->c == '%')
+	if (c->c == '%')
 		c->item.c = '%';
-	else if (c->c == 'c')
-		c->item.c = va_arg(p->ap, int);
-	else if (c->c == 's')
-		c->item.s = va_arg(p->ap, char *);
-	else if (c->c == 'p')
-		return (c->hash = true,
-				c->item.p = va_arg(p->ap, void *),
-				c->itemlen = ft_pfsizelen((size_t)c->item.p, 16),
-				ft_pfsize(p, c, (size_t)c->item.p, "0123456789abcdef"),
-				true);
-	else if (ft_strchr("id", c->c))
-		return (ft_pf_signed(p, c));
-	else if (ft_strchr("bouxX", c->c))
-		return (ft_pf_unsigned(p, c));
-	else if (ft_strchr("fFeEaAgG", c->c))
-		return (ft_pf_double(p, c), true);
-	return (funcptrs[(int)c->c](p, c), true);
+	if ((ft_strchr("cs", c->c) && c->lm == PF_LM_L)
+		|| ft_strchr("\000\001\002\003\004\005\006\a\b\t\v\n\f\r\016\017"\
+					 "\020\021\022\023\024\025\026\027\030\031\032\033\034\035"\
+					 "\036\037 !\"#$%&\'()*+,-./0123456789:;<=>?@BCDHIJKLMNOP"\
+					 "QRSTUVWYZ[\\]^_`hjklmqrtvwyz{|}~\177", c->c))
+		return (false);
+	funcptrs[(int)c->c](p, c);
+	return (true);
 }
 
 static inline int	ft_pf_get_lengthmodifier(t_pfstruct *p)

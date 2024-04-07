@@ -42,8 +42,8 @@ int ft_vsnprintf(char *str, size_t size, const char *format, va_list ap)
 		if (*p.format == '%' && !ft_pf_new_conversion(&p))
 			return (FT_ERROR);
 		else
-			while (*p.format && *p.format != '%' && ++p.bytes && *++p.format)
-				if (p.bytes - 1 < size)
+			while (*p.format && *p.format != '%' && ++p.bytes && ++(p.format))
+				if (p.bytes < size)
 					str[p.bytes - 1] = *(p.format - 1);
 	}
 	if (p.bytes < size)
@@ -57,7 +57,7 @@ int ft_vdprintf(int fd, const char *format, va_list ap)
 	char	*str;
 	int		result;
 
-	result = ft_vsnprintf(NULL, 0, format, ap);
+	result = ft_vsnprintf(NULL, 0, format, ap) + FT_TERMINATOR;
 	str = (char *)malloc(result * sizeof(char));
 	if (!str)
 		return (FT_ERROR);

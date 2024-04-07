@@ -7,21 +7,6 @@
 #include <stdio.h>
 #include <stdint.h>
 
-//provide: ssize_t *pow which is eq to 1 resulting:
-//*pow = base^tothepowerof(sqrootof(n));
-int ft_pfssizelen(ssize_t n, ssize_t base)
-{
-	int	len;
-
-	len = 1;
-	while (n <= -base || n >= base)
-	{
-		++len;
-		n /= base;
-	}
-	return (len);
-}
-
 static inline void	ft_pfssize2(t_pfstruct *p, t_pfconv *c, 
 								ssize_t n, const char *basestr)
 {
@@ -38,7 +23,7 @@ static inline void	ft_pfssize2(t_pfstruct *p, t_pfconv *c,
 	i = 0;
 	while (i < desired)
 	{
-		p->str[p->bytes - desired + i] = basestr[n / extract * abs];
+		p->str[p->bytes - desired + i] = basestr[(n / extract) * abs];
 		extract /= base;
 		n /= base;
 		i++;
@@ -80,48 +65,54 @@ void	ft_pfssize(t_pfstruct *p, t_pfconv *c, ssize_t n, const char *basestr)
 				  ' ', ft_pfdesired(p, c->fw - prfxlen - c->prec - c->itemlen));
 }
 
-static inline bool	ft_pf_signed2(t_pfstruct *p, t_pfconv *c, const char *basestr)
+//returns true if length modifier is valid, otherwise false.
+static inline bool	ft_pf_i2(t_pfstruct *p, t_pfconv *c, const char *basestr)
 {
-	if (c->lm == PF_LM_LL)
+	if (c->lm == PF_LM_L)
+		return (c->item.li = va_arg(p->ap, long),
+				c->itemlen = ft_ssizelen(c->item.li, 10),
+				ft_pfssize(p, c, c->item.li, basestr), true);
+	else if (c->lm == PF_LM_LL)
 		return (c->item.lli = va_arg(p->ap, long long),
-				c->itemlen = ft_pfssizelen(c->item.lli, 10),
+				c->itemlen = ft_ssizelen(c->item.lli, 10),
 				ft_pfssize(p, c, c->item.lli, basestr), true);
 	else if (c->lm == PF_LM_J)
 		return (c->item.ji = va_arg(p->ap, intmax_t),
-				c->itemlen = ft_pfssizelen(c->item.ji, 10),
+				c->itemlen = ft_ssizelen(c->item.ji, 10),
 				ft_pfssize(p, c, c->item.ji, basestr), true);
 	else if (c->lm == PF_LM_Z)
 		return (c->item.zi = va_arg(p->ap, ssize_t),
-				c->itemlen = ft_pfssizelen(c->item.zi, 10),
+				c->itemlen = ft_ssizelen(c->item.zi, 10),
 				ft_pfssize(p, c, c->item.zi, basestr), true);
-	return (c->item.ti = va_arg(p->ap, ptrdiff_t),
-			c->itemlen = ft_pfssizelen(c->item.ti, 10),
-			ft_pfssize(p, c, c->item.ti, basestr), true);
+	else if (c->lm == PF_LM_Z)
+		return (c->item.ti = va_arg(p->ap, ptrdiff_t),
+				c->itemlen = ft_ssizelen(c->item.ti, 10),
+				ft_pfssize(p, c, c->item.ti, basestr), true);
 	return (false);
 }
 
-//returns (0);
 //di: flags="-+ 0", fieldwidth, precision.
-bool	ft_pf_signed(t_pfstruct *p, t_pfconv *c)
+void	ft_pf_i(t_pfstruct *p, t_pfconv *c)
 {
 	const char	*basestr = "0123456789";
 
 	if (c->lm == PF_LM_NONE)
-		return (c->item.i = va_arg(p->ap, int),
-				c->itemlen = ft_pfssizelen(c->item.i, 10),
-				ft_pfssize(p, c, c->item.i, basestr), true);
+	{
+		c->item.i = va_arg(p->ap, int);
+		c->itemlen = ft_ssizelen(c->item.i, 10);
+		ft_pfssize(p, c, c->item.i, basestr);
+	}
 	else if (c->lm == PF_LM_HH)
-		return (c->item.hhi = (signed char)va_arg(p->ap, int),
-				c->itemlen = ft_pfssizelen(c->item.hhi, 10),
-				ft_pfssize(p, c, c->item.hhi, basestr), true);
+	{
+		c->item.hhi = (signed char)va_arg(p->ap, int);
+		c->itemlen = ft_ssizelen(c->item.hhi, 10);
+		ft_pfssize(p, c, c->item.hhi, basestr);
+	}
 	else if (c->lm == PF_LM_H)
-		return (c->item.hi = (short)va_arg(p->ap, int),
-				c->itemlen = ft_pfssizelen(c->item.hi, 10),
-				ft_pfssize(p, c, c->item.hi, basestr), true);
-	else if (c->lm == PF_LM_L)
-		return (c->item.li = va_arg(p->ap, long),
-				c->itemlen = ft_pfssizelen(c->item.li, 10),
-				ft_pfssize(p, c, c->item.li, basestr), true);
-	return (ft_pf_signed2(p, c, basestr));
+	{
+		c->item.hi = (short)va_arg(p->ap, int);
+		c->itemlen = ft_ssizelen(c->item.hi, 10);
+		ft_pfssize(p, c, c->item.hi, basestr);
+	}
+	ft_pf_i2(p, c, basestr);
 }
-

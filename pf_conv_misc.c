@@ -5,7 +5,7 @@
 int	ft_pfdesired(t_pfstruct *p, size_t desired)
 {
 	p->bytes += desired;
-	if (p->size >= p->bytes + FT_TERMINATOR)
+	if (p->bytes + FT_TERMINATOR < p->size)
 		return (desired);
 	else
 		return ((p->size > (p->bytes - desired + FT_TERMINATOR)) \
@@ -16,6 +16,7 @@ int	ft_pfdesired(t_pfstruct *p, size_t desired)
 //%: flags="-", fieldwidth.
 void	ft_pf_c(t_pfstruct *p, t_pfconv *c)
 {
+	c->item.c = va_arg(p->ap, int);
 	c->itemlen = 1;
 	if (!c->minus && c->fw > c->itemlen)
 		ft_memset(p->str + p->bytes - (c->fw - c->itemlen), ' ',
@@ -32,20 +33,50 @@ void	ft_pf_c(t_pfstruct *p, t_pfconv *c)
 //s: flags="-", fieldwidth, precision, length-modifier.
 void	ft_pf_s(t_pfstruct *p, t_pfconv *c)
 {
-	const char	*invalid = "(null)";
-	const int	invlen = ft_strlen(invalid);
-	const int	strlen = ft_strlen(c->item.s);
+	const char		*invalid = "(null)";
+	const size_t	invlen = ft_strlen(invalid);
+	size_t			strlen;
 
+	c->item.s = va_arg(p->ap, char *);
+	strlen = ft_strlen(c->item.s);
 	c->itemlen = (c->item.s && strlen >= c->prec) * strlen\
 				+ (c->item.s && strlen < c->prec) * c->prec\
 				+ (!c->item.s && (!c->dot || c->prec >= invlen)) * invlen;
-	if (!c->item.s)
+	if (c->item.s == NULL)
 		c->item.s = (char *)invalid;
 	if (!c->minus && c->fw > c->itemlen)
 		ft_memset(p->str + p->bytes - (c->fw - c->itemlen), ' ',
 				  ft_pfdesired(p, c->fw - c->itemlen));
 	ft_memcpy(p->str + p->bytes - c->itemlen, c->item.s,
 			  ft_pfdesired(p, c->itemlen));
+	if (c->minus && c->fw > c->itemlen)
+		ft_memset(p->str + p->bytes - (c->fw - c->itemlen), ' ',
+				  ft_pfdesired(p, c->fw - c->itemlen));
+}
+
+//for p conversion :(
+void	ft_pf_p(t_pfstruct *p, t_pfconv *c)
+{
+	const char		*invalid = "(nil)";
+	const size_t	invlen = ft_strlen(invalid);
+	size_t			sizelen;
+
+	c->item.p = va_arg(p->ap, void *);
+	sizelen = ft_sizelen((size_t)c->item.p, 16) + 2;
+	c->itemlen = (c->item.p && sizelen > c->prec) * sizelen\
+				+ (c->item.p && sizelen <= c->prec) * c->prec\
+				+ (!c->item.p) * invlen;
+	if (!c->minus && c->fw > c->itemlen)
+		ft_memset(p->str + p->bytes - (c->fw - c->itemlen), ' ',
+				  ft_pfdesired(p, c->fw - c->itemlen));
+	if (c->item.p == NULL)
+		ft_memcpy(p->str + p->bytes - invlen, invalid,
+				  ft_pfdesired(p, invlen));
+	else
+	{
+		c->hash = true;
+		ft_pfsize(p, c, (size_t)c->item.p, "0123456789abcdef");
+	}
 	if (c->minus && c->fw > c->itemlen)
 		ft_memset(p->str + p->bytes - (c->fw - c->itemlen), ' ',
 				  ft_pfdesired(p, c->fw - c->itemlen));
