@@ -1,4 +1,4 @@
-#include "libft.h"
+#include "printf.h"
 
 //adds desired to p->bytes.
 //returns 0 <= i depending on how big size is.
@@ -28,19 +28,17 @@ void	ft_pf_c(t_pfstruct *p, t_pfconv *c)
 				  ft_pfdesired(p, c->fw - c->itemlen));
 }
 
-//warning: the second call of vsnprintf(), 
-//  the char * or wchar_t * could potentially have changed.
 //s: flags="-", fieldwidth, precision, length-modifier.
 void	ft_pf_s(t_pfstruct *p, t_pfconv *c)
 {
 	const char		*invalid = "(null)";
-	const size_t	invlen = ft_strlen(invalid);
+	const int		invlen = ft_strlen(invalid);
 	size_t			strlen;
 
 	c->item.s = va_arg(p->ap, char *);
 	strlen = ft_strlen(c->item.s);
-	c->itemlen = (c->item.s && strlen >= c->prec) * strlen\
-				+ (c->item.s && strlen < c->prec) * c->prec\
+	c->itemlen = (c->item.s && strlen <= (size_t)c->prec) * strlen\
+				+ (c->item.s && strlen > (size_t)c->prec) * c->prec\
 				+ (!c->item.s && (!c->dot || c->prec >= invlen)) * invlen;
 	if (c->item.s == NULL)
 		c->item.s = (char *)invalid;
@@ -63,8 +61,8 @@ void	ft_pf_p(t_pfstruct *p, t_pfconv *c)
 
 	c->item.p = va_arg(p->ap, void *);
 	sizelen = ft_sizelen((size_t)c->item.p, 16) + 2;
-	c->itemlen = (c->item.p && sizelen > c->prec) * sizelen\
-				+ (c->item.p && sizelen <= c->prec) * c->prec\
+	c->itemlen = (c->item.p && sizelen > (size_t)c->prec) * sizelen\
+				+ (c->item.p && sizelen <= (size_t)c->prec) * c->prec\
 				+ (!c->item.p) * invlen;
 	if (!c->minus && c->fw > c->itemlen)
 		ft_memset(p->str + p->bytes - (c->fw - c->itemlen), ' ',

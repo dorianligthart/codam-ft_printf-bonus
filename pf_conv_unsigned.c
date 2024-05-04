@@ -1,4 +1,4 @@
-#include "libft.h"
+#include "printf.h"
 #include <stddef.h>
 
 static inline void	ft_pfsize2(t_pfstruct *p, t_pfconv *c, 
@@ -95,7 +95,6 @@ void	ft_pf_u(t_pfstruct *p, t_pfconv *c)
 							+ (c->c == 'x') * (size_t)"0123456789abcdef"\
 							+ (c->c == 'X') * (size_t)"0123456789ABCDEF");
 	const int	base = ft_strlen(basestr);
-	const char	*invalid = "(nil)";
 
 	if (c->lm == PF_LM_NONE)
 	{

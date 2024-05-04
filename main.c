@@ -79,7 +79,7 @@
 #include <stdarg.h>
 #include <unistd.h>
 #include <limits.h>
-#include "libft.h"
+#include "printf.h"
 
 void cmp_int(const char *str, ...)
 {
@@ -112,6 +112,22 @@ void cmp_int(const char *str, ...)
 //xXo: flags="-#0", fieldwidth, precision.
 int main(void)
 {
+	cmp_int("%1c", 'x');
+	cmp_int("%*c", 1, 'y');
+	cmp_int("%*c", -1, 'y');
+	cmp_int("%*2$c", 'z', 1, 1);
+	cmp_int("%*2$c", 'z', -1, -1);
+	cmp_int("%2c", 'x');
+	cmp_int("%*c", 2, 'y');
+	cmp_int("%*c", -2, 'y');
+	cmp_int("%*2$c", 'z', 2, 2);
+	cmp_int("%*2$c", 'z', -2, -2);
+	cmp_int("%3c", 'x');
+	cmp_int("%*c", 3, 'y');
+	cmp_int("%*c", -3, 'y');
+	cmp_int("%*2$c", 'z', 3, 3);
+	cmp_int("%*2$c", 'z', -3, -3);
+	return 0;
 	cmp_int("%02d", 42);
 	cmp_int("%0+2d", 42);
 	cmp_int("%0 2d", 42);

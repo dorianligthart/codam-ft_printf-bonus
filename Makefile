@@ -1,7 +1,7 @@
 SRC =\
-	pf_libft.c\
-	pf_printf.c\
-	pf_vprintf.c\
+	libft.c\
+	printf.c\
+	vprintf.c\
 	pf_conversion.c\
 	pf_conv_misc.c\
 	pf_conv_signed.c\
@@ -25,4 +25,10 @@ fclean: clean
 	rm -f $(NAME)
 re: fclean $(NAME)
 
-.PHONY: $(NAME) all bonus clean fclean re
+main: $(NAME)
+	cc $(CFLAGS) main.c
+	cc main.o -l./$(NAME) -v
+	make fclean
+test: main
+
+.PHONY: $(NAME) all bonus clean fclean re test main

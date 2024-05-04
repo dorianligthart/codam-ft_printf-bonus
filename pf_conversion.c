@@ -3,7 +3,7 @@
 #include <unistd.h>  //write();
 #include <stdarg.h>  //f(...), 'va_list', va_start(), va_arg(), va_end();
 #include <stdbool.h> //'bool', true, false;
-#include "libft.h"
+#include "printf.h"
 #include <stdio.h>
 
 	// printf("\n[Conversion %%%c]:\n", c->c);
@@ -16,22 +16,19 @@
 	// printf("\tdot=   %s\n", c->dot ? "true" : "false");
 	// printf("\tprec=  %d\n", c->prec);
 	// printf("\tmod=   %d\n", c->lm);
-static inline bool	ft_pf_new_conversion2(t_pfstruct *p, t_pfconv *c)
+static inline bool	ft_pf_new_conversion_choose(t_pfstruct *p, t_pfconv *c)
 {
-	void (*funcptrs[128])(t_pfstruct *, t_pfconv *) = {['%'] = ft_pf_c,\
-	['c'] = ft_pf_c, ['s'] = ft_pf_s, ['p'] = ft_pf_p, ['d'] = ft_pf_i,\
-	['i'] = ft_pf_i, ['u'] = ft_pf_u, ['x'] = ft_pf_u, ['X'] = ft_pf_u,\
-	['b'] = ft_pf_u, ['o'] = ft_pf_u, ['n'] = ft_pf_n,\
-	['f'] = ft_pf_f, ['F'] = ft_pf_f, ['e'] = ft_pf_f, ['E'] = ft_pf_f,\
+	void (*funcptrs[128])(t_pfstruct *, t_pfconv *) = {['%'] = ft_pf_c,	\
+	['c'] = ft_pf_c, ['s'] = ft_pf_s, ['p'] = ft_pf_p, ['d'] = ft_pf_i,	\
+	['i'] = ft_pf_i, ['u'] = ft_pf_u, ['x'] = ft_pf_u, ['X'] = ft_pf_u,	\
+	['b'] = ft_pf_u, ['o'] = ft_pf_u, ['n'] = ft_pf_n,					\
+	['f'] = ft_pf_f, ['F'] = ft_pf_f, ['e'] = ft_pf_f, ['E'] = ft_pf_f,	\
 	['a'] = ft_pf_f, ['A'] = ft_pf_f, ['g'] = ft_pf_f, ['G'] = ft_pf_f};
 
 	if (c->c == '%')
 		c->item.c = '%';
 	if ((ft_strchr("cs", c->c) && c->lm == PF_LM_L)
-		|| ft_strchr("\000\001\002\003\004\005\006\a\b\t\v\n\f\r\016\017"\
-					 "\020\021\022\023\024\025\026\027\030\031\032\033\034\035"\
-					 "\036\037 !\"#$%&\'()*+,-./0123456789:;<=>?@BCDHIJKLMNOP"\
-					 "QRSTUVWYZ[\\]^_`hjklmqrtvwyz{|}~\177", c->c))
+		|| !ft_strchr("%cspdiuxXbonfFeEaAgG", c->c))
 		return (false);
 	funcptrs[(int)c->c](p, c);
 	return (true);
@@ -109,5 +106,5 @@ bool	ft_pf_new_conversion(t_pfstruct *p)
 		ft_pf_get_fw_or_prec(p, &conv.prec);
 	conv.lm = ft_pf_get_lengthmodifier(p);
 	conv.c = *p->format++;
-	return (ft_pf_new_conversion2(p, &conv));
+	return (ft_pf_new_conversion_choose(p, &conv));
 }
