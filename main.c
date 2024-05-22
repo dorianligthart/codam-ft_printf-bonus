@@ -72,16 +72,14 @@
 //Reset
 #define C_RESET "\e[0m"
 
+#include "printf.h"
 #include <stdio.h>
-#include <fcntl.h>
-#include <stddef.h>
+#include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
-#include <unistd.h>
 #include <limits.h>
-#include "printf.h"
 
-void cmp_int(const char *str, ...)
+void cmp(size_t size, const char *str, ...)
 {
 	fflush(stdout);
 	static char	ftbuffer[1024];
@@ -93,17 +91,30 @@ void cmp_int(const char *str, ...)
 	va_start(ap1, str);
 	va_copy(ap2, ap1);
 	va_copy(ap3, ap1);
-	int	cap = vsnprintf(NULL, 0, str, ap1);
+	int	capreal = vsnprintf(NULL, 0, str, ap1);
+	if (capreal < 0)
+		exit(1);
+	size_t cap = (size < capreal) * size + (size >= capreal) * capreal;
 	int own = ft_vsnprintf(ftbuffer, cap + 1, str, ap2);
 	int ret = vsnprintf(buffer, cap + 1, str, ap3);
 	if (own - ret != 0 || strncmp(ftbuffer, buffer, cap))
-		write(1, C_RED, 8);
-	printf("[%s]: ft_vsnprintf() returned: %d/%d and printed: \n\t\"%.*s\"\tvs the real:\n\t\"%.*s\"\n", str, own, ret, cap, ftbuffer, cap, buffer);
-	write(1, C_RESET, 7);
+		write(1, C_RED, 7);
+	else write(1, C_GRN, 7);
+	printf("[%s]: ft_vsnprintf() returned: %d/%d and printed: \n\t \"%.*s\"\tvs the real:\n\t \"%.*s\"\n", str, own, ret, cap, ftbuffer, cap, buffer);
+	write(1, C_RESET, 4);
 	va_end(ap1);
 	fflush(stdout);
+	// if (own - ret != 0 || strncmp(ftbuffer, buffer, cap)) exit(1);
 }
 
+void	test_c(void);
+void	test_s(void);
+void	test_p(void);
+void	test_di(void);
+void	test_uxX(void);
+void	test_n(void);
+
+//COMPILE:	make re && make test && ./a.out 
 //c: flags="-", fieldwidth.
 //s: flags="-", fieldwidth, precision.
 //p: flags="-", fieldwidth, dot(?), !precision.
@@ -112,72 +123,142 @@ void cmp_int(const char *str, ...)
 //xXo: flags="-#0", fieldwidth, precision.
 int main(void)
 {
-	cmp_int("%1c", 'x');
-	cmp_int("%*c", 1, 'y');
-	cmp_int("%*c", -1, 'y');
-	cmp_int("%*2$c", 'z', 1, 1);
-	cmp_int("%*2$c", 'z', -1, -1);
-	cmp_int("%2c", 'x');
-	cmp_int("%*c", 2, 'y');
-	cmp_int("%*c", -2, 'y');
-	cmp_int("%*2$c", 'z', 2, 2);
-	cmp_int("%*2$c", 'z', -2, -2);
-	cmp_int("%3c", 'x');
-	cmp_int("%*c", 3, 'y');
-	cmp_int("%*c", -3, 'y');
-	cmp_int("%*2$c", 'z', 3, 3);
-	cmp_int("%*2$c", 'z', -3, -3);
-	return 0;
-	cmp_int("%02d", 42);
-	cmp_int("%0+2d", 42);
-	cmp_int("%0 2d", 42);
-	cmp_int("%02d", -42);
-	cmp_int("%0+2d", -42);
-	cmp_int("%0 2d", -42);
-	cmp_int("%03d", 42);
-	cmp_int("%0+3d", 42);
-	cmp_int("%0 3d", 42);
-	cmp_int("%03d", -42);
-	cmp_int("%0+3d", -42);
-	cmp_int("%0 3d", -42);
-	cmp_int("%04d", 42);
-	cmp_int("%0+4d", 42);
-	cmp_int("%0 4d", 42);
-	cmp_int("%04d", -42);
-	cmp_int("%0+4d", -42);
-	cmp_int("%0 4d", -42);
-	cmp_int("%05d", 42);
-	cmp_int("%0+5d", 42);
-	cmp_int("%0 5d", 42);
-	cmp_int("%05d", -42);
-	cmp_int("%0+5d", -42);
-	cmp_int("%0 5d", -42);
-    
-	cmp_int("%2d", 42);
-	cmp_int("%+2d", 42);
-	cmp_int("% 2d", 42);
-	cmp_int("%2d", -42);
-	cmp_int("%+2d", -42);
-	cmp_int("% 2d", -42);
-	cmp_int("%3d", 42);
-	cmp_int("%+3d", 42);
-	cmp_int("% 3d", 42);
-	cmp_int("%3d", -42);
-	cmp_int("%+3d", -42);
-	cmp_int("% 3d", -42);
-	cmp_int("%4d", 42);
-	cmp_int("%+4d", 42);
-	cmp_int("% 4d", 42);
-	cmp_int("%4d", -42);
-	cmp_int("%+4d", -42);
-	cmp_int("% 4d", -42);
-	cmp_int("%5d", 42);
-	cmp_int("%+5d", 42);
-	cmp_int("% 5d", 42);
-	cmp_int("%5d", -42);
-	cmp_int("%+5d", -42);
-	cmp_int("% 5d", -42);
+	// test_c(); //DONE!
+	// test_s(); //DONE!
+	test_p();
+	// test_di(); //DONE!
     return 0;
 
 	printf("done!\n");
+}
+
+void	test_c(void)
+{
+	// for (char x = 0; x < 127; ++x)
+	// 	cmp(1, "%c", x);
+	// cmp(1, "%c", 127);
+	for (size_t x = 0; x < 4; ++x)
+	{
+		cmp(x, "%1c", 'a');
+		cmp(x, "%2c", 'b');
+		cmp(x, "%-1c", 'c');
+		cmp(x, "%-2c", 'd');
+	}
+}
+
+void	test_s(void)
+{
+	const char	*str = "fortytwo";
+
+	for (int x = 0; x <= ft_strlen(str); ++x)
+	{
+		cmp(42, "%.*s", x, str);
+		cmp(42, "%1.*s", x, str);
+		cmp(42, "%2.*s", x, str);
+		cmp(42, "%3.*s", x, str);
+		cmp(42, "%4.*s", x, str);
+		cmp(42, "%5.*s", x, str);
+		cmp(42, "%6.*s", x, str);
+		cmp(42, "%7.*s", x, str);
+		cmp(42, "%8.*s", x, str);
+		cmp(42, "%9.*s", x, str);
+	}
+	for (int x = 0; x <= ft_strlen(str); ++x)
+	{
+		cmp(42, "%-.*s", x, str);
+		cmp(42, "%-1.*s", x, str);
+		cmp(42, "%-2.*s", x, str);
+		cmp(42, "%-3.*s", x, str);
+		cmp(42, "%-4.*s", x, str);
+		cmp(42, "%-5.*s", x, str);
+		cmp(42, "%-6.*s", x, str);
+		cmp(42, "%-7.*s", x, str);
+		cmp(42, "%-8.*s", x, str);
+		cmp(42, "%-9.*s", x, str);
+	}
+	for (int x = 0; x <= 8; ++x)
+		cmp(42, "%*.*s", x, x, NULL);
+}
+
+void	test_p(void)
+{
+	cmp(42, "%x", 0x0);
+}
+
+
+void	test_di(void)
+{
+	cmp(69, "%*c", 1, 'y');
+	cmp(69, "%*c", -1, 'Y');
+	cmp(69, "%*2$c", 'z', 2, 3);
+	cmp(69, "%*2$c", 'Z', -2, -3);
+	cmp(69, "%*3$c", 'z', 2, 3);
+	cmp(69, "%*3$c", 'Z', -2, -3);
+	cmp(69, "%*3$c and %*1$c", 'z', 2, 3);
+	cmp(69, "%*3$c and %*1$c", 'Z', -2, -3);
+	cmp(69, "%*3$c and %*2$c", 'z', 2, 3);
+	cmp(69, "%*3$c and %*2$c", 'Z', -2, -3);
+	cmp(69, "%*3$c and %*3$c", 'z', 2, 3);
+	cmp(69, "%*3$c and %*3$c", 'Z', -2, -3);
+	return ;
+	for (size_t x = 0; x < 5; ++x) {
+		cmp(x, "%02d", 42);
+		cmp(x, "%0+2d", 42);
+		cmp(x, "%0 2d", 42);
+		cmp(x, "%02d", -42);
+		cmp(x, "%0+2d", -42);
+		cmp(x, "%0 2d", -42);
+		cmp(x, "%03d", 42);
+		cmp(x, "%0+3d", 42);
+		cmp(x, "%0 3d", 42);
+		cmp(x, "%03d", -42);
+		cmp(x, "%0+3d", -42);
+		cmp(x, "%0 3d", -42);
+		cmp(x, "%04d", 42);
+		cmp(x, "%0+4d", 42);
+		cmp(x, "%0 4d", 42);
+		cmp(x, "%04d", -42);
+		cmp(x, "%0+4d", -42);
+		cmp(x, "%0 4d", -42);
+		cmp(x, "%05d", 42);
+		cmp(x, "%0+5d", 42);
+		cmp(x, "%0 5d", 42);
+		cmp(x, "%05d", -42);
+		cmp(x, "%0+5d", -42);
+		cmp(x, "%0 5d", -42);
+		cmp(x, "%2d", 42);
+		cmp(x, "%+2d", 42);
+		cmp(x, "% 2d", 42);
+		cmp(x, "%2d", -42);
+		cmp(x, "%+2d", -42);
+		cmp(x, "% 2d", -42);
+		cmp(x, "%3d", 42);
+		cmp(x, "%+3d", 42);
+		cmp(x, "% 3d", 42);
+		cmp(x, "%3d", -42);
+		cmp(x, "%+3d", -42);
+		cmp(x, "% 3d", -42);
+		cmp(x, "%4d", 42);
+		cmp(x, "%+4d", 42);
+		cmp(x, "% 4d", 42);
+		cmp(x, "%4d", -42);
+		cmp(x, "%+4d", -42);
+		cmp(x, "% 4d", -42);
+		cmp(x, "%5d", 42);
+		cmp(x, "%+5d", 42);
+		cmp(x, "% 5d", 42);
+		cmp(x, "%5d", -42);
+		cmp(x, "%+5d", -42);
+		cmp(x, "% 5d", -42);
+	}
+}
+
+void	test_uxX(void)
+{
+
+}
+
+void	test_n(void)
+{
+
 }

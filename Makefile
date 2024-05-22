@@ -1,5 +1,11 @@
+NAME = libftprintf.a
+NAME_TEST = a.out
+CC = cc
+CFLAGS = -Wall -Wextra -g
+BUILD = ./build/
+HEADER = printf.h
 SRC =\
-	libft.c\
+	libft.c ft_sizelen.c ft_ssizelen.c \
 	printf.c\
 	vprintf.c\
 	pf_conversion.c\
@@ -7,28 +13,28 @@ SRC =\
 	pf_conv_signed.c\
 	pf_conv_unsigned.c\
 	pf_conv_double.c
-
 OBJ = $(addsuffix .o, $(basename $(SRC)))
+BUILD_OBJ = $(addprefix $(BUILD), $(OBJ))
 
-NAME = libftprintf.a
-CFLAGS = -c -I./ -Wall -Wextra -fsanitize=address -ggdb
+$(BUILD)%.o: %.c
+	$(CC) -c $(CFLAGS) -o $@ $<
 
-$(NAME):
-	cc $(CFLAGS) $(SRC)
-	ar rcs $(NAME) $(OBJ)
+$(BUILD):
+	mkdir -p $(BUILD)
+
+$(NAME): $(BUILD) $(HEADER) $(BUILD_OBJ)
+	ar rcs $(NAME) $(BUILD_OBJ)
 
 all: $(NAME)
 bonus: $(NAME)
 clean:
-	rm -f $(OBJ)
+	rm -f $(BUILD_OBJ)
+	rm -fd $(BUILD)
 fclean: clean
 	rm -f $(NAME)
+	rm -f $(NAME_TEST)
 re: fclean $(NAME)
-
-main: $(NAME)
-	cc $(CFLAGS) main.c
-	cc main.o -l./$(NAME) -v
-	make fclean
-test: main
+test: 
+	$(CC) main.c -o $(NAME_TEST) -L. -l:libftprintf.a -g -fsanitize=address
 
 .PHONY: $(NAME) all bonus clean fclean re test main

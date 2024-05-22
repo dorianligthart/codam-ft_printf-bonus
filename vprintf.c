@@ -9,21 +9,14 @@ int ft_vprintf(const char *format, va_list ap)
 	return (ft_vdprintf(1, format, ap));
 }
 
-//fprintf()'s va_list function.
-int ft_vfprintf(FILE *stream, const char *format, va_list ap)
-{
-	(void)stream;
-	(void)format;
-	(void)ap;
-    return (FT_ERROR);
-}
-
 //sprintf()'s va_list function.
 int ft_vsprintf(char *str, const char *format, va_list ap)
 {
 	int  result;
 
 	result = ft_vsnprintf(NULL, 0, format, ap);
+	if (result < 0)
+		return (FT_ERROR);
 	return (ft_vsnprintf(str, (size_t)result + 1, format, ap));
 }
 
@@ -35,6 +28,7 @@ int ft_vsnprintf(char *str, size_t size, const char *format, va_list ap)
 	p.str = str;
 	p.size = size;
 	va_copy(p.ap, ap);
+	va_copy(p.oldap, ap);
 	p.format = format;
 	p.bytes = 0;
 	while (*p.format)
@@ -60,6 +54,8 @@ int ft_vdprintf(int fd, const char *format, va_list ap)
 	int		result;
 
 	result = ft_vsnprintf(NULL, 0, format, ap) + FT_TERMINATOR;
+	if (result < 0)
+		return (FT_ERROR);
 	str = (char *)malloc(result * sizeof(char));
 	if (!str)
 		return (FT_ERROR);
@@ -69,3 +65,22 @@ int ft_vdprintf(int fd, const char *format, va_list ap)
 	return (result);
 }
 
+//dprintf()'s va_list function. takes filedescriptor.
+int ft_vdnprintf(int fd, size_t size, const char *format, va_list ap)
+{
+	char	*str;
+	size_t	actualsize;
+	int		result;
+
+	result = ft_vsnprintf(NULL, 0, format, ap) + FT_TERMINATOR;
+	if (result < 0)
+		return (FT_ERROR);
+	actualsize = (size <= (size_t)result) * size + (size > (size_t)result) * result; 
+	str = (char *)malloc(actualsize * sizeof(char));
+	if (!str)
+		return (FT_ERROR);
+	ft_vsnprintf(str, actualsize, format, ap);
+	result = write(fd, str, result);
+	free(str);
+	return (result);
+}

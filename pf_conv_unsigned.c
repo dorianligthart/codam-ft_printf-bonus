@@ -1,6 +1,8 @@
 #include "printf.h"
 #include <stddef.h>
+#include <stdbool.h>
 
+	// printf("\n\n%zu, %zu, %zu, %u, \n", n, base, extract, desired);
 static inline void	ft_pfsize2(t_pfstruct *p, t_pfconv *c, 
 								size_t n, const char *basestr)
 {
@@ -16,22 +18,22 @@ static inline void	ft_pfsize2(t_pfstruct *p, t_pfconv *c,
 	i = 0;
 	while (i < desired)
 	{
-		p->str[p->bytes - desired + i] = basestr[n / extract];
+		p->str[p->bytes - c->itemlen + i] = basestr[n / extract];
+		n %= extract;
 		extract /= base;
-		n /= base;
 		i++;
 	}
 }
 
 void ft_pfsize(t_pfstruct *p, t_pfconv *c, size_t n, const char *basestr)
 {
-	const char		*prfx = (char*)((c->c == 'b') * (size_t)"b" \
-						+ (c->c == 'o') * (size_t)"0"           \
-						+ (c->c == 'u') * (size_t)""            \
-						+ (c->c == 'x') * (size_t)"0x"          \
-						+ (c->c == 'X') * (size_t)"0X");
+	const char		*prfx = (char*)((c->c == 'o') * (size_t)"0"
+							+ (c->c == 'u') * (size_t)""
+							+ (c->c == 'x') * (size_t)"0x"
+							+ (c->c == 'X') * (size_t)"0X"
+							+ (!ft_strchr("ouxX", c->c)) * (size_t)"");
 	const size_t	prfxlen = ft_strlen(prfx);
-	
+
 	if (c->prec > c->itemlen)
 		c->prec -= c->itemlen;
 	if (!c->dot && c->zero && (size_t)c->fw > c->itemlen + prfxlen)
@@ -55,7 +57,7 @@ void ft_pfsize(t_pfstruct *p, t_pfconv *c, size_t n, const char *basestr)
 
 //returns true if length modifier is valid, otherwise false.
 static inline bool	ft_pf_u2(t_pfstruct *p, t_pfconv *c,
-									const char *basestr, const int base)
+							 const char *basestr, const int base)
 {
 	if (c->lm == PF_LM_H)
 		return (c->item.hu = (unsigned short)va_arg(p->ap, unsigned int),
@@ -89,10 +91,9 @@ static inline bool	ft_pf_u2(t_pfstruct *p, t_pfconv *c,
 //xXob: flags="-#0", fieldwidth, precision.
 void	ft_pf_u(t_pfstruct *p, t_pfconv *c)
 {
-	const char	*basestr = (const char *)((c->c == 'b') * (size_t)"01"\
-							+ (c->c == 'o') * (size_t)"01234567"\
-							+ (c->c == 'u') * (size_t)"0123456789"\
-							+ (c->c == 'x') * (size_t)"0123456789abcdef"\
+	const char	*basestr = (char *)((c->c == 'o') * (size_t)"01234567"
+							+ (c->c == 'u') * (size_t)"0123456789"
+							+ (c->c == 'x') * (size_t)"0123456789abcdef"
 							+ (c->c == 'X') * (size_t)"0123456789ABCDEF");
 	const int	base = ft_strlen(basestr);
 

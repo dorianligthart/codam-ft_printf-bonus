@@ -1,4 +1,6 @@
 #include "printf.h"
+#include <stddef.h>
+#include <stdbool.h>
 
 //adds desired to p->bytes.
 //returns 0 <= i depending on how big size is.
@@ -28,53 +30,54 @@ void	ft_pf_c(t_pfstruct *p, t_pfconv *c)
 				  ft_pfdesired(p, c->fw - c->itemlen));
 }
 
+//reason we don't need to cast 'fw' to size_t is that it's always unsigned
 //s: flags="-", fieldwidth, precision, length-modifier.
 void	ft_pf_s(t_pfstruct *p, t_pfconv *c)
 {
 	const char		*invalid = "(null)";
-	const int		invlen = ft_strlen(invalid);
+	const size_t	len = ft_strlen(invalid);
 	size_t			strlen;
+	const size_t	field = (size_t)c->fw;
 
 	c->item.s = va_arg(p->ap, char *);
-	strlen = ft_strlen(c->item.s);
-	c->itemlen = (c->item.s && strlen <= (size_t)c->prec) * strlen\
-				+ (c->item.s && strlen > (size_t)c->prec) * c->prec\
-				+ (!c->item.s && (!c->dot || c->prec >= invlen)) * invlen;
 	if (c->item.s == NULL)
 		c->item.s = (char *)invalid;
-	if (!c->minus && c->fw > c->itemlen)
-		ft_memset(p->str + p->bytes - (c->fw - c->itemlen), ' ',
-				  ft_pfdesired(p, c->fw - c->itemlen));
-	ft_memcpy(p->str + p->bytes - c->itemlen, c->item.s,
-			  ft_pfdesired(p, c->itemlen));
-	if (c->minus && c->fw > c->itemlen)
-		ft_memset(p->str + p->bytes - (c->fw - c->itemlen), ' ',
-				  ft_pfdesired(p, c->fw - c->itemlen));
+	strlen = ft_strlen(c->item.s);
+	if (c->dot && (size_t)c->prec < strlen)
+		strlen = (size_t)c->prec;
+	if (c->item.s == invalid)
+		strlen *= (!c->dot || (size_t)c->prec >= len);
+	if (!c->minus && field > strlen)
+		ft_memset(p->str + p->bytes - (field - strlen), ' ',
+				  ft_pfdesired(p, field - strlen));
+	ft_memcpy(p->str + p->bytes - strlen, c->item.s,
+			  ft_pfdesired(p, strlen));
+	if (c->minus && field > strlen)
+		ft_memset(p->str + p->bytes - (field - strlen), ' ',
+				  ft_pfdesired(p, field - strlen));
 }
 
 //for p conversion :(
 void	ft_pf_p(t_pfstruct *p, t_pfconv *c)
 {
 	const char		*invalid = "(nil)";
-	const size_t	invlen = ft_strlen(invalid);
+	const size_t	len = ft_strlen(invalid);
 	size_t			sizelen;
 
+	c->hash = true;
 	c->item.p = va_arg(p->ap, void *);
 	sizelen = ft_sizelen((size_t)c->item.p, 16) + 2;
-	c->itemlen = (c->item.p && sizelen > (size_t)c->prec) * sizelen\
-				+ (c->item.p && sizelen <= (size_t)c->prec) * c->prec\
-				+ (!c->item.p) * invlen;
+	c->itemlen = (c->item.p && (int)sizelen > c->prec) * sizelen\
+				+ (c->item.p && (int)sizelen <= c->prec) * c->prec\
+				+ (!c->item.p) * len;
 	if (!c->minus && c->fw > c->itemlen)
 		ft_memset(p->str + p->bytes - (c->fw - c->itemlen), ' ',
 				  ft_pfdesired(p, c->fw - c->itemlen));
 	if (c->item.p == NULL)
-		ft_memcpy(p->str + p->bytes - invlen, invalid,
-				  ft_pfdesired(p, invlen));
+		ft_memcpy(p->str + p->bytes - len, invalid,
+				  ft_pfdesired(p, len));
 	else
-	{
-		c->hash = true;
 		ft_pfsize(p, c, (size_t)c->item.p, "0123456789abcdef");
-	}
 	if (c->minus && c->fw > c->itemlen)
 		ft_memset(p->str + p->bytes - (c->fw - c->itemlen), ' ',
 				  ft_pfdesired(p, c->fw - c->itemlen));

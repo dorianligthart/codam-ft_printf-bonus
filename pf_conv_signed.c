@@ -1,35 +1,30 @@
-#include <stddef.h>  //'size_t', 'NULL';
-#include <stdbool.h> //'bool', 'true', 'false';
-#include <stdlib.h>  //malloc();
-#include <unistd.h>  //write();
 #include "printf.h"
-#include <stdint.h>
-#include <stdio.h>
-#include <stdint.h>
+#include <unistd.h>  //'size_t', 'NULL';
+#include <stdbool.h> //'bool', 'true', 'false';
 
+	// printf("\n\n%zi, %zi, %zi, %zi, %i, \n", n, abs, base, extract, desired);
 static inline void	ft_pfssize2(t_pfstruct *p, t_pfconv *c, 
 								ssize_t n, const char *basestr)
 {
-	const int		abs = (n >= 0) * 2 - 1;
-	const size_t	base = ft_strlen(basestr);
-	size_t			extract;
+	const ssize_t	abs = (n >= 0) * 2 - 1;
+	const ssize_t	base = ft_strlen(basestr);
+	ssize_t			extract;
 	int				desired;
 	int				i;
 
 	extract = 1;
-	while (extract <= n / base)
+	while (extract <= n / base * abs)
 		extract *= base;
 	desired = ft_pfdesired(p, c->itemlen);
 	i = 0;
 	while (i < desired)
 	{
-		p->str[p->bytes - desired + i] = basestr[(n / extract) * abs];
+		p->str[p->bytes - c->itemlen + i] = basestr[(n / extract) * abs];
+		n %= extract;
 		extract /= base;
-		n /= base;
 		i++;
 	}
 }
-
 
 //CHANGE in values(compared to parent function):
 //	adds sign to itemlen,
@@ -38,18 +33,18 @@ static inline void	ft_pfssize2(t_pfstruct *p, t_pfconv *c,
 //	negative boolean value to scaler for '0',
 void	ft_pfssize(t_pfstruct *p, t_pfconv *c, ssize_t n, const char *basestr)
 {
-	const char		*prfx = (char*)( \
-							  (n >= 0 && c->plus && !c->space) * (size_t)"+" \
-							+ (n >= 0 && !c->plus && c->space) * (size_t)" " \
-							+ (n >= 0 && !c->plus && !c->space) * (size_t)"" \
+	const char		*prfx = (char*)(
+							  (n >= 0 && c->plus && !c->space) * (size_t)"+"
+							+ (n >= 0 && !c->plus && c->space) * (size_t)" "
+							+ (n >= 0 && !c->plus && !c->space) * (size_t)""
 							+ (n < 0) * (size_t)"-");
-	const size_t	prfxlen = ft_strlen(prfx);
-	
+	const int		prfxlen = ft_strlen(prfx);
+
 	if (c->prec > c->itemlen)
 		c->prec -= c->itemlen;
-	if (!c->dot && c->zero && (size_t)c->fw > c->itemlen + prfxlen)
+	if (!c->dot && c->zero && c->fw > c->itemlen + prfxlen)
 		c->prec = c->fw - c->itemlen - prfxlen;
-	if (!c->minus && !c->zero && (size_t)c->fw > c->itemlen + prfxlen)
+	if (!c->minus && !c->zero && c->fw > c->itemlen + prfxlen)
 		ft_memset(p->str + p->bytes - (c->fw - prfxlen - c->prec - c->itemlen),
 				  ' ', ft_pfdesired(p, c->fw - prfxlen - c->prec - c->itemlen));
 	if (prfxlen && !(n == 0 && c->dot && !c->prec))
@@ -60,7 +55,7 @@ void	ft_pfssize(t_pfstruct *p, t_pfconv *c, ssize_t n, const char *basestr)
 				  '0', ft_pfdesired(p, c->prec));
 	if (!(n == 0 && c->dot && !c->prec))
 		ft_pfssize2(p, c, n, basestr);
-	if (c->minus && (size_t)c->fw > c->itemlen + prfxlen)
+	if (c->minus && c->fw > c->itemlen + prfxlen)
 		ft_memset(p->str + p->bytes - (c->fw - prfxlen - c->prec - c->itemlen),
 				  ' ', ft_pfdesired(p, c->fw - prfxlen - c->prec - c->itemlen));
 }
@@ -114,5 +109,6 @@ void	ft_pf_i(t_pfstruct *p, t_pfconv *c)
 		c->itemlen = ft_ssizelen(c->item.hi, 10);
 		ft_pfssize(p, c, c->item.hi, basestr);
 	}
-	ft_pf_i2(p, c, basestr);
+	else
+		ft_pf_i2(p, c, basestr);
 }

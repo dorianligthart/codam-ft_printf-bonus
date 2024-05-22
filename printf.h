@@ -94,6 +94,7 @@ typedef struct s_pfstruct
 	size_t  	size;
 	const char	*format;
 	va_list 	ap;
+	va_list 	oldap;
 	size_t     	bytes;
 } t_pfstruct;
 
@@ -101,20 +102,24 @@ typedef struct s_pfstruct
 
 int ft_printf(const char *format, ...)\
 	__attribute__((format (printf, 1, 2)));
-int	ft_fprintf(FILE *stream, const char *format, ...)\
-	__attribute__((format (printf, 2, 3)));
+
 int ft_sprintf(char *str, const char *format, ...)\
 	__attribute__((format (printf, 2, 3)));
+
 int ft_snprintf(char *str, size_t size, const char *format, ...)\
 	__attribute__((format (printf, 3, 4)));
+
 int ft_dprintf(int fd, const char *format, ...)\
 	__attribute__((format (printf, 2, 3)));
 
+int ft_dnprintf(int fd, size_t size, const char *format, ...)\
+	__attribute__((format (printf, 3, 4)));
+
 int ft_vprintf(const char *format, va_list ap);
-int ft_vfprintf(FILE *stream, const char *format, va_list ap);
 int ft_vsprintf(char *str, const char *format, va_list ap);
 int ft_vsnprintf(char *str, size_t size, const char *format, va_list ap);
 int ft_vdprintf(int fd, const char *format, va_list ap);
+int ft_vdnprintf(int fd, size_t size, const char *format, va_list ap);
 
 //Conversion specific (one letter names) :
 
@@ -126,7 +131,7 @@ void	ft_pf_u(t_pfstruct *p, t_pfconv *c);
 void	ft_pf_f(t_pfstruct *p, t_pfconv *c);
 void	ft_pf_n(t_pfstruct *p, t_pfconv *c);
 
-//Conversion general (without underscore) :
+//Conversion general :
 
 bool	ft_pf_new_conversion(t_pfstruct *p);
 int		ft_pfdesired(t_pfstruct *p, size_t desired);

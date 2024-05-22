@@ -1,28 +1,14 @@
-#include <stddef.h>  //'size_t', NULL;
-#include <stdlib.h>  //malloc(), free();
-#include <unistd.h>  //write();
-#include <stdarg.h>  //f(...), 'va_list', va_start(), va_arg(), va_end();
-#include <stdbool.h> //'bool', true, false;
 #include "printf.h"
-#include <stdio.h>
+#include <stddef.h>  //'size_t', NULL;
+#include <stdbool.h> //'bool', true, false;
 
-	// printf("\n[Conversion %%%c]:\n", c->c);
-	// printf("\thash=  %s\n", c->hash ? "true" : "false");
-	// printf("\tminus= %s\n", c->minus ? "true" : "false");
-	// printf("\tplus=  %s\n", c->plus ? "true" : "false");
-	// printf("\tspace= %s\n", c->space ? "true" : "false");
-	// printf("\tzero=  %s\n", c->zero ? "true" : "false");
-	// printf("\tfw=    %d\n", c->fw);
-	// printf("\tdot=   %s\n", c->dot ? "true" : "false");
-	// printf("\tprec=  %d\n", c->prec);
-	// printf("\tmod=   %d\n", c->lm);
 static inline bool	ft_pf_new_conversion_choose(t_pfstruct *p, t_pfconv *c)
 {
-	void (*funcptrs[128])(t_pfstruct *, t_pfconv *) = {['%'] = ft_pf_c,	\
-	['c'] = ft_pf_c, ['s'] = ft_pf_s, ['p'] = ft_pf_p, ['d'] = ft_pf_i,	\
-	['i'] = ft_pf_i, ['u'] = ft_pf_u, ['x'] = ft_pf_u, ['X'] = ft_pf_u,	\
-	['b'] = ft_pf_u, ['o'] = ft_pf_u, ['n'] = ft_pf_n,					\
-	['f'] = ft_pf_f, ['F'] = ft_pf_f, ['e'] = ft_pf_f, ['E'] = ft_pf_f,	\
+	void (*funcptrs[128])(t_pfstruct *, t_pfconv *) = {['%'] = ft_pf_c,
+	['c'] = ft_pf_c, ['s'] = ft_pf_s, ['p'] = ft_pf_p, ['d'] = ft_pf_i,
+	['i'] = ft_pf_i, ['u'] = ft_pf_u, ['x'] = ft_pf_u, ['X'] = ft_pf_u,
+	['b'] = ft_pf_u, ['o'] = ft_pf_u, ['n'] = ft_pf_n,
+	['f'] = ft_pf_f, ['F'] = ft_pf_f, ['e'] = ft_pf_f, ['E'] = ft_pf_f,
 	['a'] = ft_pf_f, ['A'] = ft_pf_f, ['g'] = ft_pf_f, ['G'] = ft_pf_f};
 
 	if (c->c == '%')
@@ -73,14 +59,13 @@ static inline void	ft_pf_get_fw_or_prec(t_pfstruct *p, int *wp)
 	{
 		if (*p->format == '$')
 			p->format++;
-		va_copy(tmp, p->ap);
+		va_copy(tmp, p->oldap);
 		while (atoi--)
 			*wp = va_arg(tmp, int);
 		va_end(tmp);
 	}
 }
 
-// if (ft_strchr("cspdiuoxXfFeEaAgG%", **str))
 bool	ft_pf_new_conversion(t_pfstruct *p)
 {
 	t_pfconv	conv;

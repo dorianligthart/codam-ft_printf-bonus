@@ -13,17 +13,6 @@ int ft_printf(const char *format, ...)
     return (tmp);
 }
 
-int ft_fprintf(FILE *stream, const char *format, ...)
-{
-    va_list ap;
-    int     tmp;
-
-    va_start(ap, format);
-    tmp = ft_vfprintf(stream, format, ap);
-    va_end(ap);
-    return (tmp);
-}
-
 int ft_sprintf(char *str, const char *format, ...)
 {
     va_list ap;
@@ -57,3 +46,13 @@ int ft_dprintf(int fd, const char *format, ...)
     return (tmp);
 }
 
+int ft_dnprintf(int fd, size_t size, const char *format, ...)
+{
+    va_list ap;
+    int     tmp;
+
+    va_start(ap, format);
+    tmp = ft_vdnprintf(fd, size, format, ap);
+    va_end(ap);
+    return (tmp);
+}
