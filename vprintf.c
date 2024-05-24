@@ -33,7 +33,7 @@ int ft_vsnprintf(char *str, size_t size, const char *format, va_list ap)
 	p.bytes = 0;
 	while (*p.format)
 	{
-		if (*p.format == '%' && !ft_pf_new_conversion(&p))
+		if (*p.format == '%' && !ft_print_new_conversion(&p))
 			return (FT_ERROR);
 		if (*p.format != '%' && p.bytes + FT_TERMINATOR < size)
 		{

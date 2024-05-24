@@ -77,8 +77,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
-#include <limits.h>
+// #include <limits.h>
+#include <stdint.h> //SIZE_MAX
 
+//size=SIZE_MAX means %n is being tested
 void cmp(size_t size, const char *str, ...)
 {
 	fflush(stdout);
@@ -114,7 +116,8 @@ void	test_di(void);
 void	test_uxX(void);
 void	test_n(void);
 
-//COMPILE:	make re && make test && ./a.out 
+//COMPILE:
+//make re && make test && ./a.out
 //c: flags="-", fieldwidth.
 //s: flags="-", fieldwidth, precision.
 //p: flags="-", fieldwidth, dot(?), !precision.
@@ -123,15 +126,19 @@ void	test_n(void);
 //xXo: flags="-#0", fieldwidth, precision.
 int main(void)
 {
+	printf("valistsize=%zu\n", sizeof(va_list) * 3);
 	// test_c(); //DONE!
 	// test_s(); //DONE!
-	test_p();
+	// test_p();
 	// test_di(); //DONE!
+	// test_uxX(); //DONE!!
+	// test_n(); 
     return 0;
 
 	printf("done!\n");
 }
 
+//c: flags="-", fieldwidth.
 void	test_c(void)
 {
 	// for (char x = 0; x < 127; ++x)
@@ -144,8 +151,21 @@ void	test_c(void)
 		cmp(x, "%-1c", 'c');
 		cmp(x, "%-2c", 'd');
 	}
+	cmp(69, "%*c", 1, 'y');
+	cmp(69, "%*c", -1, 'Y');
+	cmp(69, "%*2$c", 'z', 2, 3);
+	cmp(69, "%*2$c", 'Z', -2, -3);
+	cmp(69, "%*3$c", 'z', 2, 3);
+	cmp(69, "%*3$c", 'Z', -2, -3);
+	cmp(69, "%*3$c and %*1$c", 'z', 2, 3);
+	cmp(69, "%*3$c and %*1$c", 'Z', -2, -3);
+	cmp(69, "%*3$c and %*2$c", 'z', 2, 3);
+	cmp(69, "%*3$c and %*2$c", 'Z', -2, -3);
+	cmp(69, "%*3$c and %*3$c", 'z', 2, 3);
+	cmp(69, "%*3$c and %*3$c", 'Z', -2, -3);
 }
 
+//s: flags="-", fieldwidth, precision.
 void	test_s(void)
 {
 	const char	*str = "fortytwo";
@@ -180,28 +200,18 @@ void	test_s(void)
 		cmp(42, "%*.*s", x, x, NULL);
 }
 
+//p: flags="-", fieldwidth, dot(?), !precision.
 void	test_p(void)
 {
-	cmp(42, "%x", 0x0);
+	cmp(42, "%p", 0x0);
+	cmp(42, "%.0p", 0x0);
+	// cmp(42, "%p", 0x1);
 }
 
-
+//di: flags="-+ 0", fieldwidth, precision.
 void	test_di(void)
 {
-	cmp(69, "%*c", 1, 'y');
-	cmp(69, "%*c", -1, 'Y');
-	cmp(69, "%*2$c", 'z', 2, 3);
-	cmp(69, "%*2$c", 'Z', -2, -3);
-	cmp(69, "%*3$c", 'z', 2, 3);
-	cmp(69, "%*3$c", 'Z', -2, -3);
-	cmp(69, "%*3$c and %*1$c", 'z', 2, 3);
-	cmp(69, "%*3$c and %*1$c", 'Z', -2, -3);
-	cmp(69, "%*3$c and %*2$c", 'z', 2, 3);
-	cmp(69, "%*3$c and %*2$c", 'Z', -2, -3);
-	cmp(69, "%*3$c and %*3$c", 'z', 2, 3);
-	cmp(69, "%*3$c and %*3$c", 'Z', -2, -3);
-	return ;
-	for (size_t x = 0; x < 5; ++x) {
+	for (size_t x = 1; x < 8; ++x) {
 		cmp(x, "%02d", 42);
 		cmp(x, "%0+2d", 42);
 		cmp(x, "%0 2d", 42);
@@ -251,14 +261,133 @@ void	test_di(void)
 		cmp(x, "%+5d", -42);
 		cmp(x, "% 5d", -42);
 	}
+
+	cmp(5, "%.d", 0);
+	cmp(5, "%.0d", 0);
 }
 
+//u: flags="-0", fieldwidth, precision.
+//xXo: flags="-#0", fieldwidth, precision.
 void	test_uxX(void)
 {
-
+	cmp(5, "%.o", 0);
+	cmp(5, "%.u", 0);
+	cmp(5, "%.x", 0);
+	for (size_t x = 1; x < 5; ++x) {
+		cmp(x, "%02x", 42);
+		cmp(x, "%02o", 42);
+		cmp(x, "%0#2x", 42);
+		cmp(x, "%0#2o", 42);
+		cmp(x, "%0-2x", 42);
+		cmp(x, "%0-2o", 42);
+				cmp(x, "%0-2u", 42);
+		cmp(x, "%03x", 42);
+		cmp(x, "%03o", 42);
+				cmp(x, "%03u", 42);
+		cmp(x, "%0#3x", 42);
+		cmp(x, "%0#3o", 42);
+		cmp(x, "%0-3x", 42);
+		cmp(x, "%0-3o", 42);
+				cmp(x, "%0-3u", 42);
+		cmp(x, "%04x", 42);
+		cmp(x, "%04o", 42);
+				cmp(x, "%04u", 42);
+		cmp(x, "%0#4x", 42);
+		cmp(x, "%0#4o", 42);
+		cmp(x, "%0-4x", 42);
+		cmp(x, "%0-4o", 42);
+				cmp(x, "%0-4u", 42);
+		cmp(x, "%2x", 42);
+		cmp(x, "%2o", 42);
+				cmp(x, "%2u", 42);
+		cmp(x, "%#2x", 42);
+		cmp(x, "%#2o", 42);
+		cmp(x, "%-2x", 42);
+		cmp(x, "%-2o", 42);
+				cmp(x, "%-2u", 42);
+		cmp(x, "%3x", 42);
+		cmp(x, "%3o", 42);
+				cmp(x, "%3u", 42);
+		cmp(x, "%#3x", 42);
+		cmp(x, "%#3o", 42);
+		cmp(x, "%-3x", 42);
+		cmp(x, "%-3o", 42);
+				cmp(x, "%-3u", 42);
+		cmp(x, "%4x", 42);
+		cmp(x, "%4o", 42);
+				cmp(x, "%4u", 42);
+		cmp(x, "%#4x", 42);
+		cmp(x, "%#4o", 42);
+		cmp(x, "%-4x", 42);
+		cmp(x, "%-4o", 42);
+				cmp(x, "%-4u", 42);
+	}
 }
 
+//n: no flags
 void	test_n(void)
 {
+	const char	*str = "0123456789012345678901234567890123456789012345678901234567890123456789"\
+					   "0123456789012345678901234567890123456789012345678901234567890123456789"\
+					   "0123456789012345678901234567890123456789012345678901234567890123456789"\
+					   "0123456789012345678901234567890123456789012345678901234567890123456789"\
+					   "0123456789012345678901234567890123456789012345678901234567890123456789"\
+					   "0123456789012345678901234567890123456789012345678901234567890123456789"\
+					   "0123456789012345678901234567890123456789012345678901234567890123456789"\
+					   "0123456789012345678901234567890123456789012345678901234567890123456789"\
+					   "0123456789012345678901234567890123456789012345678901234567890123456789"\
+					   "0123456789012345678901234567890123456789012345678901234567890123456789"\
+					   "0123456789012345678901234567890123456789012345678901234567890123456789"\
+					   "0123456789012345678901234567890123456789012345678901234567890123456789"\
+					   "0123456789012345678901234567890123456789012345678901234567890123456789"\
+					   "0123456789012345678901234567890123456789012345678901234567890123456789";
+	int			n = 0;
+	signed char	hhn = 0;
+	short		hn = 0;
+	long		ln = 0;
+	long long	lln = 0;
+	intmax_t	jn = 0;
+	ssize_t		zn = 0;
+	ptrdiff_t	tn = 0;
+	int			ft_n = 0;
+	signed char	ft_hhn = 0;
+	short		ft_hn = 0;
+	long		ft_ln = 0;
+	long long	ft_lln = 0;
+	intmax_t	ft_jn = 0;
+	ssize_t		ft_zn = 0;
+	ptrdiff_t	ft_tn = 0;
+	
+	ft_snprintf(NULL, 0, "%s%n", str, &ft_n);
+	snprintf(NULL, 0, "%s%n", str, &n);
+	if (ft_n != n) printf("ft_n doesn't eq n: %n != %n", ft_n, n);
+
+	ft_snprintf(NULL, 0, "%s%hhn", str, &ft_hhn);
+	snprintf(NULL, 0, "%s%hhn", str, &hhn);
+	if (ft_hhn != hhn) printf("ft_hhn doesn't eq hhn: %hhn != %hhn", ft_hhn, hhn);
+
+	ft_snprintf(NULL, 0, "%s%hn", str, &ft_hn);
+	snprintf(NULL, 0, "%s%hn", str, &hn);
+	if (ft_hn != hn) printf("ft_hn doesn't eq hn: %hn != %hn", ft_hn, hn);
+
+	ft_snprintf(NULL, 0, "%s%ln", str, &ft_ln);
+	snprintf(NULL, 0, "%s%ln", str, &ln);
+	if (ft_ln != ln) printf("ft_ln doesn't eq ln: %ln != %ln", ft_ln, ln);
+
+	ft_snprintf(NULL, 0, "%s%lln", str, &ft_lln);
+	snprintf(NULL, 0, "%s%lln", str, &lln);
+	if (ft_lln != lln) printf("ft_lln doesn't eq lln: %lln != %lln", ft_lln, lln);
+
+	ft_snprintf(NULL, 0, "%s%jn", str, &ft_jn);
+	snprintf(NULL, 0, "%s%jn", str, &jn);
+	if (ft_jn != jn) printf("ft_jn doesn't eq jn: %jn != %jn", ft_jn, jn);
+
+	ft_snprintf(NULL, 0, "%s%zn", str, &ft_zn);
+	snprintf(NULL, 0, "%s%zn", str, &zn);
+	if (ft_zn != zn) printf("ft_zn doesn't eq zn: %zn != %zn", ft_zn, zn);
+
+	ft_snprintf(NULL, 0, "%s%tn", str, &ft_tn);
+	snprintf(NULL, 0, "%s%tn", str, &tn);
+	if (ft_tn != tn) printf("ft_tn doesn't eq tn: %tn != %tn", ft_tn, tn);
 
 }

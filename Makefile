@@ -4,15 +4,15 @@ CC = cc
 CFLAGS = -Wall -Wextra -g
 BUILD = ./build/
 HEADER = printf.h
-SRC =\
-	libft.c ft_sizelen.c ft_ssizelen.c \
+SRC = libft.c ft_sizelen.c ft_ssizelen.c\
 	printf.c\
 	vprintf.c\
-	pf_conversion.c\
-	pf_conv_misc.c\
-	pf_conv_signed.c\
-	pf_conv_unsigned.c\
-	pf_conv_double.c
+	pf_format_to_data.c\
+	pf_misc.c\
+	pf_signed.c\
+	pf_unsigned.c\
+	pf_double.c
+
 OBJ = $(addsuffix .o, $(basename $(SRC)))
 BUILD_OBJ = $(addprefix $(BUILD), $(OBJ))
 

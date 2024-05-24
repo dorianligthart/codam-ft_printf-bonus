@@ -1,7 +1,6 @@
 #ifndef PRINTF_H
 # define PRINTF_H
 
-//SIZE_MIN and SSIZE_MAX is PTRDIFF_MIN PTRDIFF_MAX respectively.
 # if defined(FT_TERMINATOR) || defined(FT_ERROR)
 # else
 #  define FT_TERMINATOR 1
@@ -10,12 +9,12 @@
 
 # include <stddef.h>  //various types
 # include <stdbool.h> //'bool';
-# include <wchar.h>   //'wint_t',  'wchar_t*';
+# include <wchar.h>   //'wint_t',  'wchar_t*' even though we don't support them;
 # include <stdint.h>  //SIZE_MAX, 'intmax_t', 'uintmax_t'; 
 # include <unistd.h>  //'ssize_t', 'size_t';
 # include <stdarg.h>  //'va_list', '...', __attribute__
 
-//activate printf functions and structs/union/enum.
+//activate printf functions and structs/union.
 # ifndef VA_FORBIDDEN
 //4bytes
 //LF = long float
@@ -70,7 +69,7 @@ union u_pfunion
 };
 
 //last 3 values in this struct always needed. rest is optional.
-//7 * sizeof(char) + 4 * sizeof(int) + sizeof(pf_union) = 31 -> 32bytes
+//7 * sizeof(char) + 4 * sizeof(int) + sizeof(pf_union) = 31 -> 32bytes per conversion
 typedef struct s_pfconv
 {
 	bool				hash;
@@ -87,7 +86,7 @@ typedef struct s_pfconv
 	int					itemlen;
 } t_pfconv;
 
-//40 bytes
+//80 bytes
 typedef struct s_pfstruct
 {
 	char    	*str;
@@ -98,7 +97,7 @@ typedef struct s_pfstruct
 	size_t     	bytes;
 } t_pfstruct;
 
-//Printf function definitions :
+//Printf variants function definitions :
 
 int ft_printf(const char *format, ...)\
 	__attribute__((format (printf, 1, 2)));
@@ -121,31 +120,35 @@ int ft_vsnprintf(char *str, size_t size, const char *format, va_list ap);
 int ft_vdprintf(int fd, const char *format, va_list ap);
 int ft_vdnprintf(int fd, size_t size, const char *format, va_list ap);
 
-//Conversion specific (one letter names) :
+//Conversion general functions :
 
-void	ft_pf_c(t_pfstruct *p, t_pfconv *c);
-void	ft_pf_s(t_pfstruct *p, t_pfconv *c);
-void	ft_pf_p(t_pfstruct *p, t_pfconv *c);
-void	ft_pf_i(t_pfstruct *p, t_pfconv *c);
-void	ft_pf_u(t_pfstruct *p, t_pfconv *c);
-void	ft_pf_f(t_pfstruct *p, t_pfconv *c);
-void	ft_pf_n(t_pfstruct *p, t_pfconv *c);
+		//(entry of new conversion)
+bool	ft_print_new_conversion(t_pfstruct *p);
 
-//Conversion general :
-
-bool	ft_pf_new_conversion(t_pfstruct *p);
+		//(checks if p->bytes + desired fit in p->size)
 int		ft_pfdesired(t_pfstruct *p, size_t desired);
 
-//for (unsigned) integers:
-
+		//(puts unsigned digit on p->str)
 void	ft_pfsize(t_pfstruct *p, t_pfconv *c, size_t n, const char *basestr);
-void	ft_pfssize(t_pfstruct *p, t_pfconv *c, ssize_t n, const char *basestr);
-int		ft_ssizelen(ssize_t n, ssize_t base);
-int		ft_sizelen(size_t n, size_t base);
+
+//Conversion specific (one letter names) :
+
+void	ft_print_c(t_pfstruct *p, t_pfconv *c);
+void	ft_print_s(t_pfstruct *p, t_pfconv *c);
+void	ft_print_p(t_pfstruct *p, t_pfconv *c);
+void	ft_print_i(t_pfstruct *p, t_pfconv *c);
+void	ft_print_u(t_pfstruct *p, t_pfconv *c);
+void	ft_print_f(t_pfstruct *p, t_pfconv *c);
+void	ft_print_n(t_pfstruct *p, t_pfconv *c);
 
 # endif //#ifndef VA_FORBIDDEN
 
-//LIBFT :
+//NEW LIBFT :
+
+int		ft_ssizelen(ssize_t n, ssize_t base);
+int		ft_sizelen(size_t n, size_t base);
+
+//OLD LIBFT :
 
 void	*ft_memcpy(void *dest, const void *src, size_t n);
 char	*ft_strchr(const char *s, int c);
