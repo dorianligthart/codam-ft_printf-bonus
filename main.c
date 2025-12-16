@@ -102,7 +102,7 @@ void cmp(size_t size, const char *str, ...)
 	if (own - ret != 0 || strncmp(ftbuffer, buffer, cap))
 		write(1, C_RED, 7);
 	else write(1, C_GRN, 7);
-	printf("[%s]: ft_vsnprintf() returned: %d/%d and printed: \n\t \"%.*s\"\tvs the real:\n\t \"%.*s\"\n", str, own, ret, cap, ftbuffer, cap, buffer);
+	printf("[%s]: ft_vsnprintf() returned: %d/%d and printed: \n\t \"%.*s\"\tvs the real:\n\t \"%.*s\"\n", str, own, ret, (int)cap, ftbuffer, (int)cap, buffer);
 	write(1, C_RESET, 4);
 	va_end(ap1);
 	fflush(stdout);
@@ -127,12 +127,12 @@ void	test_n(void);
 int main(void)
 {
 	printf("valistsize=%zu\n", sizeof(va_list) * 3);
-	// test_c(); //DONE!
-	// test_s(); //DONE!
-	// test_p();
-	// test_di(); //DONE!
-	// test_uxX(); //DONE!!
-	// test_n(); 
+	test_c(); //DONE!
+	test_s(); //DONE!
+	test_p();
+	test_di(); //DONE!
+	test_uxX(); //DONE!!
+	test_n(); 
     return 0;
 
 	printf("done!\n");
@@ -360,34 +360,34 @@ void	test_n(void)
 	
 	ft_snprintf(NULL, 0, "%s%n", str, &ft_n);
 	snprintf(NULL, 0, "%s%n", str, &n);
-	if (ft_n != n) printf("ft_n doesn't eq n: %n != %n", ft_n, n);
+	if (ft_n != n) printf("ft_n doesn't eq n: %n != %n", &ft_n, &n);
 
 	ft_snprintf(NULL, 0, "%s%hhn", str, &ft_hhn);
 	snprintf(NULL, 0, "%s%hhn", str, &hhn);
-	if (ft_hhn != hhn) printf("ft_hhn doesn't eq hhn: %hhn != %hhn", ft_hhn, hhn);
+	if (ft_hhn != hhn) printf("ft_hhn doesn't eq hhn: %hhn != %hhn", &ft_hhn, &hhn);
 
 	ft_snprintf(NULL, 0, "%s%hn", str, &ft_hn);
 	snprintf(NULL, 0, "%s%hn", str, &hn);
-	if (ft_hn != hn) printf("ft_hn doesn't eq hn: %hn != %hn", ft_hn, hn);
+	if (ft_hn != hn) printf("ft_hn doesn't eq hn: %hn != %hn", &ft_hn, &hn);
 
 	ft_snprintf(NULL, 0, "%s%ln", str, &ft_ln);
 	snprintf(NULL, 0, "%s%ln", str, &ln);
-	if (ft_ln != ln) printf("ft_ln doesn't eq ln: %ln != %ln", ft_ln, ln);
+	if (ft_ln != ln) printf("ft_ln doesn't eq ln: %ln != %ln", &ft_ln, &ln);
 
 	ft_snprintf(NULL, 0, "%s%lln", str, &ft_lln);
 	snprintf(NULL, 0, "%s%lln", str, &lln);
-	if (ft_lln != lln) printf("ft_lln doesn't eq lln: %lln != %lln", ft_lln, lln);
+	if (ft_lln != lln) printf("ft_lln doesn't eq lln: %lln != %lln", &ft_lln, &lln);
 
 	ft_snprintf(NULL, 0, "%s%jn", str, &ft_jn);
 	snprintf(NULL, 0, "%s%jn", str, &jn);
-	if (ft_jn != jn) printf("ft_jn doesn't eq jn: %jn != %jn", ft_jn, jn);
+	if (ft_jn != jn) printf("ft_jn doesn't eq jn: %jn != %jn", &ft_jn, &jn);
 
 	ft_snprintf(NULL, 0, "%s%zn", str, &ft_zn);
 	snprintf(NULL, 0, "%s%zn", str, &zn);
-	if (ft_zn != zn) printf("ft_zn doesn't eq zn: %zn != %zn", ft_zn, zn);
+	if (ft_zn != zn) printf("ft_zn doesn't eq zn: %zn != %zn", &ft_zn, &zn);
 
 	ft_snprintf(NULL, 0, "%s%tn", str, &ft_tn);
 	snprintf(NULL, 0, "%s%tn", str, &tn);
-	if (ft_tn != tn) printf("ft_tn doesn't eq tn: %tn != %tn", ft_tn, tn);
+	if (ft_tn != tn) printf("ft_tn doesn't eq tn: %tn != %tn", &ft_tn, &tn);
 
 }

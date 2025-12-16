@@ -1,40 +1,37 @@
-NAME = libftprintf.a
-NAME_TEST = a.out
-CC = cc
-CFLAGS = -Wall -Wextra -g
-BUILD = ./build/
-HEADER = printf.h
-SRC = libft.c ft_sizelen.c ft_ssizelen.c\
-	printf.c\
-	vprintf.c\
-	pf_format_to_data.c\
-	pf_misc.c\
-	pf_signed.c\
-	pf_unsigned.c\
-	pf_double.c
-
-OBJ = $(addsuffix .o, $(basename $(SRC)))
-BUILD_OBJ = $(addprefix $(BUILD), $(OBJ))
-
+#release:
+CC     := cc
+COMMON :=-Wno-sign-compare -Wno-implicit-fallthrough -Wall -Wextra -Werror -DIEEE_8087 -DNO_ERRNO
+CFLAGS :=$(COMMON) -c
+LFLAGS :=$(COMMON) -L. -l:libftprintf.a -ggdb -fsanitize=address
+HEADER := printf.h
+BUILD  := objfiles/
+SRC := dtoa.c libft.c ft_sizelen.c ft_ssizelen.c printf.c vprintf.c\
+	   pf_format_to_data.c pf_misc.c pf_signed.c pf_unsigned.c pf_double.c
+OBJ := $(SRC:.c=.o)
 $(BUILD)%.o: %.c
-	$(CC) -c $(CFLAGS) -o $@ $<
+	$(CC) $(CFLAGS) -o $@ $^
 
+NAME := libftprintf.a
+$(NAME): $(addprefix $(BUILD), $(OBJ))
+	ar rcs $@ $^
 $(BUILD):
 	mkdir -p $(BUILD)
-
-$(NAME): $(BUILD) $(HEADER) $(BUILD_OBJ)
-	ar rcs $(NAME) $(BUILD_OBJ)
-
-all: $(NAME)
-bonus: $(NAME)
+all: $(BUILD) $(HEADER) $(NAME)
+bonus: all
 clean:
-	rm -f $(BUILD_OBJ)
+	rm -f $(addprefix $(BUILD), $(OBJ))
+	rm -f $(NAME_TEST)
 	rm -fd $(BUILD)
 fclean: clean
 	rm -f $(NAME)
-	rm -f $(NAME_TEST)
-re: fclean $(NAME)
-test: 
-	$(CC) main.c -o $(NAME_TEST) -L. -l:libftprintf.a -g -fsanitize=address
+re: fclean
+	sleep 0.2 && make all #sleep because rm thread isn't finished
 
-.PHONY: $(NAME) all bonus clean fclean re test main
+# test/debug:
+NAME_TEST := test.out
+test:
+	$(CC) main.c -o $(NAME_TEST) $(LFLAGS) $(NAME)
+tags:
+	ctags -R ./*
+
+.PHONY: all bonus clean fclean re test tags
